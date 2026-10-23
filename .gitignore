@@ -1,0 +1,40 @@
+# Carpetas que Unity regenera solo (no se comparten)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/.utmp/
+/build/
+
+# Compilaciones (el APK se comparte aparte, por ejemplo en GitHub Releases o Drive)
+/[Bb]uilds/
+*.apk
+*.aab
+*.apk.anterior
+
+# Control externo del editor y capturas de prueba
+/AutoSync/
+
+# Archivos del editor de código
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.pidb
+*.booproj
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini

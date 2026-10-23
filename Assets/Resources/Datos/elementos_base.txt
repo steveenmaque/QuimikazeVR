@@ -1,0 +1,121 @@
+# Z|Simbolo|Nombre|Masa|Categoria|Estado|Electronegatividad|Fusion C|Ebullicion C|Densidad|Valencias|Descubridor|Anio|ColorCPK
+# Categorias: AM alcalino, AE alcalinoterreo, TM transicion, PT metal del bloque p, ML metaloide, NM no metal, HA halogeno, NG gas noble, LA lantanido, AC actinido
+# Estado a 25 C: S solido, L liquido, G gas, ? desconocido. Densidad en g/cm3 (gases en g/L).
+1|H|Hidrógeno|1.008|NM|G|2.20|-259.1|-252.9|0.0899 g/L|+1,-1|Henry Cavendish|1766|FFFFFF
+2|He|Helio|4.0026|NG|G|—|-272.2 (bajo presión)|-268.9|0.1786 g/L|0|Pierre Janssen y Norman Lockyer|1868|D9FFFF
+3|Li|Litio|6.94|AM|S|0.98|180.5|1342|0.534 g/cm³|+1|Johan August Arfwedson|1817|CC80FF
+4|Be|Berilio|9.0122|AE|S|1.57|1287|2469|1.85 g/cm³|+2|Louis-Nicolas Vauquelin|1798|C2FF00
+5|B|Boro|10.81|ML|S|2.04|2076|3927|2.34 g/cm³|+3|Gay-Lussac, Thénard y Humphry Davy|1808|FFB5B5
+6|C|Carbono|12.011|NM|S|2.55|3642 (sublima)|—|2.27 g/cm³ (grafito)|+2,+4,-4|Conocido desde la Prehistoria|Prehistoria|909090
+7|N|Nitrógeno|14.007|NM|G|3.04|-210.0|-195.8|1.251 g/L|+3,+5,+1,+2,+4,-3|Daniel Rutherford|1772|3050F8
+8|O|Oxígeno|15.999|NM|G|3.44|-218.8|-183.0|1.429 g/L|-2,-1|Carl W. Scheele y Joseph Priestley|1774|FF0D0D
+9|F|Flúor|18.998|HA|G|3.98|-219.7|-188.1|1.696 g/L|-1|Henri Moissan|1886|90E050
+10|Ne|Neón|20.180|NG|G|—|-248.6|-246.0|0.900 g/L|0|William Ramsay y Morris Travers|1898|B3E3F5
+11|Na|Sodio|22.990|AM|S|0.93|97.8|883|0.971 g/cm³|+1|Humphry Davy|1807|AB5CF2
+12|Mg|Magnesio|24.305|AE|S|1.31|650|1090|1.738 g/cm³|+2|Joseph Black (aislado por Humphry Davy)|1755|8AFF00
+13|Al|Aluminio|26.982|PT|S|1.61|660.3|2470|2.70 g/cm³|+3|Hans Christian Ørsted|1825|BFA6A6
+14|Si|Silicio|28.085|ML|S|1.90|1414|3265|2.33 g/cm³|+4,-4|Jöns Jacob Berzelius|1824|F0C8A0
+15|P|Fósforo|30.974|NM|S|2.19|44.1 (blanco)|280.5|1.82 g/cm³ (blanco)|+3,+5,-3|Hennig Brand|1669|FF8000
+16|S|Azufre|32.06|NM|S|2.58|115.2|444.6|2.07 g/cm³|+4,+2,+6,-2|Conocido desde la Antigüedad|Antigüedad|FFFF30
+17|Cl|Cloro|35.45|HA|G|3.16|-101.5|-34.0|3.214 g/L|+1,+3,+5,+7,-1|Carl Wilhelm Scheele|1774|1FF01F
+18|Ar|Argón|39.948|NG|G|—|-189.3|-185.8|1.784 g/L|0|Lord Rayleigh y William Ramsay|1894|80D1E3
+19|K|Potasio|39.098|AM|S|0.82|63.5|759|0.862 g/cm³|+1|Humphry Davy|1807|8F40D4
+20|Ca|Calcio|40.078|AE|S|1.00|842|1484|1.55 g/cm³|+2|Humphry Davy|1808|3DFF00
+21|Sc|Escandio|44.956|TM|S|1.36|1541|2836|2.985 g/cm³|+3|Lars Fredrik Nilson|1879|E6E6E6
+22|Ti|Titanio|47.867|TM|S|1.54|1668|3287|4.506 g/cm³|+4,+2,+3|William Gregor|1791|BFC2C7
+23|V|Vanadio|50.942|TM|S|1.63|1910|3407|6.0 g/cm³|+5,+2,+3,+4|Andrés Manuel del Río|1801|A6A6AB
+24|Cr|Cromo|51.996|TM|S|1.66|1907|2671|7.19 g/cm³|+3,+2,+6|Louis-Nicolas Vauquelin|1797|8A99C7
+25|Mn|Manganeso|54.938|TM|S|1.55|1246|2061|7.21 g/cm³|+2,+3,+4,+6,+7|Johan Gottlieb Gahn|1774|9C7AC7
+26|Fe|Hierro|55.845|TM|S|1.83|1538|2862|7.874 g/cm³|+3,+2|Conocido desde la Antigüedad|Antigüedad|E06633
+27|Co|Cobalto|58.933|TM|S|1.88|1495|2927|8.90 g/cm³|+2,+3|Georg Brandt|1735|F090A0
+28|Ni|Níquel|58.693|TM|S|1.91|1455|2913|8.908 g/cm³|+2,+3|Axel Fredrik Cronstedt|1751|50D050
+29|Cu|Cobre|63.546|TM|S|1.90|1084.6|2562|8.96 g/cm³|+2,+1|Conocido desde la Prehistoria|Prehistoria|C88033
+30|Zn|Zinc|65.38|TM|S|1.65|419.5|907|7.14 g/cm³|+2|Andreas Marggraf (lo aisló en Europa)|1746|7D80B0
+31|Ga|Galio|69.723|PT|S|1.81|29.8|2400|5.91 g/cm³|+3|Paul-Émile Lecoq de Boisbaudran|1875|C28F8F
+32|Ge|Germanio|72.630|ML|S|2.01|938.3|2833|5.323 g/cm³|+4,+2|Clemens Winkler|1886|668F8F
+33|As|Arsénico|74.922|ML|S|2.18|817 (bajo presión)|614 (sublima)|5.727 g/cm³|+3,+5,-3|Alberto Magno|1250|BD80E3
+34|Se|Selenio|78.971|NM|S|2.55|221|685|4.81 g/cm³|+4,+6,-2|Jöns Jacob Berzelius|1817|FFA100
+35|Br|Bromo|79.904|HA|L|2.96|-7.2|58.8|3.10 g/cm³|+1,+3,+5,+7,-1|Antoine Jérôme Balard y Carl Löwig|1826|A62929
+36|Kr|Kriptón|83.798|NG|G|3.00|-157.4|-153.4|3.749 g/L|0,+2|William Ramsay y Morris Travers|1898|5CB8D1
+37|Rb|Rubidio|85.468|AM|S|0.82|39.3|688|1.532 g/cm³|+1|Robert Bunsen y Gustav Kirchhoff|1861|702EB0
+38|Sr|Estroncio|87.62|AE|S|0.95|777|1382|2.64 g/cm³|+2|Adair Crawford (aislado por Humphry Davy)|1790|00FF00
+39|Y|Itrio|88.906|TM|S|1.22|1526|3345|4.472 g/cm³|+3|Johan Gadolin|1794|94FFFF
+40|Zr|Circonio|91.224|TM|S|1.33|1855|4409|6.52 g/cm³|+4|Martin Heinrich Klaproth|1789|94E0E0
+41|Nb|Niobio|92.906|TM|S|1.6|2477|4744|8.57 g/cm³|+5,+3|Charles Hatchett|1801|73C2C9
+42|Mo|Molibdeno|95.95|TM|S|2.16|2623|4639|10.28 g/cm³|+6,+2,+3,+4,+5|Carl Wilhelm Scheele|1778|54B5B5
+43|Tc|Tecnecio|[98]|TM|S|1.9|2157|4265|11.5 g/cm³|+7,+4,+6|Carlo Perrier y Emilio Segrè|1937|3B9E9E
+44|Ru|Rutenio|101.07|TM|S|2.2|2334|4150|12.45 g/cm³|+3,+2,+4,+6,+8|Karl Ernst Claus|1844|248F8F
+45|Rh|Rodio|102.91|TM|S|2.28|1964|3695|12.41 g/cm³|+3|William Hyde Wollaston|1804|0A7D8C
+46|Pd|Paladio|106.42|TM|S|2.20|1554.9|2963|12.02 g/cm³|+2,+4|William Hyde Wollaston|1803|006985
+47|Ag|Plata|107.87|TM|S|1.93|961.8|2162|10.49 g/cm³|+1|Conocida desde la Antigüedad|Antigüedad|C0C0C0
+48|Cd|Cadmio|112.41|TM|S|1.69|321.1|767|8.65 g/cm³|+2|Friedrich Stromeyer|1817|FFD98F
+49|In|Indio|114.82|PT|S|1.78|156.6|2072|7.31 g/cm³|+3,+1|Ferdinand Reich y Hieronymus Richter|1863|A67573
+50|Sn|Estaño|118.71|PT|S|1.96|231.9|2602|7.287 g/cm³|+4,+2|Conocido desde la Antigüedad|Antigüedad|668080
+51|Sb|Antimonio|121.76|ML|S|2.05|630.6|1587|6.685 g/cm³|+3,+5,-3|Conocido desde la Antigüedad|Antigüedad|9E63B5
+52|Te|Telurio|127.60|ML|S|2.1|449.5|988|6.232 g/cm³|+4,+2,+6,-2|Franz-Joseph Müller von Reichenstein|1782|D47A00
+53|I|Yodo|126.90|HA|S|2.66|113.7|184.3|4.93 g/cm³|+1,+3,+5,+7,-1|Bernard Courtois|1811|940094
+54|Xe|Xenón|131.29|NG|G|2.60|-111.8|-108.1|5.894 g/L|0,+2,+4,+6|William Ramsay y Morris Travers|1898|429EB0
+55|Cs|Cesio|132.91|AM|S|0.79|28.5|671|1.93 g/cm³|+1|Robert Bunsen y Gustav Kirchhoff|1860|57178F
+56|Ba|Bario|137.33|AE|S|0.89|727|1845|3.51 g/cm³|+2|Carl W. Scheele (aislado por Humphry Davy)|1774|00C900
+57|La|Lantano|138.91|LA|S|1.10|920|3464|6.162 g/cm³|+3|Carl Gustaf Mosander|1839|70D4FF
+58|Ce|Cerio|140.12|LA|S|1.12|795|3443|6.770 g/cm³|+3,+4|Berzelius, Hisinger y Klaproth|1803|FFFFC7
+59|Pr|Praseodimio|140.91|LA|S|1.13|935|3520|6.77 g/cm³|+3|Carl Auer von Welsbach|1885|D9FFC7
+60|Nd|Neodimio|144.24|LA|S|1.14|1024|3074|7.01 g/cm³|+3|Carl Auer von Welsbach|1885|C7FFC7
+61|Pm|Prometio|[145]|LA|S|1.13|1042|3000|7.26 g/cm³|+3|Marinsky, Glendenin y Coryell|1945|A3FFC7
+62|Sm|Samario|150.36|LA|S|1.17|1072|1794|7.52 g/cm³|+3,+2|Paul-Émile Lecoq de Boisbaudran|1879|8FFFC7
+63|Eu|Europio|151.96|LA|S|1.2|826|1529|5.264 g/cm³|+3,+2|Eugène-Anatole Demarçay|1901|61FFC7
+64|Gd|Gadolinio|157.25|LA|S|1.20|1312|3273|7.90 g/cm³|+3|Jean Charles Galissard de Marignac|1880|45FFC7
+65|Tb|Terbio|158.93|LA|S|1.2|1356|3230|8.23 g/cm³|+3,+4|Carl Gustaf Mosander|1843|30FFC7
+66|Dy|Disprosio|162.50|LA|S|1.22|1407|2567|8.540 g/cm³|+3|Paul-Émile Lecoq de Boisbaudran|1886|1FFFC7
+67|Ho|Holmio|164.93|LA|S|1.23|1461|2720|8.79 g/cm³|+3|Delafontaine, Soret y Per Teodor Cleve|1878|00FF9C
+68|Er|Erbio|167.26|LA|S|1.24|1529|2868|9.066 g/cm³|+3|Carl Gustaf Mosander|1843|00E675
+69|Tm|Tulio|168.93|LA|S|1.25|1545|1950|9.32 g/cm³|+3,+2|Per Teodor Cleve|1879|00D452
+70|Yb|Iterbio|173.05|LA|S|1.1|824|1196|6.90 g/cm³|+3,+2|Jean Charles Galissard de Marignac|1878|00BF38
+71|Lu|Lutecio|174.97|LA|S|1.27|1652|3402|9.841 g/cm³|+3|Georges Urbain|1907|00AB24
+72|Hf|Hafnio|178.49|TM|S|1.3|2233|4603|13.31 g/cm³|+4|Dirk Coster y George de Hevesy|1923|4DC2FF
+73|Ta|Tantalio|180.95|TM|S|1.5|3017|5458|16.69 g/cm³|+5|Anders Gustaf Ekeberg|1802|4DA6FF
+74|W|Wolframio|183.84|TM|S|2.36|3422|5555|19.25 g/cm³|+6,+2,+4,+5|Juan José y Fausto Elhuyar|1783|2194D6
+75|Re|Renio|186.21|TM|S|1.9|3186|5596|21.02 g/cm³|+7,+4,+6|Walter Noddack, Ida Tacke y Otto Berg|1925|267DAB
+76|Os|Osmio|190.23|TM|S|2.2|3033|5012|22.59 g/cm³|+4,+2,+3,+6,+8|Smithson Tennant|1803|266696
+77|Ir|Iridio|192.22|TM|S|2.20|2446|4428|22.56 g/cm³|+4,+3|Smithson Tennant|1803|175487
+78|Pt|Platino|195.08|TM|S|2.28|1768.3|3825|21.45 g/cm³|+2,+4|Antonio de Ulloa (lo describió)|1748|D0D0E0
+79|Au|Oro|196.97|TM|S|2.54|1064.2|2856|19.3 g/cm³|+3,+1|Conocido desde la Prehistoria|Prehistoria|FFD123
+80|Hg|Mercurio|200.59|TM|L|2.00|-38.8|356.7|13.53 g/cm³|+2,+1|Conocido desde la Antigüedad|Antigüedad|B8B8D0
+81|Tl|Talio|204.38|PT|S|1.62|304|1473|11.85 g/cm³|+1,+3|William Crookes|1861|A6544D
+82|Pb|Plomo|207.2|PT|S|2.33|327.5|1749|11.34 g/cm³|+2,+4|Conocido desde la Antigüedad|Antigüedad|575961
+83|Bi|Bismuto|208.98|PT|S|2.02|271.4|1564|9.78 g/cm³|+3,+5|Claude François Geoffroy|1753|9E4FB5
+84|Po|Polonio|[209]|PT|S|2.0|254|962|9.32 g/cm³|+4,+2|Marie y Pierre Curie|1898|AB5C00
+85|At|Astato|[210]|HA|S|2.2|≈302|≈337|—|-1,+1,+3,+5,+7|Corson, MacKenzie y Segrè|1940|754F45
+86|Rn|Radón|[222]|NG|G|2.2|-71|-61.7|9.73 g/L|0,+2|Friedrich Ernst Dorn|1900|428296
+87|Fr|Francio|[223]|AM|S|0.7|≈27|≈677|≈1.87 g/cm³|+1|Marguerite Perey|1939|420066
+88|Ra|Radio|[226]|AE|S|0.9|700|1737|5.5 g/cm³|+2|Marie y Pierre Curie|1898|007D00
+89|Ac|Actinio|[227]|AC|S|1.1|1050|3198|10.07 g/cm³|+3|André-Louis Debierne|1899|70ABFA
+90|Th|Torio|232.04|AC|S|1.3|1750|4788|11.72 g/cm³|+4|Jöns Jacob Berzelius|1829|00BAFF
+91|Pa|Protactinio|231.04|AC|S|1.5|1572|4027|15.37 g/cm³|+5,+4|Kasimir Fajans y Oswald Göhring|1913|00A1FF
+92|U|Uranio|238.03|AC|S|1.38|1132.2|4131|19.1 g/cm³|+6,+3,+4,+5|Martin Heinrich Klaproth|1789|008FFF
+93|Np|Neptunio|[237]|AC|S|1.36|644|≈4000|20.45 g/cm³|+5,+3,+4,+6|Edwin McMillan y Philip Abelson|1940|0080FF
+94|Pu|Plutonio|[244]|AC|S|1.28|639.4|3228|19.82 g/cm³|+4,+3,+5,+6|Glenn T. Seaborg y colaboradores|1940|006BFF
+95|Am|Americio|[243]|AC|S|1.3|1176|2011|12 g/cm³|+3,+2,+4,+5,+6|Glenn T. Seaborg y colaboradores|1944|545CF2
+96|Cm|Curio|[247]|AC|S|1.3|1345|3110|13.51 g/cm³|+3,+4|Glenn T. Seaborg y colaboradores|1944|785CE3
+97|Bk|Berkelio|[247]|AC|S|1.3|986|—|14.78 g/cm³|+3,+4|Glenn T. Seaborg y colaboradores|1949|8A4FE3
+98|Cf|Californio|[251]|AC|S|1.3|900|—|15.1 g/cm³|+3,+2,+4|Glenn T. Seaborg y colaboradores|1950|A136D4
+99|Es|Einstenio|[252]|AC|S|1.3|860|—|8.84 g/cm³|+3,+2|Albert Ghiorso y colaboradores|1952|B31FD4
+100|Fm|Fermio|[257]|AC|S|1.3|≈1527 (estimado)|—|—|+3,+2|Albert Ghiorso y colaboradores|1952|B31FBA
+101|Md|Mendelevio|[258]|AC|S|1.3|≈827 (estimado)|—|—|+3,+2|Albert Ghiorso, Glenn T. Seaborg y colaboradores|1955|B30DA6
+102|No|Nobelio|[259]|AC|S|1.3|≈827 (estimado)|—|—|+2,+3|Instituto de Dubná (Rusia)|1966|BD0D87
+103|Lr|Lawrencio|[266]|AC|S|1.3|≈1627 (estimado)|—|—|+3|Albert Ghiorso y colaboradores (Berkeley)|1961|C70066
+104|Rf|Rutherfordio|[267]|TM|?|—|—|—|—|+4|Dubná (Rusia) y Berkeley (EE. UU.)|1964|CC0059
+105|Db|Dubnio|[268]|TM|?|—|—|—|—|+5|Dubná (Rusia) y Berkeley (EE. UU.)|1968|D1004F
+106|Sg|Seaborgio|[269]|TM|?|—|—|—|—|+6|Albert Ghiorso y colaboradores (Berkeley)|1974|D90045
+107|Bh|Bohrio|[270]|TM|?|—|—|—|—|+7|GSI, Darmstadt (Alemania)|1981|E00038
+108|Hs|Hasio|[269]|TM|?|—|—|—|—|+8|GSI, Darmstadt (Alemania)|1984|E6002E
+109|Mt|Meitnerio|[278]|TM|?|—|—|—|—|?|GSI, Darmstadt (Alemania)|1982|EB0026
+110|Ds|Darmstadtio|[281]|TM|?|—|—|—|—|?|GSI, Darmstadt (Alemania)|1994|F00024
+111|Rg|Roentgenio|[282]|TM|?|—|—|—|—|?|GSI, Darmstadt (Alemania)|1994|F00024
+112|Cn|Copernicio|[285]|TM|?|—|—|—|—|+2|GSI, Darmstadt (Alemania)|1996|F00024
+113|Nh|Nihonio|[286]|PT|?|—|—|—|—|?|RIKEN (Japón)|2004|F00024
+114|Fl|Flerovio|[289]|PT|?|—|—|—|—|?|Dubná (Rusia) y Livermore (EE. UU.)|1998|F00024
+115|Mc|Moscovio|[290]|PT|?|—|—|—|—|?|Dubná (Rusia) y Livermore (EE. UU.)|2003|F00024
+116|Lv|Livermorio|[293]|PT|?|—|—|—|—|?|Dubná (Rusia) y Livermore (EE. UU.)|2000|F00024
+117|Ts|Teneso|[294]|HA|?|—|—|—|—|?|Dubná (Rusia), Oak Ridge y Vanderbilt (EE. UU.)|2010|F00024
+118|Og|Oganesón|[294]|NG|?|—|—|—|—|?|Dubná (Rusia) y Livermore (EE. UU.)|2002|F00024
