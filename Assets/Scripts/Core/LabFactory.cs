@@ -130,8 +130,7 @@ namespace LabQuimicaVR
         }
 
         /// <summary>
-        /// Pantalla con esquinas redondeadas: marco del color de acento, fondo violeta-azul con degradado y patron
-        /// de anillos hexagonales, y el titulo en una cinta de color. Devuelve la raiz; el contenido se coloca
+        /// Pantalla oscura con marco luminoso y titulo. Devuelve la raiz; el contenido se coloca
         /// en coordenadas locales (x derecha, y arriba) con z = 0 en la superficie de la pantalla.
         /// </summary>
         public static Transform Screen(string name, Transform parent, Vector3 localPos, Quaternion localRot, Vector2 size,
@@ -139,48 +138,37 @@ namespace LabQuimicaVR
         {
             var root = Node(name, parent, localPos, localRot).transform;
             var acc = accent ?? Palette.Accent;
-            acc.a = 1f;
-            float radius = Mathf.Clamp(Mathf.Min(size.x, size.y) * 0.06f, 0.08f, 0.3f);
-            Panel("Marco", root, new Vector3(0, 0, 0.06f), size + new Vector2(0.2f, 0.2f), radius + 0.1f, 0.08f,
-                Color.Lerp(acc, Color.white, 0.3f), Color.Lerp(acc, Color.black, 0.45f));
-            Panel("Pantalla", root, new Vector3(0, 0, 0.015f), size, radius, 0.02f,
-                Color.Lerp(Palette.PanelTop, acc, 0.12f), Palette.PanelBottom, "Panel");
+            Box("Marco", root, new Vector3(0, 0, 0.06f), new Vector3(size.x + 0.16f, size.y + 0.16f, 0.08f), Mat("ScreenFrame"));
+            Box("Pantalla", root, new Vector3(0, 0, 0.015f), new Vector3(size.x, size.y, 0.02f), Mat("Screen"));
+            var glow = Tinted("GlowBase", acc, 1.6f);
+            Box("BordeSup", root, new Vector3(0, size.y / 2 + 0.04f, 0f), new Vector3(size.x + 0.1f, 0.025f, 0.03f), glow);
+            Box("BordeInf", root, new Vector3(0, -size.y / 2 - 0.04f, 0f), new Vector3(size.x + 0.1f, 0.025f, 0.03f), glow);
             if (!string.IsNullOrEmpty(title))
             {
                 float th = Mathf.Clamp(size.y * 0.075f, 0.12f, 0.3f);
-                float y = size.y / 2 - th * 0.85f;
-                var ink = Luma(acc) > 0.45f ? Palette.Ink : Color.white;
-                var t = Text(root, title, new Vector3(0, y, -0.02f), th, ink, TextAlignmentOptions.Center, size.x - 0.5f, th * 1.6f, true);
+                var t = Text(root, title, new Vector3(0, size.y / 2 - th * 0.95f, -0.01f), th, acc,
+                    TextAlignmentOptions.Center, size.x - 0.3f, th * 1.6f, true);
                 t.textWrappingMode = TextWrappingModes.NoWrap;
                 t.enableAutoSizing = true;
                 t.fontSizeMax = th * 10f;
                 t.fontSizeMin = th * 5f;
-                t.ForceMeshUpdate();
-                float w = t.textBounds.size.x;
-                if (!(w > 0.05f) || w > size.x) w = size.x * 0.6f;
-                // Cinta del titulo (como las etiquetas de los juegos): del color de acento con brillo arriba.
-                Panel("Cinta", root, new Vector3(0, y, -0.004f), new Vector2(Mathf.Min(w + th * 1.6f, size.x - 0.2f), th * 1.3f), th * 0.6f, 0.02f,
-                    Color.Lerp(acc, Color.white, 0.35f), acc);
+                Box("Linea", root, new Vector3(0, size.y / 2 - th * 1.85f, -0.005f), new Vector3(size.x * 0.92f, 0.012f, 0.005f), glow);
             }
             return root;
         }
 
-        /// <summary>Rectangulo redondeado con degradado vertical (colores en los vertices).</summary>
+        /// <summary>Forma redondeada con degradado vertical (iconos y etiquetas); los colores van en los vertices.</summary>
         public static GameObject Panel(string name, Transform parent, Vector3 localPos, Vector2 size, float radius, float depth,
-            Color top, Color bottom, string material = "PanelPlain")
+            Color top, Color bottom)
         {
             top.a = bottom.a = 1f;
-            return MeshObject(name, PanelMesh.Rounded(size, radius, depth, top, bottom), parent, localPos, Vector3.one, Mat(material));
+            return MeshObject(name, PanelMesh.Rounded(size, radius, depth, top, bottom), parent, localPos, Vector3.one, Mat("PanelPlain"));
         }
 
-        public static float Luma(Color c) => 0.2126f * c.r + 0.7152f * c.g + 0.0722f * c.b;
-
-        /// <summary>Tarjeta redondeada (un poco mas clara arriba) dentro de una pantalla.</summary>
+        /// <summary>Tarjeta (rectangulo de color) dentro de una pantalla.</summary>
         public static Transform Card(Transform parent, Vector3 localPos, Vector2 size, Color color)
         {
-            float radius = Mathf.Min(0.09f, Mathf.Min(size.x, size.y) * 0.25f);
-            var go = Panel("Tarjeta", parent, localPos + new Vector3(0, 0, -0.005f), size, radius, 0.008f,
-                Color.Lerp(color, Color.white, 0.14f), Color.Lerp(color, Color.black, 0.12f));
+            var go = Box("Tarjeta", parent, localPos + new Vector3(0, 0, -0.005f), new Vector3(size.x, size.y, 0.008f), Tinted("Card", color));
             return go.transform;
         }
 
@@ -191,12 +179,8 @@ namespace LabQuimicaVR
             var col = root.AddComponent<BoxCollider>();
             col.size = new Vector3(size.x, size.y, 0.08f);
             var idle = color.HasValue ? Tinted("ButtonIdle", color.Value, 0.25f) : Mat("ButtonIdle");
-            // Pildora con brillo arriba: el material pone el color (normal, mirado o elegido) y la malla el degradado.
-            float radius = Mathf.Min(size.x, size.y) * 0.42f;
-            var body = MeshObject("Fondo", PanelMesh.Rounded(size, radius, 0.04f, Color.white, new Color(0.7f, 0.7f, 0.74f)),
-                root.transform, new Vector3(0, 0, 0.01f), Vector3.one, idle);
-            var outline = MeshObject("Contorno", PanelMesh.Rounded(size + new Vector2(0.06f, 0.06f), radius + 0.03f, 0.02f, Color.white, Color.white),
-                root.transform, new Vector3(0, 0, 0.025f), Vector3.one, Mat("TileHover"));
+            var body = Box("Fondo", root.transform, new Vector3(0, 0, 0.01f), new Vector3(size.x, size.y, 0.04f), idle);
+            var outline = Box("Contorno", root.transform, new Vector3(0, 0, 0.025f), new Vector3(size.x + 0.05f, size.y + 0.05f, 0.02f), Mat("TileHover"));
             outline.SetActive(false);
             var text = Text(root.transform, label, new Vector3(0, 0, -0.02f), textSize, Color.white, TextAlignmentOptions.Center, size.x - 0.04f, size.y, true, role);
             // En los botones, sombra en vez de halo: el texto pequeno se lee mas nitido.
@@ -238,24 +222,18 @@ namespace LabQuimicaVR
         }
     }
 
-    /// <summary>
-    /// Colores de Quimikaze (ver COLORES.md): fondos violeta-azul saturados pero oscuros (menos fatiga en VR y
-    /// mas agradables para ninos que el gris o el negro), acentos brillantes y texto claro con contraste 7:1 o mas.
-    /// </summary>
     public static class Palette
     {
         public static readonly Color Accent = new Color(0.0f, 0.78f, 0.95f);
         public static readonly Color Accent2 = new Color(1.0f, 0.75f, 0.2f);
-        public static readonly Color Pink = new Color(1.0f, 0.42f, 0.7f);
-        public static readonly Color Violet = new Color(0.62f, 0.45f, 1.0f);
-        public static readonly Color Text = new Color(0.95f, 0.96f, 1f);
-        public static readonly Color TextDim = new Color(0.8f, 0.83f, 1f);
-        public static readonly Color Ink = new Color(0.11f, 0.08f, 0.27f);
-        public static readonly Color PanelTop = new Color(0.25f, 0.18f, 0.56f);
-        public static readonly Color PanelBottom = new Color(0.09f, 0.14f, 0.42f);
-        public static readonly Color CardBg = new Color(0.27f, 0.29f, 0.68f);
-        public static readonly Color ButtonAlt = new Color(0.47f, 0.33f, 0.8f);
+        public static readonly Color Text = new Color(0.93f, 0.96f, 1f);
+        public static readonly Color TextDim = new Color(0.62f, 0.72f, 0.84f);
+        public static readonly Color Dark = new Color(0.1f, 0.12f, 0.16f);
+        public static readonly Color CardBg = new Color(0.12f, 0.2f, 0.32f);
         public static readonly Color Good = new Color(0.35f, 0.9f, 0.5f);
         public static readonly Color Warn = new Color(1f, 0.55f, 0.3f);
+        public static readonly Color Violet = new Color(0.62f, 0.45f, 1.0f);
+        /// <summary>Tinta oscura para texto sobre iconos y etiquetas de color claro.</summary>
+        public static readonly Color Ink = new Color(0.11f, 0.08f, 0.27f);
     }
 }

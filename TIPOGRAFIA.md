@@ -2,7 +2,7 @@
 
 | Uso | Fuente | Por qué |
 |---|---|---|
-| Títulos, botones y cifras | **Fredoka SemiBold** | Redondeada y amigable, como los juegos VR para todo público. Los títulos de las pantallas van en una cinta de color ([COLORES.md](COLORES.md)), y los demás títulos grandes y claros llevan un halo de neón de su color. |
+| Títulos, botones y cifras | **Fredoka SemiBold** | Redondeada y amigable, como los juegos VR para todo público. En las pantallas oscuras lleva un halo de neón de su color. |
 | Textos | **Atkinson Hyperlegible Next Medium** | Está diseñada para que las letras parecidas no se confundan. Usa un peso medio, porque en VR los pesos finos se leen peor. |
 | Símbolos y fórmulas | **Atkinson Hyperlegible Next Bold** | Distingue `l`, `I` y `1`, y también `O` y `0`. Así no se confunden Cl, I o H₂O. |
 
@@ -20,7 +20,7 @@ Las dos fuentes son gratuitas, con licencia SIL Open Font License.
 
 ## Qué tomamos de los juegos VR hechos en Unity
 - **Owlchemy Labs** (*Job Simulator*, *Cosmonious High*): texto grande y con buen contraste ([Unity, 2023](https://unity.com/blog/games/developing-for-blindness-low-vision-in-vr-with-cosmonious-high)). Los textos sobre los paisajes 360° llevan sombra oscura.
-- **Beat Saber**: títulos en mayúsculas con brillo de neón sobre fondo oscuro. Lo aplicamos en los títulos grandes, como el nombre del elemento, con más espacio entre letras.
+- **Beat Saber**: títulos en mayúsculas con brillo de neón sobre fondo oscuro. Lo aplicamos en los títulos de las pantallas, con más espacio entre letras.
 
 ## Descartadas
 - **Lexend:** se promociona para mejorar la lectura, pero casi no tiene estudios independientes.

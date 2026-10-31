@@ -4,9 +4,8 @@ using UnityEngine;
 namespace LabQuimicaVR
 {
     /// <summary>
-    /// Rectangulos redondeados con grosor para pantallas, tarjetas y botones. El color va en los vertices
-    /// (degradado de arriba hacia abajo) y la UV es la posicion en metros, para que el patron del material
-    /// tenga el mismo tamano en todos los paneles. La cara frontal mira hacia -Z, como los textos.
+    /// Rectangulos redondeados con grosor (iconos y etiquetas de las pantallas). El color va en los vertices
+    /// (degradado de arriba hacia abajo). La cara frontal mira hacia -Z, como los textos.
     /// </summary>
     public static class PanelMesh
     {
@@ -34,7 +33,6 @@ namespace LabQuimicaVR
 
             var v = new List<Vector3>();
             var col = new List<Color>();
-            var uv = new List<Vector2>();
             var tri = new List<int>();
             float zf = -depth / 2f, zb = depth / 2f;
             Color At(float y) => Color.Lerp(bottom, top, Mathf.InverseLerp(-size.y / 2, size.y / 2, y));
@@ -51,8 +49,8 @@ namespace LabQuimicaVR
             foreach (var (z, n, front) in new[] { (zf, Vector3.back, true), (zb, Vector3.forward, false) })
             {
                 int center = v.Count;
-                v.Add(new Vector3(0, 0, z)); col.Add(front ? At(0) : side); uv.Add(Vector2.zero);
-                foreach (var p in ring) { v.Add(new Vector3(p.x, p.y, z)); col.Add(front ? At(p.y) : side); uv.Add(p); }
+                v.Add(new Vector3(0, 0, z)); col.Add(front ? At(0) : side);
+                foreach (var p in ring) { v.Add(new Vector3(p.x, p.y, z)); col.Add(front ? At(p.y) : side); }
                 for (int i = 0; i < ring.Count; i++)
                     Tri(center, center + 1 + i, center + 1 + (i + 1) % ring.Count, n);
             }
@@ -69,7 +67,7 @@ namespace LabQuimicaVR
                 int s = v.Count;
                 v.Add(new Vector3(p0.x, p0.y, zf)); v.Add(new Vector3(p1.x, p1.y, zf));
                 v.Add(new Vector3(p1.x, p1.y, zb)); v.Add(new Vector3(p0.x, p0.y, zb));
-                for (int k = 0; k < 4; k++) { col.Add(side); uv.Add(p0); }
+                for (int k = 0; k < 4; k++) col.Add(side);
                 Tri(s, s + 1, s + 2, normal);
                 Tri(s, s + 2, s + 3, normal);
             }
@@ -77,7 +75,6 @@ namespace LabQuimicaVR
             var mesh = new Mesh { name = "Panel_" + key };
             mesh.SetVertices(v);
             mesh.SetColors(col);
-            mesh.SetUVs(0, uv);
             mesh.SetTriangles(tri, 0);
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();

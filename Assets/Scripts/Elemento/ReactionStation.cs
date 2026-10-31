@@ -46,9 +46,7 @@ namespace LabQuimicaVR
                 var p = ElementDatabase.BySymbol(Partners[i]);
                 int r = i / cols, c = i % cols;
                 var pos = new Vector3((c - (cols - 1) / 2f) * 0.41f, 0.72f - r * 0.35f, -0.03f);
-                // Mismos colores que las casillas de la tabla, con el simbolo en tinta oscura.
-                var b = LabFactory.Button(screen, p.Symbol, pos, bsize, 0.12f, CategoryInfo.Color(p.Category), TextRole.Symbol);
-                b.Label.color = Palette.Ink;
+                var b = LabFactory.Button(screen, p.Symbol, pos, bsize, 0.12f, CategoryInfo.Color(p.Category) * 0.55f, TextRole.Symbol);
                 int z = p.Z;
                 b.OnClick += () => Run(z);
                 buttons.Add(b);

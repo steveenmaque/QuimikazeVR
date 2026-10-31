@@ -37,7 +37,7 @@ namespace LabQuimicaVR.EditorTools
         }
 
         // ---------------- Texturas ----------------
-        public static Texture2D FloorTexture, SoftDot, HexPattern;
+        public static Texture2D FloorTexture, SoftDot;
 
         public static void CreateTextures()
         {
@@ -51,8 +51,6 @@ namespace LabQuimicaVR.EditorTools
                 return new Color(c, c * 1.01f, c * 1.03f, 1f);
             }, TextureWrapMode.Repeat);
 
-            HexPattern = SaveTexture("PatronHexagonal", 512, HexPatternPixel, TextureWrapMode.Repeat, true);
-
             SoftDot = SaveTexture("PuntoSuave", 64, (x, y) =>
             {
                 float dx = (x + 0.5f) / 32f - 1f, dy = (y + 0.5f) / 32f - 1f;
@@ -61,39 +59,6 @@ namespace LabQuimicaVR.EditorTools
                 a = a * a * (3f - 2f * a);
                 return new Color(1, 1, 1, a);
             }, TextureWrapMode.Clamp, true);
-        }
-
-        /// <summary>
-        /// Patron de anillos hexagonales con un "atomo" en cada vertice (como el grafeno o el benceno).
-        /// La textura cubre una celda de 3R x raiz(3)R estirada a un cuadrado; el material corrige la proporcion.
-        /// </summary>
-        static Color HexPatternPixel(int x, int y)
-        {
-            const float a = 0.8660254f; // apotema de un hexagono de radio 1
-            var p = new Vector2((x + 0.5f) / 512f * 3f, (y + 0.5f) / 512f * 2f * a);
-            Vector2 best = Vector2.zero;
-            float bestD = float.MaxValue;
-            for (int i = -1; i <= 2; i++)
-                for (int j = -1; j <= 1; j++)
-                {
-                    var c = new Vector2(1.5f * i, 2f * a * (j + ((i & 1) != 0 ? 0.5f : 0f)));
-                    float d = (p - c).sqrMagnitude;
-                    if (d < bestD) { bestD = d; best = c; }
-                }
-            var q = p - best;
-            q = new Vector2(Mathf.Abs(q.x), Mathf.Abs(q.y));
-            float edge = a - Mathf.Max(q.y, a * q.x + 0.5f * q.y);
-            float line = 1f - Smooth(0.025f, 0.05f, edge);
-            float vd = Mathf.Min((q - new Vector2(1f, 0f)).magnitude, (q - new Vector2(0.5f, a)).magnitude);
-            float dot = 1f - Smooth(0.08f, 0.12f, vd);
-            return new Color(1f, 1f, 1f, Mathf.Max(line * 0.65f, dot));
-        }
-
-        /// <summary>smoothstep de los shaders (Mathf.SmoothStep es otra cosa: interpola entre dos valores).</summary>
-        static float Smooth(float e0, float e1, float x)
-        {
-            float t = Mathf.Clamp01((x - e0) / (e1 - e0));
-            return t * t * (3f - 2f * t);
         }
 
         static Texture2D SaveTexture(string name, int size, System.Func<int, int, Color> fn, TextureWrapMode wrap, bool alpha = false)
@@ -172,20 +137,6 @@ namespace LabQuimicaVR.EditorTools
             return m;
         }
 
-        /// <summary>Material de los paneles redondeados (Quimikaze/Panel) con el patron hexagonal opcional.</summary>
-        static Material Panel(string name, string hex, float pattern)
-        {
-            var m = GetMat(name, FindShader("Quimikaze/Panel"));
-            m.color = Hex(hex);
-            m.SetTexture("_Pattern", HexPattern);
-            // Celda del patron: hexagonos de 0.16 m de radio (3R x raiz(3)R por repeticion).
-            m.SetTextureScale("_Pattern", new Vector2(1f / (3f * 0.16f), 1f / (1.7320508f * 0.16f)));
-            m.SetColor("_PatternColor", new Color(0.75f, 0.8f, 1f));
-            m.SetFloat("_PatternStrength", pattern);
-            EditorUtility.SetDirty(m);
-            return m;
-        }
-
         /// <summary>Material mate barato (Lambert) para superficies grandes: mucho mas liviano que Standard en celulares.</summary>
         static Material Diffuse(string name, string hex)
         {
@@ -248,16 +199,14 @@ namespace LabQuimicaVR.EditorTools
             Standard("Metal", "B8BEC6", 0.75f, 0.9f);
 
             // Pantallas (sin iluminacion, como un monitor)
+            Unlit("Screen", "0D1624");
             Unlit("Card", "1C3350");
-            Unlit("Screen", "1E1F5E");
-            // Paneles redondeados: el color va en los vertices (degradado) y el material solo lo multiplica.
-            Panel("Panel", "FFFFFF", 0.14f);
-            Panel("PanelPlain", "FFFFFF", 0f);
-            Panel("ButtonIdle", "5A5FD8", 0f);
-            Panel("ButtonActive", "0F8A55", 0f);
-            // Los botones tenidos guardados con el shader anterior se vuelven a crear.
-            foreach (var old in Directory.GetFiles(TintDir, "ButtonIdle_*.mat"))
-                AssetDatabase.DeleteAsset(old.Replace('\\', '/'));
+            Unlit("ButtonIdle", "1F3B5C");
+            Unlit("ButtonActive", "00A86B");
+            // Iconos y etiquetas redondeadas (PanelMesh): el color va en los vertices y el material solo lo multiplica.
+            var panel = GetMat("PanelPlain", FindShader("Quimikaze/Panel"));
+            panel.color = Color.white;
+            EditorUtility.SetDirty(panel);
             Unlit("TileHover", "00E5FF");
             Unlit("Reticle", "FFFFFF");
             Standard("GlowBase", "00C8F0", 0.3f, 0, 1.5f);
