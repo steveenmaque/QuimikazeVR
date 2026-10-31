@@ -1,4 +1,4 @@
-# QuimikazeVR · Laboratorio Químico VR
+# Quimikaze · Laboratorio virtual de química en VR
 
 Laboratorio virtual de química para chicos de 10 a 14 años que no tienen acceso a un laboratorio real. Funciona con un **celular Android dentro de un visor tipo VR Box o Cardboard**, el botón del visor y un **mando Bluetooth genérico**.
 
@@ -6,7 +6,12 @@ Entras a una sala blanca con la **tabla periódica completa de los 118 elementos
 - su **modelo 3D** (Bohr, nube electrónica y núcleo);
 - su **historia**: línea de tiempo, descubridor y datos curiosos;
 - sus **propiedades**: grupo, periodo, valencias y configuración electrónica;
-- una **estación de reacciones** con otros elementos.
+- una **estación de reacciones** con otros elementos;
+- una **vitrina con la muestra real** del elemento: un modelo 3D hecho a semejanza de su foto real, con la foto al lado;
+- los **descubridores con su retrato** y **dónde se encuentra en la naturaleza**, con datos del Perú;
+- una **transición con un paisaje 360°** relacionado con el elemento: el espacio, una mina, el mar, el bosque…
+
+> Novedades de la versión actual: [NOVEDADES_v1.1.md](NOVEDADES_v1.1.md)
 
 ---
 
@@ -27,13 +32,14 @@ En la página de [Releases](https://github.com/steveenmaque/QuimikazeVR/releases
 2. Abre el archivo descargado desde **Descargas** o el administrador de archivos.
 3. Android pedirá **permitir instalar apps desconocidas** para el navegador o el administrador de archivos. Actívalo y vuelve atrás.
 4. Pulsa **Instalar**. Si aparece *Google Play Protect*, elige **Más detalles → Instalar de todos modos**. Es normal: la app no viene de Play Store.
-5. Abre **Laboratorio Químico VR**.
+5. Abre **Quimikaze**. Si tenías instalada la versión anterior, la nueva se instala encima.
 
 ### Primera vez con el visor
-1. Coloca el celular en el visor, en horizontal.
+1. Coloca el celular en el visor, en horizontal y **del lado que quieras**: con los botones de volumen hacia arriba o hacia abajo. La pantalla gira sola, también si el celular tiene el bloqueo de rotación activado.
 2. Mira al frente unos segundos: la vista se centra sola.
 3. Si se ve doble, ajusta la separación de las lentes con **L1 / R1** del mando.
 4. Si la vista queda torcida, **mantén pulsado** el botón del visor para recentrarla.
+5. Para **transmitir la pantalla** (Meet, Zoom…), comparte la pantalla del celular: la imagen sale derecha, sin importar de qué lado esté el celular.
 
 ---
 
@@ -51,6 +57,8 @@ En la página de [Releases](https://github.com/steveenmaque/QuimikazeVR/releases
 | Cambiar el modelo del átomo | **X** | M |
 | Ajustar las lentes si se ve doble | **L1 / R1** (1 mm por pulsación; se guarda) | [ / ] |
 | Pantalla dividida para el visor | Automática en el celular | V |
+| Orientación de la pantalla | Automática (gira con el celular), o fija con el botón **Pantalla** en *¿Cómo se usa?* | O |
+| Saltar la transición del paisaje | Toque del botón del visor o **A** | Clic izquierdo |
 
 ---
 
@@ -140,7 +148,7 @@ Trabajamos con **ramas**: cada persona hace sus cambios en una rama propia y des
 
 ### 6. Reglas para no pisarse el trabajo
 - **No editen la misma escena (`.unity`) al mismo tiempo.** Git no puede mezclar bien dos cambios en una escena. Avisen en el grupo quién está con cuál.
-- Las escenas se **generan por código**. Los cambios del laboratorio van en `Assets/Editor/LabSceneBuilder.cs` y luego se regeneran con el menú **Laboratorio VR → Construir escenas**. Si se edita una escena a mano, el próximo *Construir escenas* borra esos cambios.
+- Las escenas se **generan por código**. Los cambios del laboratorio van en `Assets/Editor/LabSceneBuilder.cs` y luego se regeneran con el menú **Quimikaze → Construir escenas**. Si se edita una escena a mano, el próximo *Construir escenas* borra esos cambios.
 - Los textos de los elementos están en `Assets/Resources/Datos/*.txt`. Son ideales para repartir: por ejemplo, una persona revisa los elementos 1 al 56 y otra del 57 al 118.
 - **No suban** `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `Builds/` ni APKs. El archivo `.gitignore` ya los excluye.
 - Hagan commits pequeños y con mensajes claros.
@@ -158,24 +166,21 @@ Un conflicto aparece en `git pull` o en el Pull Request cuando dos personas camb
 ## 📦 Publicar una nueva versión del APK
 
 ### Compilar
-1. En Unity: menú **Laboratorio VR → Compilar APK (Android)**. Tarda unos 3 minutos y la primera vez más.
-2. El APK queda en `Builds/LaboratorioQuimicaVR.apk`, y el resultado en `AutoSync/build_result.txt`.
+1. En Unity: menú **Quimikaze → Compilar APK (Android)**. Tarda unos 3 minutos y la primera vez más.
+2. El APK queda en `Builds/QuimikazeVR.apk`, ya con el nombre correcto para subirlo, y el resultado en `AutoSync/build_result.txt`.
 3. Antes de publicar, pruébalo en un celular.
 
 ### Subir a GitHub Releases (desde la web)
 1. En el repositorio, entra a **Releases → Draft a new release**.
 2. En **Choose a tag** escribe la nueva versión, por ejemplo `v1.1`, y pulsa *Create new tag*.
 3. Título: `QuimikazeVR v1.1`. En la descripción explica qué cambió.
-4. Arrastra el APK a la zona *Attach binaries*. **Cámbiale el nombre a `QuimikazeVR.apk` antes de subirlo**, para que el enlace de descarga de este README siempre apunte a la última versión.
+4. Arrastra `Builds/QuimikazeVR.apk` a la zona *Attach binaries*. **El archivo debe llamarse `QuimikazeVR.apk`**, para que el enlace de descarga de este README siempre apunte a la última versión.
 5. Pulsa **Publish release**.
 
 ### Subir a GitHub Releases (desde la terminal, con GitHub CLI)
 Instala GitHub CLI desde https://cli.github.com e inicia sesión una vez con `gh auth login`. Después:
 ```bash
-copy Builds\LaboratorioQuimicaVR.apk Builds\QuimikazeVR.apk
-```
-```bash
-gh release create v1.1 Builds/QuimikazeVR.apk --title "QuimikazeVR v1.1" --notes "Qué cambió en esta versión"
+gh release create v1.1 Builds/QuimikazeVR.apk --title "Quimikaze v1.1" --notes-file NOVEDADES_v1.1.md
 ```
 
 ---
@@ -189,11 +194,13 @@ Unity 6 (6000.6.0f1) · Built-in Render Pipeline · Android en horizontal · IL2
 |---|---|
 | `Assets/Scripts/VR` | Visor en el celular (pantalla dividida, giroscopio), puntero por mirada y controles |
 | `Assets/Scripts/Tabla` | Tabla periódica, leyendas y datos curiosos |
-| `Assets/Scripts/Elemento` | Modelo del átomo, nube electrónica, muestra real y estación de reacciones |
+| `Assets/Scripts/Elemento` | Modelo del átomo, nube electrónica, estación de reacciones, muestras reales (`ElementSample` y el generador de formas `MeshKit`) y la transición con paisajes (`ElementIntro`) |
 | `Assets/Scripts/Datos` | Base de datos de elementos, configuración electrónica y reacciones |
 | `Assets/Scripts/Core` | Estado del juego, transiciones, sonidos y fábrica de objetos 3D |
 | `Assets/Editor` | Constructor de escenas, materiales y mallas, y compilación del APK |
 | `Assets/Resources/Datos` | Textos de los 118 elementos, editables |
+| `Assets/Resources/Fotos` | Fotos reales de los elementos y retratos de los descubridores |
+| `Assets/Resources/Paisajes` | Paisajes 360° de la transición y de la ventana |
 | `Assets/Resources/LabMaterials`, `LabMeshes` | Materiales y modelos 3D generados |
 | `Assets/Scenes` | `TablaPeriodica` y `ElementoDetalle` |
 
@@ -201,19 +208,27 @@ Unity 6 (6000.6.0f1) · Built-in Render Pipeline · Android en horizontal · IL2
 | Escena | Qué contiene |
 |---|---|
 | `TablaPeriodica` | Pantalla de inicio: una sala blanca cerrada con la zona de inicio y la tabla periódica completa al frente. A los costados están los bloques s/p/d/f, los periodos, los tipos de elementos (al elegir uno se resalta su familia en la tabla), los grupos y sus nombres, los controles y datos curiosos. Atrás: el título, "la tabla en números" y "¿qué es un átomo?". |
-| `ElementoDetalle` | El nivel de cada elemento. **Al frente:** el modelo 3D. **Izquierda:** historia, línea de tiempo, descubridor, origen del nombre, aportes y dato curioso. **Derecha:** propiedades (grupo, periodo, bloque, valencias, equivalente químico, configuración electrónica y electrones por nivel). **Adelante:** la estación de reacciones y los botones del modelo y de anterior/siguiente. **Atrás:** volver a la tabla. |
+| `ElementoDetalle` | El nivel de cada elemento. **Al frente:** el modelo 3D. **Izquierda:** historia, línea de tiempo, descubridor, origen del nombre, aportes y dato curioso. **Derecha:** propiedades (grupo, periodo, bloque, valencias, equivalente químico, configuración electrónica y electrones por nivel). **Adelante:** la estación de reacciones y los botones del modelo y de anterior/siguiente. **A la derecha:** la vitrina con la muestra real y su foto. **Atrás:** la ventana con el paisaje del elemento, la salida, los descubridores con su retrato y dónde se encuentra en la naturaleza. |
 
-### Menú "Laboratorio VR" en Unity
+### Menú "Quimikaze" en Unity
 - **Construir escenas**: regenera desde el código los materiales, las mallas y las dos escenas.
 - **Mostrar laboratorio**: abre la escena principal y encuadra la vista.
 - **Vista previa: siguiente elemento**: con `ElementoDetalle` abierta, muestra el siguiente elemento.
 - **Capturar vistas** / **Probar en modo Play**: guardan imágenes de control en `AutoSync/`.
-- **Compilar APK (Android)**: genera `Builds/LaboratorioQuimicaVR.apk`.
+- **Capturar muestras (118)**: foto de cada muestra 3D en `AutoSync/muestras`, para compararlas con las fotos reales.
+- **Capturar descubridores**: revisa las pantallas de retratos y naturaleza de varios elementos.
+- **Reimportar fotos y paisajes**: vuelve a aplicar la compresión de las imágenes.
+- **Compilar APK (Android)**: genera `Builds/QuimikazeVR.apk`.
 
 ### Datos
 Los textos están en `Assets/Resources/Datos`, en archivos separados por `|`:
 - `elementos_base.txt`: símbolo, nombre, masa, categoría, estado, electronegatividad, puntos de fusión y ebullición, densidad, valencias, descubridor y año.
 - `elementos_historia_1.txt` (Z 1–56) y `elementos_historia_2.txt` (Z 57–118): origen del nombre, historia, línea de tiempo con el formato `año=evento;año=evento`, aportes y valor, y dato curioso.
+- `muestras.txt`: cómo se ve cada elemento. Incluye la forma del modelo 3D (tubo, ampolla, cristales, barra, escamas…), el color, el brillo metálico, una descripción, dónde se encuentra en la naturaleza, su paisaje y el pie de la foto.
+- `descubridores.txt` y `personas.txt`: retratos, años de vida y descripción de los descubridores.
+- `paisajes.txt` y `fotos_elementos.txt`: nombre, autor y licencia de cada paisaje y foto.
+
+Los créditos de todas las imágenes están en [CREDITOS_IMAGENES.txt](CREDITOS_IMAGENES.txt).
 
 La configuración electrónica se calcula con la regla de Moeller e incluye las excepciones reales (Cr, Cu, Pd, Au…). Las reacciones más comunes están escritas a mano en `ReactionDatabase.cs`. Las demás combinaciones se predicen con las valencias, y en pantalla se indica que es una predicción.
 

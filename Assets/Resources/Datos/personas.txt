@@ -1,0 +1,102 @@
+# Clave|Nombre|Nacimiento|Muerte|Descripcion|Imagen|Tipo(P persona, H historico, I institucion)|Autor|Licencia
+Adair_Crawford|Adair Crawford|1748|1795|Químico británico||P||
+Albert_Ghiorso|Albert Ghiorso|1915|2010|Científico nuclear estadounidense|Albert_Ghiorso|P|Unknown authorUnknown author|Public domain
+Albertus_Magnus|Alberto Magno|1193|1280|Sabio y filósofo alemán de la Edad Media|Albertus_Magnus|P|Vicente Salvador Gómez|Public domain
+Anders_Gustaf_Ekeberg|Anders Gustaf Ekeberg|1767|1813|Químico sueco|Anders_Gustaf_Ekeberg|P|Lithography by unknown artist|Public domain
+Andreas_Sigismund_Marggraf|Andreas Sigismund Marggraf|1709|1782|Químico alemán|Andreas_Sigismund_Marggraf|P|Unknown authorUnknown author|Public domain
+Andr_Louis_Debierne|André-Louis Debierne|1874|1949|Químico francés|Andr_Louis_Debierne|P|Benjamin Couprie|Public domain
+Andrs_Manuel_del_Ro|Andrés Manuel del Río|1764|1849|Científico español que vivió en México|Andrs_Manuel_del_Ro|P|José Luiz|CC BY-SA 4.0
+Antoine_Jrme_Balard|Antoine-Jérôme Balard|1802|1876|Químico francés|Antoine_Jrme_Balard|P|Unknown authorUnknown author|Public domain
+Antonio_de_Ulloa|Antonio de Ulloa|1716|1795|Naturalista, militar y escritor español|Antonio_de_Ulloa|P|Andrés Cortés y Aguilar|Public domain
+Axel_Fredrik_Cronstedt|Axel Fredrik Cronstedt|1722|1765|Mineralogista y químico sueco|Axel_Fredrik_Cronstedt|P|Unknown authorUnknown author|Public domain
+Bernard_Courtois|Bernard Courtois|1777|1838|Químico francés||P||
+Carl_Auer_von_Welsbach|Carl Auer von Welsbach|1858|1929|Químico e inventor austriaco|Carl_Auer_von_Welsbach|P|Unknown authorUnknown author|Public domain
+Carl_Gustaf_Mosander|Carl Gustaf Mosander|1797|1858|Químico sueco|Carl_Gustaf_Mosander|P|Painting by Karl Gustaf Plagemann (1805-1868)|Public domain
+Carl_Jacob_Lwig|Carl Jacob Löwig|1803|1890|Químico alemán|Carl_Jacob_Lwig|P|Johann Konrad Bolleter|Public domain
+Carl_Wilhelm_Scheele|Carl Wilhelm Scheele|1742|1786|Químico sueco|Carl_Wilhelm_Scheele|P|Johann Gottfried Scheffner|PDM-owner
+Carlo_Perrier|Carlo Perrier|1886|1948|Mineralogista italiano||P||
+Cerro_Rico|Cerro Rico de Potosí: sus minas dieron plata a todo el mundo colonial||||Cerro_Rico|H|Mhwater at Dutch Wikipedia|Public domain
+Charles_D_Coryell|Charles D. Coryell|1912|1971|Químico estadounidense|Charles_D_Coryell|P|Christian A. Coryell|GFDL
+Charles_Hatchett|Charles Hatchett|1765|1847|Químico británico|Charles_Hatchett|P||CC BY 4.0
+Claude_Franois_Geoffroy|Claude François Geoffroy|1729|1753|Químico francés||P||
+Clemens_Winkler|Clemens Winkler|1838|1904|Químico alemán|Clemens_Winkler|P||Public domain
+Curse_tablet|Tablilla romana de plomo con un mensaje escrito||||Curse_tablet|H|Pankratos|Public domain
+Dale_R_Corson|Dale R. Corson|1914|2012|Físico estadounidense||P||
+Daniel_Rutherford|Daniel Rutherford|1749|1819|Médico y químico escocés|Daniel_Rutherford|P|Henry Wright Kerr|Public domain
+Dirk_Coster|Dirk Coster|1889|1950|Físico neerlandés|Dirk_Coster|P|Unknown photographer|Public domain
+Edwin_McMillan|Edwin McMillan|1907|1991|Químico estadounidense, premio Nobel|Edwin_McMillan|P|Nobel Foundation|Public domain
+Emilio_Segr|Emilio Segrè|1905|1989|Físico italiano, premio Nobel|Emilio_Segr|P|Nobel foundation|Public domain
+Eugne_Anatole_Demaray|Eugène-Anatole Demarçay|1852|1903|Químico francés|Eugne_Anatole_Demaray|P|Unknown authorUnknown author|Public domain
+Fausto_Elhuyar|Fausto Elhuyar|1755|1833|Químico español|Fausto_Elhuyar|P|Biblioteca Nacional de España|Public domain
+Ferdinand_Reich|Ferdinand Reich|1799|1882|Químico alemán|Ferdinand_Reich|P|Weeks, Mary Elvira|Public domain
+Franz_Joseph_Mller_von_Reichenstein|Franz-Joseph Müller von Reichenstein|1742|1825|Mineralogista austriaco||P||
+Friedrich_Ernst_Dorn|Friedrich Ernst Dorn|1848|1916|Físico alemán|Friedrich_Ernst_Dorn|P|Unknown authorUnknown author|CC BY-SA 3.0
+Friedrich_Stromeyer|Friedrich Stromeyer|1776|1835|Químico alemán|Friedrich_Stromeyer|P|Unknown; original upload by user Grzes14 on pl.wikipedia|Public domain
+GSI_Helmholtz_Centre_for_Heavy_Ion_Research|Centro GSI de Investigación de Iones Pesados (Darmstadt, Alemania)||||GSI_Helmholtz_Centre_for_Heavy_Ion_Research|I|commander-pirx|CC BY-SA 3.0
+Georg_Brandt|Georg Brandt|1694|1768|Químico y mineralogista sueco||P||
+George_de_Hevesy|George de Hevesy|1885|1966|Químico húngaro, premio Nobel|George_de_Hevesy|P|Unknown authorUnknown author|Public domain
+Georges_Urbain|Georges Urbain|1872|1938|Químico francés|Georges_Urbain|P|Georges Urbain (1872-1938)|Public domain
+Glenn_T_Seaborg|Glenn T. Seaborg|1912|1999|Químico estadounidense, premio Nobel|Glenn_T_Seaborg|P|Atomic Energy Commission. (1946 - 01/19/1975)|Public domain
+Gustav_Kirchhoff|Gustav Kirchhoff|1824|1887|Físico alemán|Gustav_Kirchhoff|P|Unknown authorUnknown author|Public domain
+Hans_Christian_rsted|Hans Christian Ørsted|1777|1851|Físico y químico danés|Hans_Christian_rsted|P|Christian Albrecht Jensen|Public domain
+Hennig_Brand|Hennig Brand|1630|1710|Alquimista alemán (pintura que imagina su descubrimiento)|Hennig_Brand|P|Joseph Wright of Derby|Public domain
+Henri_Moissan|Henri Moissan|1852|1907|Químico francés|Henri_Moissan|P|sv:Generalstabens litografiska anstalt|Public domain
+Henry_Cavendish|Henry Cavendish|1731|1810|Físico y químico británico|Henry_Cavendish|P|George Wilson|Public domain
+Hieronymous_Theodor_Richter|Hieronymous Theodor Richter|1824|1898|Químico alemán|Hieronymous_Theodor_Richter|P|Ernst Friedrich Wilhelm Hugo Höffert (1832–1903)|Public domain
+Huancavelica|Huancavelica (Perú): sus minas de mercurio fueron de las más grandes del mundo||||Huancavelica|H|Jorge Gobbi from Buenos Aires, Argentina|CC BY 2.0
+Humphry_Davy|Humphry Davy|1778|1829|Químico británico|Humphry_Davy|P|Thomas Phillips|Public domain
+Ida_Noddack|Ida Noddack (Tacke)|1896|1978|Química alemana|Ida_Noddack|P|Unknown authorUnknown author|CC BY-SA 3.0
+Iron_pillar_of_Delhi|Pilar de hierro de Delhi (India): tiene unos 1600 años y casi no se ha oxidado||||Iron_pillar_of_Delhi|H|Photograph taken by Mark A. Wilson (Department of Geology, The College|Public domain
+Jacob_A_Marinsky|Jacob A. Marinsky|1918|2005|Químico estadounidense|Jacob_A_Marinsky|P|ORNL|Public domain
+Jacques_Louis_Soret|Jacques-Louis Soret|1827|1890|Químico suizo|Jacques_Louis_Soret|P|The British Library (Original) Wolfymoza (Commons upload)|No restrictions
+Jean_Charles_Galissard_de_Marignac|Jean Charles Galissard de Marignac|1817|1894|Químico suizo|Jean_Charles_Galissard_de_Marignac|P|Unknown authorUnknown author|Public domain
+Johan_August_Arfwedson|Johan August Arfwedson|1792|1841|Químico sueco|Johan_August_Arfwedson|P|Fehr and Miller of Stockholm|Public domain
+Johan_Gadolin|Johan Gadolin|1760|1852|Químico finlandés (estampilla en su honor)|Johan_Gadolin|P|Published by Posti- ja telelaitos|Public domain
+Johan_Gottlieb_Gahn|Johan Gottlieb Gahn|1745|1818|Químico sueco|Johan_Gottlieb_Gahn|P|Cardon, Johan Elias (1802 - 1878)|Public domain
+John_William_Strutt_3rd_Baron_Rayleigh|Lord Rayleigh|1842|1919|Físico inglés|John_William_Strutt_3rd_Baron_Rayleigh|P|Unknown authorUnknown author|Public domain
+Joint_Institute_for_Nuclear_Research|Instituto Unificado de Investigaciones Nucleares (Dubná, Rusia)||||Joint_Institute_for_Nuclear_Research|I|The original uploader was Hrustov at Russian Wikipedia.|CC BY-SA 3.0
+Joseph_Black|Joseph Black|1728|1799|Químico escocés|Joseph_Black|P|Rogers, J|Public domain
+Joseph_Louis_Gay_Lussac|Joseph Louis Gay-Lussac|1778|1850|Químico y físico francés|Joseph_Louis_Gay_Lussac|P|François-Séraphin Delpech|Public domain
+Joseph_Priestley|Joseph Priestley|1733|1804|Científico y teólogo inglés|Joseph_Priestley|P|James Sharples|Public domain
+Juan_Jos_Elhuyar|Juan José Elhuyar|1754|1796|Químico español||P||
+Jns_Jacob_Berzelius|Jöns Jacob Berzelius|1779|1848|Químico sueco|Jns_Jacob_Berzelius|P|John Way [1]|Public domain
+Karl_Ernst_Claus|Karl Ernst Claus|1796|1864|Químico ruso de origen alemán|Karl_Ernst_Claus|P|Unknown authorUnknown author|Public domain
+Kawah_Ijen|Volcán Kawah Ijen (Indonesia), donde se recoge azufre a mano||||Kawah_Ijen|H|Sémhur (talk)|CC BY-SA 4.0
+Kazimierz_Fajans|Kasimir Fajans|1887|1975|Químico polaco|Kazimierz_Fajans|P|NN (University of Michigan)|Public domain
+Kenneth_Ross_MacKenzie|Kenneth Ross Mackenzie|1912|2002|Físico estadounidense|Kenneth_Ross_MacKenzie|P|Department of Energy. Lawrence Berkeley National Laboratory. Public Af|Public domain
+Kohl_cosmetics|Kohl: maquillaje antiguo para los ojos, hecho con antimonio||||Kohl_cosmetics|H|Camila Zanon.|CC BY 2.0
+Kosuke_Morita|Kosuke Morita|1957||Científico japonés|Kosuke_Morita|P|文部科学省|CC BY 4.0
+Lars_Fredrik_Nilson|Lars Fredrik Nilson|1840|1899|Químico sueco|Lars_Fredrik_Nilson|P|Otto Petterson|Public domain
+Lascaux|Pinturas de la cueva de Lascaux (Francia), dibujadas con carbón hace unos 17 000 años||||Lascaux|H|EU|Public domain
+Lawrence_Berkeley_National_Laboratory|Laboratorio Nacional Lawrence Berkeley (California, EE. UU.)||||Lawrence_Berkeley_National_Laboratory|I|U.S. Department of Energy from United States|Public domain
+Lawrence_E_Glendenin|Lawrence E. Glendenin|1918|2008|Químico estadounidense|Lawrence_E_Glendenin|P|ORNL|Public domain
+Lawrence_Livermore_National_Laboratory|Laboratorio Nacional Lawrence Livermore (California, EE. UU.)||||Lawrence_Livermore_National_Laboratory|I|Alfred Twu|CC0
+Lord_of_Sipn|Señor de Sipán (Lambayeque, Perú): los moches trabajaban el cobre y el oro||||Lord_of_Sipn|H|Cicero Moraes|CC BY-SA 4.0
+Louis_Jacques_Thnard|Louis Jacques Thénard|1777|1857|Químico francés|Louis_Jacques_Thnard|P||Public domain
+Louis_Nicolas_Vauquelin|Louis Nicolas Vauquelin|1763|1829|Químico francés|Louis_Nicolas_Vauquelin|P|Goblain B.|Public domain
+Marc_Delafontaine|Marc Delafontaine|1838|1911|Químico suizo|Marc_Delafontaine|P|Chicago Tribune (30 de maig del 1897)|Public domain
+Marguerite_Perey|Marguerite Perey|1909|1975|Física francesa||P||
+Marie_Curie|Marie Curie|1867|1934|Física y química polaca, dos veces premio Nobel|Marie_Curie|P|Henri Manuel|Public domain
+Martin_Heinrich_Klaproth|Martin Heinrich Klaproth|1743|1817|Químico alemán|Martin_Heinrich_Klaproth|P||Public domain
+Morris_Travers|Morris Travers|1872|1961|Químico inglés|Morris_Travers|P|The Cyclopedia Publishing Company, Calcutta|Public domain
+Norman_Lockyer|Norman Lockyer|1836|1920|Astrónomo inglés|Norman_Lockyer|P|Stereoscopic Co.|Public domain
+Oak_Ridge_National_Laboratory|Laboratorio Nacional de Oak Ridge (Tennessee, EE. UU.)||||Oak_Ridge_National_Laboratory|I|Oak Ridge Office of Environmental Management, U.S. Department of Energ|Public domain
+Oswald_Helmuth_Ghring|Oswald Helmuth Göhring|1889|1915|Químico alemán||P||
+Otto_Berg_scientist|Otto Berg|1873|1939|Químico y físico alemán|Otto_Berg_scientist|P|Gilimor|CC BY-SA 4.0
+Paul_mile_Lecoq_de_Boisbaudran|Paul-Émile Lecoq de Boisbaudran|1838|1912|Químico francés|Paul_mile_Lecoq_de_Boisbaudran|P|Unknown authorUnknown author|Public domain
+Per_Teodor_Cleve|Per Teodor Cleve|1840|1905|Químico sueco|Per_Teodor_Cleve|P|Osti, Heinrich, 1826-1914|Public domain
+Philip_H_Abelson|Philip Abelson|1913|2004|Físico estadounidense|Philip_H_Abelson|P|U.S. Navy|Public domain
+Pierre_Curie|Pierre Curie|1859|1906|Físico francés|Pierre_Curie|P|Dujardin|Public domain
+Pierre_Janssen|Pierre Janssen|1824|1907|Astrónomo francés|Pierre_Janssen|P|Atelier Nadar. Photographe|CC0
+Riken|RIKEN, instituto de investigación de Japón|||||I||
+Robert_Bunsen|Robert Bunsen|1811|1899|Químico alemán|Robert_Bunsen|P|UnknownUnknown|CC BY-SA 4.0
+Smithson_Tennant|Smithson Tennant|1761|1815|Químico británico (placa en su casa natal)|Smithson_Tennant|P|en:User:Sakhrat|CC BY-SA 3.0
+Tumi|Tumi de oro de la cultura sicán (Lambayeque, Perú)||||Tumi|H||CC0
+Uluburun_shipwreck|Barco hundido de Uluburun (hace 3300 años): llevaba estaño y cobre para hacer bronce||||Uluburun_shipwreck|H|Martin Bahmann|CC BY-SA 3.0
+Walter_Noddack|Walter Noddack|1893|1960|Químico alemán|Walter_Noddack|P|www.uni-bamberg.de|Public domain
+Wilhelm_Hisinger|Wilhelm Hisinger|1766|1852|Químico y mineralogista sueco|Wilhelm_Hisinger|P|Unknown authorUnknown author|Public domain
+William_Crookes|William Crookes|1832|1919|Químico y físico británico|William_Crookes|P|George Charles Beresford (1864-1938)|Public domain
+William_Gregor|William Gregor|1761|1817|Clérigo y mineralogista británico|William_Gregor|P|John Hoppner, R.A.|Public domain
+William_Hyde_Wollaston|William Hyde Wollaston|1766|1828|Químico y físico inglés|William_Hyde_Wollaston|P|John Jackson|Public domain
+William_Ramsay|William Ramsay|1852|1916|Químico escocés|William_Ramsay|P|Elliott & Fry|Public domain
+Yuri_Oganessian|Yuri Oganessian|1933||Físico ruso: el oganesón lleva su nombre|Yuri_Oganessian|P|VPRO|CC BY-SA 3.0 nl

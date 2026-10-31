@@ -12,6 +12,7 @@ namespace LabQuimicaVR
     ///  - B, Escape o boton "atras" del celular: volver.
     ///  - X o M: cambiar el modelo del atomo.
     ///  - L1 / R1 o [ / ]: ajustar la separacion de las lentes del visor.
+    ///  - O: cambiar la orientacion de la pantalla (tambien hay un boton en "¿Como se usa?").
     /// </summary>
     public static class LabInput
     {
@@ -158,5 +159,8 @@ namespace LabQuimicaVR
         }
 
         public static bool ToggleStereoDown => Input.GetKeyDown(KeyCode.V);
+
+        /// <summary>O: cambiar la orientacion de la pantalla (automatica / fija a un lado / al otro).</summary>
+        public static bool OrientationDown => Input.GetKeyDown(KeyCode.O);
     }
 }

@@ -238,6 +238,17 @@ namespace LabQuimicaVR.EditorTools
             EditorUtility.SetDirty(line);
             Particle("CloudParticle", false);
             Particle("Spark", true);
+
+            // Fotos reales, retratos y paisajes 360 (sin iluminacion, se ven tal como son)
+            var photo = GetMat("Photo", FindShader("Unlit/Texture"));
+            EditorUtility.SetDirty(photo);
+            var pano = GetMat("Panorama", FindShader("Unlit/Texture"));
+            EditorUtility.SetDirty(pano);
+            // El paisaje de la transicion se desvanece y se dibuja encima de todo: el shader de UI
+            // tiene color con alfa y permite desactivar la prueba de profundidad (unity_GUIZTestMode).
+            var fade = GetMat("PanoramaFade", FindShader("UI/Default"));
+            fade.color = Color.white;
+            EditorUtility.SetDirty(fade);
             AssetDatabase.SaveAssets();
         }
 

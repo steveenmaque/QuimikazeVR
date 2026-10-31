@@ -48,7 +48,7 @@ namespace LabQuimicaVR
                 }
             }
 
-            if (LabInput.SelectDown && current != null && !ScreenFader.Busy)
+            if (LabInput.SelectDown && current != null && !ScreenFader.Busy && !ElementIntro.Active)
             {
                 pulse = 1f;
                 LabAudio.Play(LabSound.Click);

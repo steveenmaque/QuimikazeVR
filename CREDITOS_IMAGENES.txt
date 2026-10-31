@@ -1,0 +1,206 @@
+# Creditos de las imagenes usadas en Quimikaze (fotos de Wikimedia Commons y panoramas de Poly Haven / ESO).
+# Archivo|Descripcion|Autor|Licencia|Fuente
+Fotos/Elementos/001.jpg|Elemento 1|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Hydrogen_discharge_tube.jpg
+Fotos/Elementos/002.jpg|Elemento 2|Alchemist-hp (talk) (www.pse-mendelejew.de)|GFDL 1.2|https://commons.wikimedia.org/wiki/File:Helium_discharge_tube.jpg
+Fotos/Elementos/003.jpg|Elemento 3|AdvancedTinkering|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:Purified_lithium_in_an_ampoule_under_argon,_dark_background.png
+Fotos/Elementos/004.jpg|Elemento 4|W. Oelen|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Beryllium_nuggets_2.jpg
+Fotos/Elementos/005.jpg|Elemento 5|Jurii|CC BY 3.0|https://commons.wikimedia.org/wiki/File:Boron.jpg
+Fotos/Elementos/006.jpg|Elemento 6||Public domain|https://commons.wikimedia.org/wiki/File:Coal_anthracite.jpg
+Fotos/Elementos/007.jpg|Elemento 7|Robin Müller|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Fluessiger_Stickstoff.jpg
+Fotos/Elementos/008.jpg|Elemento 8|U.S. Air Force/Staff Sgt. Jim Araos|Public domain|https://commons.wikimedia.org/wiki/File:Liquid_oxygen_in_a_beaker_4.jpg
+Fotos/Elementos/009.jpg|Elemento 9|.mw-parser-output .plainlist ul{line-height:inherit;list-style:none none;margin:0}.mw-parser-output .plainlist ul li{mar|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Liquid_fluorine_tighter_crop.jpg
+Fotos/Elementos/010.jpg|Elemento 10|User:Pslawinski|CC BY-SA 2.5|https://commons.wikimedia.org/wiki/File:NeTube.jpg
+Fotos/Elementos/011.jpg|Elemento 11|The original uploader was Dnn87 at English Wikipedia.|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Na_(Sodium).jpg
+Fotos/Elementos/012.jpg|Elemento 12|Warut Roonguthai|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Magnesium_crystals.jpg
+Fotos/Elementos/013.jpg|Elemento 13|Unknown authorUnknown author|CC BY 3.0|https://commons.wikimedia.org/wiki/File:Aluminium-4.jpg
+Fotos/Elementos/014.jpg|Elemento 14|Enricoros at English Wikipedia|Public domain|https://commons.wikimedia.org/wiki/File:SiliconCroda.jpg
+Fotos/Elementos/015.jpg|Elemento 15|Dnn87|CC BY 3.0|https://commons.wikimedia.org/wiki/File:Phosphor.JPG
+Fotos/Elementos/016.jpg|Elemento 16|Raflinoer32|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:Raflinoer32-Museum_Geologi-Belerang.jpg
+Fotos/Elementos/017.jpg|Elemento 17|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Chlorine_liquid_in_an_ampoule.jpg
+Fotos/Elementos/018.jpg|Elemento 18|User:Pslawinski|CC BY-SA 2.5|https://commons.wikimedia.org/wiki/File:ArTube.jpg
+Fotos/Elementos/019.jpg|Elemento 19|BXXXD|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Kalium.jpg
+Fotos/Elementos/020.jpg|Elemento 20|de:Benutzer:Tomihahndorf|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Calcium_1.jpg
+Fotos/Elementos/021.jpg|Elemento 21|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Scandium_sublimed_dendritic_and_1cm3_cube.jpg
+Fotos/Elementos/022.jpg|Elemento 22|Alchemist-hp (pse-mendelejew.de)|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Titan-crystal_bar.JPG
+Fotos/Elementos/023.jpg|Elemento 23|The original uploader was Tomihahndorf at German Wikipedia.|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Vanadium_1.jpg
+Fotos/Elementos/024.jpg|Elemento 24|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Chromium_crystals_and_1cm3_cube.jpg
+Fotos/Elementos/025.jpg|Elemento 25|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Manganese_electrolytic_and_1cm3_cube.jpg
+Fotos/Elementos/026.jpg|Elemento 26|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Iron_electrolytic_and_1cm3_cube.jpg
+Fotos/Elementos/027.jpg|Elemento 27|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Kobalt_electrolytic_and_1cm3_cube.jpg
+Fotos/Elementos/028.jpg|Elemento 28|Jurii|CC BY 3.0|https://commons.wikimedia.org/wiki/File:Electrolytic_nickel.jpg
+Fotos/Elementos/029.jpg|Elemento 29|Didier Descouens|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:Cuivre_Michigan.jpg
+Fotos/Elementos/030.jpg|Elemento 30|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Zinc_fragment_sublimed_and_1cm3_cube.jpg
+Fotos/Elementos/031.jpg|Elemento 31|en:user:foobar|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Gallium_crystals.jpg
+Fotos/Elementos/032.jpg|Elemento 32|W. Oelen|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Germanium_element.jpg
+Fotos/Elementos/033.jpg|Elemento 33|The original uploader was Tomihahndorf at German Wikipedia.|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Arsen_1.jpg
+Fotos/Elementos/034.jpg|Elemento 34|de:User:Tomihahndorf|Public domain|https://commons.wikimedia.org/wiki/File:Selen_1.jpg
+Fotos/Elementos/035.jpg|Elemento 35|Alchemist-hp (pse-mendelejew.de)|CC BY-SA 3.0 de|https://commons.wikimedia.org/wiki/File:Bromine_vial_in_acrylic_cube.jpg
+Fotos/Elementos/036.jpg|Elemento 36|User:Pslawinski|CC BY-SA 2.5|https://commons.wikimedia.org/wiki/File:KrTube.jpg
+Fotos/Elementos/037.jpg|Elemento 37|Dnn87|CC BY 3.0|https://commons.wikimedia.org/wiki/File:RbMetal.JPG
+Fotos/Elementos/038.jpg|Elemento 38|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Strontium_destilled_crystals.jpg
+Fotos/Elementos/039.jpg|Elemento 39|Alchemist-hp (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Yttrium_sublimed_dendritic_and_1cm3_cube.jpg
+Fotos/Elementos/040.jpg|Elemento 40|Alchemist-hp (pse-mendelejew.de).|FAL|https://commons.wikimedia.org/wiki/File:Zirconium_crystal_bar_and_1cm3_cube.jpg
+Fotos/Elementos/041.jpg|Elemento 41|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Niobium_crystals_and_1cm3_cube.jpg
+Fotos/Elementos/042.jpg|Elemento 42|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Molybdenum_crystaline_fragment_and_1cm3_cube.jpg
+Fotos/Elementos/043.jpg|Elemento 43|MARCO CARDIN|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:Technetium-sample.jpg
+Fotos/Elementos/044.jpg|Elemento 44|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Ruthenium_a_half_bar.jpg
+Fotos/Elementos/045.jpg|Elemento 45|Alchemist-hp (talk) www.pse-mendelejew.de derivative work: Purpy Pupple (talk)|CC BY-SA 3.0 de|https://commons.wikimedia.org/wiki/File:Rhodium_powder_pressed_melted.jpg
+Fotos/Elementos/046.jpg|Elemento 46|Hi-Res Images of Chemical Elements|CC BY 3.0|https://commons.wikimedia.org/wiki/File:Palladium_(46_Pd).jpg
+Fotos/Elementos/047.jpg|Elemento 47|Alchemist-hp (talk) (www.pse-mendelejew.de)|CC BY-SA 3.0 de|https://commons.wikimedia.org/wiki/File:Silver_crystal.jpg
+Fotos/Elementos/048.jpg|Elemento 48|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Cadmium-crystal_bar.jpg
+Fotos/Elementos/049.jpg|Elemento 49|Schtone|Public domain|https://commons.wikimedia.org/wiki/File:Indium_wetting_glass.jpg
+Fotos/Elementos/050.jpg|Elemento 50|Ondřej Mangl|Public domain|https://commons.wikimedia.org/wiki/File:C%C3%ADn.PNG
+Fotos/Elementos/051.jpg|Elemento 51|Jurii|CC BY 3.0|https://commons.wikimedia.org/wiki/File:Antimony-2.jpg
+Fotos/Elementos/052.jpg|Elemento 52|W. Oelen|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Tellurium_element_2.jpg
+Fotos/Elementos/053.jpg|Elemento 53|LHcheM|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Sample_of_iodine.jpg
+Fotos/Elementos/054.jpg|Elemento 54|User:Pslawinski|CC BY-SA 2.5|https://commons.wikimedia.org/wiki/File:XeTube.jpg
+Fotos/Elementos/055.jpg|Elemento 55|Dnn87 Contact email: Dnn87yahoo.dk|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Cesium.jpg
+Fotos/Elementos/056.jpg|Elemento 56|The original uploader was Tomihahndorf at German Wikipedia.|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Barium_1.jpg
+Fotos/Elementos/057.jpg|Elemento 57|Lanthan_1.jpg: Tomihahndorf derivative work: Materialscientist (talk)|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Lanthan_1-cropflipped.jpg
+Fotos/Elementos/058.jpg|Elemento 58|Alchemist-hp (pse-mendelejew.de) Alchemist-hp at de.wikipedia|CC BY-SA 2.0 de|https://commons.wikimedia.org/wiki/File:CE2k2g.jpg
+Fotos/Elementos/059.jpg|Elemento 59|The original uploader was Tomihahndorf at German Wikipedia.|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Praseodym_1.jpg
+Fotos/Elementos/060.jpg|Elemento 60|The original uploader was Tomihahndorf at German Wikipedia.|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Neodym_1.jpg
+Fotos/Elementos/061.jpg|Elemento 61|E. J. Wheelwright|Public domain|https://commons.wikimedia.org/wiki/File:Promethium_Metal_Buttons_(cropped).png
+Fotos/Elementos/062.jpg|Elemento 62|Tomihahndorf|Public domain|https://commons.wikimedia.org/wiki/File:Samarium_1.jpg
+Fotos/Elementos/063.jpg|Elemento 63|Alchemist-hp (www.pse-mendelejew.de)|CC BY-SA 3.0 de|https://commons.wikimedia.org/wiki/File:Eu-Block.jpg
+Fotos/Elementos/064.jpg|Elemento 64||CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Gadolinium.jpg
+Fotos/Elementos/065.jpg|Elemento 65|W. Oelen|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Terbium_element.jpg
+Fotos/Elementos/066.jpg|Elemento 66|W. Oelen|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Dysprosium1.jpg
+Fotos/Elementos/067.jpg|Elemento 67|Wilco Oelen|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Holmium.jpg
+Fotos/Elementos/068.jpg|Elemento 68|Tomihahndorf|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Erbium.jpg
+Fotos/Elementos/069.jpg|Elemento 69|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Thulium_sublimed_dendritic_and_1cm3_cube.jpg
+Fotos/Elementos/070.jpg|Elemento 70|W. Oelen|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Ytterbium_element.jpg
+Fotos/Elementos/071.jpg|Elemento 71|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Lutetium_sublimed_dendritic_and_1cm3_cube.jpg
+Fotos/Elementos/072.jpg|Elemento 72|Alchemist-hp (talk) (www.pse-mendelejew.de)|CC BY-SA 3.0 de|https://commons.wikimedia.org/wiki/File:Hf-crystal_bar.jpg
+Fotos/Elementos/073.jpg|Elemento 73|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Tantalum_single_crystal_and_1cm3_cube.jpg
+Fotos/Elementos/074.jpg|Elemento 74|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Wolfram_evaporated_crystals_and_1cm3_cube.jpg
+Fotos/Elementos/075.jpg|Elemento 75|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Rhenium_single_crystal_bar_and_1cm3_cube.jpg
+Fotos/Elementos/076.jpg|Elemento 76|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Osmium_crystals.jpg
+Fotos/Elementos/077.jpg|Elemento 77|Dschwen|CC BY 2.5|https://commons.wikimedia.org/wiki/File:Iridium_foil.jpg
+Fotos/Elementos/078.jpg|Elemento 78|Periodictableru|CC BY 3.0|https://commons.wikimedia.org/wiki/File:Platinum_crystals.jpg
+Fotos/Elementos/079.jpg|Elemento 79|Alchemist-hp (talk) www.pse-mendelejew.de|CC BY-SA 3.0 de|https://commons.wikimedia.org/wiki/File:Gold-crystals.jpg
+Fotos/Elementos/080.jpg|Elemento 80||Public domain|https://commons.wikimedia.org/wiki/File:Mercury-element.jpg
+Fotos/Elementos/081.jpg|Elemento 81|W. Oelen|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Thallium_pieces_in_ampoule.jpg
+Fotos/Elementos/082.jpg|Elemento 82|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Lead_electrolytic_and_1cm3_cube.jpg
+Fotos/Elementos/083.jpg|Elemento 83|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Bismuth_crystals_and_1cm3_cube.jpg
+Fotos/Elementos/084.jpg|Elemento 84|Maksym Kozlenko|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:2019-11-22_Spark_plugs_and_static_eliminators_with_radioactive_polonium_at_museum_display.jpg
+Fotos/Elementos/086.jpg|Elemento 86|David.Monniaux|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Radon_water_apparatus_P1120815.JPG
+Fotos/Elementos/088.jpg|Elemento 88|grenadier|CC BY 3.0|https://commons.wikimedia.org/wiki/File:Radium226.jpg
+Fotos/Elementos/089.jpg|Elemento 89|Oak Ridge National Laboratory|CC BY 2.0|https://commons.wikimedia.org/wiki/File:Actinium_sample_(31481701837).png
+Fotos/Elementos/090.jpg|Elemento 90|Alchemist-hp (talk) (www.pse-mendelejew.de)|FAL|https://commons.wikimedia.org/wiki/File:Thorium_sample_0.1g.jpg
+Fotos/Elementos/091.jpg|Elemento 91|ENERGY.GOV|Public domain|https://commons.wikimedia.org/wiki/File:Protactinium-233.jpg
+Fotos/Elementos/092.jpg|Elemento 92||Public domain|https://commons.wikimedia.org/wiki/File:Uranium2.jpg
+Fotos/Elementos/093.jpg|Elemento 93|Los Alamos National Laboratory,|Public domain|https://commons.wikimedia.org/wiki/File:Neptunium2.jpg
+Fotos/Elementos/094.jpg|Elemento 94|Los Alamos National Laboratory|Attribution|https://commons.wikimedia.org/wiki/File:Plutonium_ring.jpg
+Fotos/Elementos/095.jpg|Elemento 95|Bionerd|CC BY 3.0|https://commons.wikimedia.org/wiki/File:Americium_microscope.jpg
+Fotos/Elementos/096.jpg|Elemento 96|Eschenmoser + Kollegen|Public domain|https://commons.wikimedia.org/wiki/File:Cm-Fluoreszenz.png
+Fotos/Elementos/097.jpg|Elemento 97|Oak Ridge National Laboratory, US Department of Energy|Public domain|https://commons.wikimedia.org/wiki/File:Berkelium_metal.jpg
+Fotos/Elementos/098.jpg|Elemento 98|United States Department of Energy (see File:Einsteinium.jpg)|Public domain|https://commons.wikimedia.org/wiki/File:Californium.jpg
+Fotos/Elementos/099.jpg|Elemento 99|Haire, R. G., US Department of Energy. Touched up by Materialscientist at en.wikipedia.|Public domain|https://commons.wikimedia.org/wiki/File:Einsteinium.jpg
+Fotos/Personas/Albert_Ghiorso.jpg|Albert Ghiorso|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Albert_Ghiorso_ca_1970.jpg
+Fotos/Personas/Albertus_Magnus.jpg|Alberto Magno|Vicente Salvador Gómez|Public domain|https://commons.wikimedia.org/wiki/File:Vicente_salvador_gomez-san_alberto.jpg
+Fotos/Personas/Anders_Gustaf_Ekeberg.jpg|Anders Gustaf Ekeberg|Lithography by unknown artist|Public domain|https://commons.wikimedia.org/wiki/File:Anders_Gustaf_Ekeberg.jpg
+Fotos/Personas/Andreas_Sigismund_Marggraf.jpg|Andreas Sigismund Marggraf|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Andreas_Sigismund_Marggaf.jpg
+Fotos/Personas/Andr_Louis_Debierne.jpg|André-Louis Debierne|Benjamin Couprie|Public domain|https://commons.wikimedia.org/wiki/File:Debierne.jpg
+Fotos/Personas/Andrs_Manuel_del_Ro.jpg|Andrés Manuel del Río Fernández|José Luiz|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:%27Andr%C3%A9s_Manuel_de_R%C3%ADo%27_(1825)_by_Rafael_Ximeno_y_Planes_-_Museo_Tols%C3%A1_-_Palacio_de_Miner%C3%ADa_-_Mexico_2024.jpg
+Fotos/Personas/Antoine_Jrme_Balard.jpg|Antoine-Jérôme Balard|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Antoine_J%C3%A9r%C3%B4me_Balard_1870s.jpg
+Fotos/Personas/Antonio_de_Ulloa.jpg|Antonio de Ulloa|Andrés Cortés y Aguilar|Public domain|https://commons.wikimedia.org/wiki/File:Almirante_Antonio_de_Ulloa.jpg
+Fotos/Personas/Axel_Fredrik_Cronstedt.jpg|Axel Fredrik Cronstedt|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Axel_Fredrik_Cronstedt.JPG
+Fotos/Personas/Carl_Auer_von_Welsbach.jpg|Carl Auer von Welsbach|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Auer_von_Welsbach.jpg
+Fotos/Personas/Carl_Gustaf_Mosander.jpg|Carl Gustaf Mosander|Painting by Karl Gustaf Plagemann (1805-1868)|Public domain|https://commons.wikimedia.org/wiki/File:Mosander_Carl_Gustav_bw.jpg
+Fotos/Personas/Carl_Jacob_Lwig.jpg|Carl Jacob Löwig|Johann Konrad Bolleter|Public domain|https://commons.wikimedia.org/wiki/File:Carl_Jacob_Loewig_(1803-1890).jpg
+Fotos/Personas/Carl_Wilhelm_Scheele.jpg|Carl Wilhelm Scheele|Johann Gottfried Scheffner|PDM-owner|https://commons.wikimedia.org/wiki/File:Carl_Wilhelm_Scheele_by_Johann_Gottfried_Scheffner_(cropped).png
+Fotos/Personas/Cerro_Rico.jpg|Cerro Rico de Potosí: sus minas dieron plata a todo el mundo colonial|Mhwater at Dutch Wikipedia|Public domain|https://commons.wikimedia.org/wiki/File:Cerro_ricco.jpg
+Fotos/Personas/Charles_D_Coryell.jpg|Charles D. Coryell|Christian A. Coryell|GFDL|https://commons.wikimedia.org/wiki/File:Charles_D._Coryell_M.I.T._May_1947.png
+Fotos/Personas/Charles_Hatchett.jpg|Charles Hatchett||CC BY 4.0|https://commons.wikimedia.org/wiki/File:Charles_Hatchett._Soft-ground_etching_by_F._C._Lewis_after_T_Wellcome_V0002614_(cropped).jpg
+Fotos/Personas/Clemens_Winkler.jpg|Clemens Winkler||Public domain|https://commons.wikimedia.org/wiki/File:Winkler_Clemens.jpg
+Fotos/Personas/Curse_tablet.jpg|Tablilla romana de plomo con un mensaje escrito|Pankratos|Public domain|https://commons.wikimedia.org/wiki/File:Tablette_de_d%C3%A9fixion_d%27Eygui%C3%A8res.jpg
+Fotos/Personas/Daniel_Rutherford.jpg|Daniel Rutherford|Henry Wright Kerr|Public domain|https://commons.wikimedia.org/wiki/File:Daniel_Rutherford_(1749-1819).jpg
+Fotos/Personas/Dirk_Coster.jpg|Dirk Coster|Unknown photographer|Public domain|https://commons.wikimedia.org/wiki/File:DirkCoster1930s.jpg
+Fotos/Personas/Edwin_McMillan.jpg|Edwin Mattison McMillan|Nobel Foundation|Public domain|https://commons.wikimedia.org/wiki/File:Edwin_McMillan_Nobel.jpg
+Fotos/Personas/Emilio_Segr.jpg|Emilio Gino Segrè|Nobel foundation|Public domain|https://commons.wikimedia.org/wiki/File:Segre.jpg
+Fotos/Personas/Eugne_Anatole_Demaray.jpg|Eugène Demarçay|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Demar%C3%A7ay.jpg
+Fotos/Personas/Fausto_Elhuyar.jpg|Fausto Delhuyar|Biblioteca Nacional de España|Public domain|https://commons.wikimedia.org/wiki/File:Fausto_Elhuyar.jpg
+Fotos/Personas/Ferdinand_Reich.jpg|Ferdinand Reich|Weeks, Mary Elvira|Public domain|https://commons.wikimedia.org/wiki/File:Reich_Ferdinand.jpg
+Fotos/Personas/Friedrich_Ernst_Dorn.jpg|Friedrich Ernst Dorn|Unknown authorUnknown author|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:DORN_Friedrich_Ernst.jpg
+Fotos/Personas/Friedrich_Stromeyer.jpg|Friedrich Stromeyer|Unknown; original upload by user Grzes14 on pl.wikipedia|Public domain|https://commons.wikimedia.org/wiki/File:Friedrich_Stromeyer.jpg
+Fotos/Personas/GSI_Helmholtz_Centre_for_Heavy_Ion_Research.jpg|Centro GSI de Investigación de Iones Pesados (Darmstadt, Alemania)|commander-pirx|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:GSI-Darmstadt-S%C3%BCdbau.jpg
+Fotos/Personas/George_de_Hevesy.jpg|George Hevesy|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:George_de_Hevesy.jpg
+Fotos/Personas/Georges_Urbain.jpg|Georges Urbain|Georges Urbain (1872-1938)|Public domain|https://commons.wikimedia.org/wiki/File:Georges_Urbain_(1872-1938).png
+Fotos/Personas/Glenn_T_Seaborg.jpg|Glenn T. Seaborg|Atomic Energy Commission. (1946 - 01/19/1975)|Public domain|https://commons.wikimedia.org/wiki/File:Glenn_Seaborg_-_1964.jpg
+Fotos/Personas/Gustav_Kirchhoff.jpg|Gustav Kirchhoff|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Gustav_Robert_Kirchhoff.jpg
+Fotos/Personas/Hans_Christian_rsted.jpg|Hans Christian Ørsted|Christian Albrecht Jensen|Public domain|https://commons.wikimedia.org/wiki/File:C.A._Jensen_-_Portrait_of_the_Physicist_Hans_Christian_%C3%98rsted_-_KMS8176_-_Statens_Museum_for_Kunst.jpg
+Fotos/Personas/Hennig_Brand.jpg|Hennig Brand|Joseph Wright of Derby|Public domain|https://commons.wikimedia.org/wiki/File:Joseph_Wright_of_Derby_The_Alchemist.jpg
+Fotos/Personas/Henri_Moissan.jpg|Henri Moissan|sv:Generalstabens litografiska anstalt|Public domain|https://commons.wikimedia.org/wiki/File:Henri_Moissan.jpg
+Fotos/Personas/Henry_Cavendish.jpg|Henry Cavendish|George Wilson|Public domain|https://commons.wikimedia.org/wiki/File:Cavendish_Henry_signature.jpg
+Fotos/Personas/Hieronymous_Theodor_Richter.jpg|Hieronymous Theodor Richter|Ernst Friedrich Wilhelm Hugo Höffert (1832–1903)|Public domain|https://commons.wikimedia.org/wiki/File:Hieronymus_Theodor_Richter.jpg
+Fotos/Personas/Huancavelica.jpg|Huancavelica (Perú): sus minas de mercurio fueron de las más grandes del mundo|Jorge Gobbi from Buenos Aires, Argentina|CC BY 2.0|https://commons.wikimedia.org/wiki/File:391239379_81ed2d3789_o.jpg
+Fotos/Personas/Humphry_Davy.jpg|Humphry Davy|Thomas Phillips|Public domain|https://commons.wikimedia.org/wiki/File:Sir_Humphry_Davy,_Bt_by_Thomas_Phillips.jpg
+Fotos/Personas/Ida_Noddack.jpg|Ida Noderikash|Unknown authorUnknown author|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Ida_Noddack-Tacke.png
+Fotos/Personas/Iron_pillar_of_Delhi.jpg|Pilar de hierro de Delhi (India): tiene unos 1600 años y casi no se ha oxidado|Photograph taken by Mark A. Wilson (Department of Geology, The College of Wooster). [1]|Public domain|https://commons.wikimedia.org/wiki/File:Iron_Pillar,_Delhi,_May_2008.jpg
+Fotos/Personas/Jacob_A_Marinsky.jpg|Jacob A. Marinsky|ORNL|Public domain|https://commons.wikimedia.org/wiki/File:Jacob_A_Marinsky.jpg
+Fotos/Personas/Jacques_Louis_Soret.jpg|Jacques-Louis Soret|The British Library (Original) Wolfymoza (Commons upload)|No restrictions|https://commons.wikimedia.org/wiki/File:Jacques-Louis_Soret.JPG
+Fotos/Personas/Jean_Charles_Galissard_de_Marignac.jpg|Jean Charles Galissard de Marignac|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Galissard_de_Marignac.jpg
+Fotos/Personas/Johan_August_Arfwedson.jpg|Johann Arfvedson|Fehr and Miller of Stockholm|Public domain|https://commons.wikimedia.org/wiki/File:Arfwedson_Johan_A.jpg
+Fotos/Personas/Johan_Gadolin.jpg|Johan Gadolin|Published by Posti- ja telelaitos|Public domain|https://commons.wikimedia.org/wiki/File:Johan-Gadolin-1960.jpg
+Fotos/Personas/Johan_Gottlieb_Gahn.jpg|Johan Gottlieb Gahn|Cardon, Johan Elias (1802 - 1878)|Public domain|https://commons.wikimedia.org/wiki/File:Gahn_Johan_Gottlieb.jpg
+Fotos/Personas/John_William_Strutt_3rd_Baron_Rayleigh.jpg|Lord Rayleigh|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:John_William_Strutt.jpg
+Fotos/Personas/Joint_Institute_for_Nuclear_Research.jpg|Instituto Unificado de Investigaciones Nucleares (Dubná, Rusia)|The original uploader was Hrustov at Russian Wikipedia.|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Dubna.house_of_scientiests.jpg
+Fotos/Personas/Joseph_Black.jpg|Joseph Black|Rogers, J|Public domain|https://commons.wikimedia.org/wiki/File:Joseph_Black_b1728.jpg
+Fotos/Personas/Joseph_Louis_Gay_Lussac.jpg|Joseph Louis Gay-Lussac|François-Séraphin Delpech|Public domain|https://commons.wikimedia.org/wiki/File:Gaylussac.jpg
+Fotos/Personas/Joseph_Priestley.jpg|Joseph Priestley|James Sharples|Public domain|https://commons.wikimedia.org/wiki/File:Joseph_Priestley_(NPG).jpg
+Fotos/Personas/Jns_Jacob_Berzelius.jpg|Jöns Jacob Berzelius|John Way [1]|Public domain|https://commons.wikimedia.org/wiki/File:J%C3%B6ns_Jacob_Berzelius_1826.jpg
+Fotos/Personas/Karl_Ernst_Claus.jpg|Karl Ernst Claus|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:ClausKE.png
+Fotos/Personas/Kawah_Ijen.jpg|Volcán Kawah Ijen (Indonesia), donde se recoge azufre a mano|Sémhur (talk)|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:Sulfur_mining_in_Kawah_Ijen_-_Indonesia_-_20110608.jpg
+Fotos/Personas/Kazimierz_Fajans.jpg|Kasimir Fajans|NN (University of Michigan)|Public domain|https://commons.wikimedia.org/wiki/File:Kazimierz_Fajans.jpg
+Fotos/Personas/Kenneth_Ross_MacKenzie.jpg|Kenneth Ross Mackenzie|Department of Energy. Lawrence Berkeley National Laboratory. Public Affairs Department. Strategic Resources Office. Phot|Public domain|https://commons.wikimedia.org/wiki/File:Kenneth_Ross_MacKenzie.jpg
+Fotos/Personas/Kohl_cosmetics.jpg|Kohl: maquillaje antiguo para los ojos, hecho con antimonio|Camila Zanon.|CC BY 2.0|https://commons.wikimedia.org/wiki/File:Eye_make-up_(mascara).jpg
+Fotos/Personas/Kosuke_Morita.jpg|Kosuke Morita|文部科学省|CC BY 4.0|https://commons.wikimedia.org/wiki/File:Kosuke_Morita_cropped_2_Kosuke_Morita_20161201.jpg
+Fotos/Personas/Lars_Fredrik_Nilson.jpg|Lars Fredrik Nilson|Otto Petterson|Public domain|https://commons.wikimedia.org/wiki/File:Nilson_Lars_Fredrik.jpg
+Fotos/Personas/Lascaux.jpg|Pinturas de la cueva de Lascaux (Francia), dibujadas con carbón hace unos 17 000 años|EU|Public domain|https://commons.wikimedia.org/wiki/File:Lascaux_painting.jpg
+Fotos/Personas/Lawrence_Berkeley_National_Laboratory.jpg|Laboratorio Nacional Lawrence Berkeley (California, EE. UU.)|U.S. Department of Energy from United States|Public domain|https://commons.wikimedia.org/wiki/File:Molecular_Foundry_at_Lawrence_Berkeley_National_Laboratory_(52230758982).jpg
+Fotos/Personas/Lawrence_E_Glendenin.jpg|Lawrence E. Glendenin|ORNL|Public domain|https://commons.wikimedia.org/wiki/File:Larry_E_Glendenin.jpg
+Fotos/Personas/Lawrence_Livermore_National_Laboratory.jpg|Laboratorio Nacional Lawrence Livermore (California, EE. UU.)|Alfred Twu|CC0|https://commons.wikimedia.org/wiki/File:IMAG3049-livermore-lab_cropped.jpg
+Fotos/Personas/Lord_of_Sipn.jpg|Señor de Sipán (Lambayeque, Perú): los moches trabajaban el cobre y el oro|Cicero Moraes|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:Se%C3%B1or_de_S%C3%ADpan_-_Reconstrucci%C3%B3n_Facial_Forense.jpg
+Fotos/Personas/Louis_Jacques_Thnard.jpg|Louis Jacques Thénard||Public domain|https://commons.wikimedia.org/wiki/File:Louis_Jacques_Th%C3%A9nard.jpg
+Fotos/Personas/Louis_Nicolas_Vauquelin.jpg|Louis Nicolas Vauquelin|Goblain B.|Public domain|https://commons.wikimedia.org/wiki/File:Portrait_of_Louis-Nicolas_Vauquelin.jpg
+Fotos/Personas/Marc_Delafontaine.jpg|Marc Delafontaine|Chicago Tribune (30 de maig del 1897)|Public domain|https://commons.wikimedia.org/wiki/File:Marc_Delafontaine.jpg
+Fotos/Personas/Marie_Curie.jpg|Marie Curie|Henri Manuel|Public domain|https://commons.wikimedia.org/wiki/File:Marie_Curie_c._1920s.jpg
+Fotos/Personas/Martin_Heinrich_Klaproth.jpg|Martin Heinrich Klaproth||Public domain|https://commons.wikimedia.org/wiki/File:Martin_Heinrich_Klaproth.jpg
+Fotos/Personas/Morris_Travers.jpg|Morris Travers|The Cyclopedia Publishing Company, Calcutta|Public domain|https://commons.wikimedia.org/wiki/File:Morris_Travers.jpg
+Fotos/Personas/Norman_Lockyer.jpg|Joseph Norman Lockyer|Stereoscopic Co.|Public domain|https://commons.wikimedia.org/wiki/File:Picture_of_Norman_Lockyer.jpg
+Fotos/Personas/Oak_Ridge_National_Laboratory.jpg|Laboratorio Nacional de Oak Ridge (Tennessee, EE. UU.)|Oak Ridge Office of Environmental Management, U.S. Department of Energy|Public domain|https://commons.wikimedia.org/wiki/File:Oak_Ridge_National_Laboratory_Aerial_View.jpg
+Fotos/Personas/Otto_Berg_scientist.jpg|Otto Berg|Gilimor|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:Otto_Berg_(cropped).jpg
+Fotos/Personas/Paul_mile_Lecoq_de_Boisbaudran.jpg|Paul Emile Lecoq de Boisbaudran|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Lecoq_de_Boisbaudran.jpg
+Fotos/Personas/Per_Teodor_Cleve.jpg|Per Teodor Cleve|Osti, Heinrich, 1826-1914|Public domain|https://commons.wikimedia.org/wiki/File:Per_Teodor_Cleve_c1885.jpg
+Fotos/Personas/Philip_H_Abelson.jpg|Philip Hauge Abelson|U.S. Navy|Public domain|https://commons.wikimedia.org/wiki/File:Phillip_H._Abelson_450901-N-NO204-0001.jpg
+Fotos/Personas/Pierre_Curie.jpg|Pierre Curie|Dujardin|Public domain|https://commons.wikimedia.org/wiki/File:Pierre_Curie_by_Dujardin_c1906.jpg
+Fotos/Personas/Pierre_Janssen.jpg|Pierre Janssen|Atelier Nadar. Photographe|CC0|https://commons.wikimedia.org/wiki/File:Jules_Janssen.png
+Fotos/Personas/Robert_Bunsen.jpg|Robert Bunsen|UnknownUnknown|CC BY-SA 4.0|https://commons.wikimedia.org/wiki/File:Robert_Wilhelm_Bunsen_(HeidICON_53016)_(cropped).jpg
+Fotos/Personas/Smithson_Tennant.jpg|Smithson Tennant|en:User:Sakhrat|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Smithson_Tennant_Blue_Plaque.jpg
+Fotos/Personas/Tumi.jpg|Tumi de oro de la cultura sicán (Lambayeque, Perú)||CC0|https://commons.wikimedia.org/wiki/File:Ceremonial_Knife_(Tumi)_MET_DP215693.jpg
+Fotos/Personas/Uluburun_shipwreck.jpg|Barco hundido de Uluburun (hace 3300 años): llevaba estaño y cobre para hacer bronce|Martin Bahmann|CC BY-SA 3.0|https://commons.wikimedia.org/wiki/File:Uluburun1.jpg
+Fotos/Personas/Walter_Noddack.jpg|Walter Noddack|www.uni-bamberg.de|Public domain|https://commons.wikimedia.org/wiki/File:,%D9%88%D8%A7%D9%84%D8%AA%D8%B1_%D9%86%D8%A7%D8%AF%D8%A7%D9%83_(cropped).jpg
+Fotos/Personas/Wilhelm_Hisinger.jpg|Wilhelm Hisinger|Unknown authorUnknown author|Public domain|https://commons.wikimedia.org/wiki/File:Wilhelm_Hisinger.JPG
+Fotos/Personas/William_Crookes.jpg|William Crookes|George Charles Beresford (1864-1938)|Public domain|https://commons.wikimedia.org/wiki/File:Sir_William_Crookes_1906.jpg
+Fotos/Personas/William_Gregor.jpg|William Gregor|John Hoppner, R.A.|Public domain|https://commons.wikimedia.org/wiki/File:Portrait_of_the_Reverend_William_Gregor_(1761%E2%80%931817).jpg
+Fotos/Personas/William_Hyde_Wollaston.jpg|William Hyde Wollaston|John Jackson|Public domain|https://commons.wikimedia.org/wiki/File:Wollaston_William_Hyde_Jackson_color.jpg
+Fotos/Personas/William_Ramsay.jpg|William Ramsay|Elliott & Fry|Public domain|https://commons.wikimedia.org/wiki/File:William_Ramsay.jpg
+Fotos/Personas/Yuri_Oganessian.jpg|Yuri Tsolakovich Oganessian|VPRO|CC BY-SA 3.0 nl|https://commons.wikimedia.org/wiki/File:Yuri_Oganessian_(cropped).jpg
+Paisajes/eso_milkyway.jpg|El espacio|ESO/S. Brunier|CC BY 4.0|https://www.eso.org/public/images/eso0932a/
+Paisajes/rogland_clear_night.jpg|Cielo estrellado|Greg Zaal|CC0|https://polyhaven.com/a/rogland_clear_night
+Paisajes/meadow_2.jpg|Al aire libre|Sergej Majboroda|CC0|https://polyhaven.com/a/meadow_2
+Paisajes/rainforest_trail.jpg|El bosque|Dimitrios Savva, Jarod Guest|CC0|https://polyhaven.com/a/rainforest_trail
+Paisajes/lauter_waterfall.jpg|Ríos del bosque|Andreas Mischok|CC0|https://polyhaven.com/a/lauter_waterfall
+Paisajes/fish_hoek_beach.jpg|El mar|Greg Zaal, Rico Cilliers|CC0|https://polyhaven.com/a/fish_hoek_beach
+Paisajes/flamingo_pan.jpg|Lagunas salinas|Dimitrios Savva, Jarod Guest|CC0|https://polyhaven.com/a/flamingo_pan
+Paisajes/goegap.jpg|El desierto|Greg Zaal|CC0|https://polyhaven.com/a/goegap
+Paisajes/kiara_1_dawn.jpg|Montañas mineras|Greg Zaal|CC0|https://polyhaven.com/a/kiara_1_dawn
+Paisajes/quarry_01.jpg|Mina a tajo abierto|Sergej Majboroda|CC0|https://polyhaven.com/a/quarry_01
+Paisajes/sunset_in_the_chalk_quarry.jpg|Cantera de caliza|Sergej Majboroda|CC0|https://polyhaven.com/a/sunset_in_the_chalk_quarry
+Paisajes/small_cave.jpg|Cuevas de roca|Andreas Mischok|CC0|https://polyhaven.com/a/small_cave
+Paisajes/shanghai_bund.jpg|La ciudad de noche|Greg Zaal|CC0|https://polyhaven.com/a/shanghai_bund
+Paisajes/peppermint_powerplant.jpg|La industria|Andreas Mischok|CC0|https://polyhaven.com/a/peppermint_powerplant
+Paisajes/vintage_measuring_lab.jpg|Laboratorio antiguo|Oliksiy Yakovlyev|CC0|https://polyhaven.com/a/vintage_measuring_lab
+Paisajes/moon_lab.jpg|Exploración espacial|Greg Zaal|CC0|https://polyhaven.com/a/moon_lab
+Paisajes/concrete_tunnel_02.jpg|Acelerador de partículas|Andreas Mischok|CC0|https://polyhaven.com/a/concrete_tunnel_02

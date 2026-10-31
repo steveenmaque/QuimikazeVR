@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -21,6 +21,9 @@ namespace LabQuimicaVR
         public Transform controlsAnchor;
         public Transform sampleAnchor;
         public Transform backAnchor;
+        public Transform discoverersAnchor;
+        public Transform natureAnchor;
+        public Transform landscapeAnchor;
 
         [Tooltip("Elemento que se muestra en el editor (vista previa)")]
         public int previewZ = 6;
@@ -34,12 +37,14 @@ namespace LabQuimicaVR
 
         void Start()
         {
-            if (Application.isPlaying) Populate(LabState.SelectedZ);
+            if (!Application.isPlaying) return;
+            Populate(LabState.SelectedZ);
+            ElementIntro.Play(element, ElementExtras.Landscape(ElementExtras.Sample(element).Landscape));
         }
 
         void Update()
         {
-            if (!Application.isPlaying || element == null) return;
+            if (!Application.isPlaying || element == null || ElementIntro.Active) return;
             if (LabInput.BackDown) LabState.BackToTable();
             if (LabInput.ModeDown && atom != null) SetMode(atom.NextMode());
         }
@@ -54,6 +59,9 @@ namespace LabQuimicaVR
             BuildProperties();
             BuildControls();
             BuildBack();
+            BuildDiscoverers();
+            BuildNature();
+            BuildLandscape();
             if (sampleAnchor != null) { LabFactory.ClearChildren(sampleAnchor); ElementSample.Build(sampleAnchor, element); }
             if (reactionAnchor != null)
             {
@@ -283,11 +291,140 @@ namespace LabQuimicaVR
         void BuildBack()
         {
             LabFactory.ClearChildren(backAnchor);
-            var s = LabFactory.Screen("PantallaVolver", backAnchor, Vector3.zero, Quaternion.identity, new Vector2(4.2f, 1.9f), "SALIDA DEL LABORATORIO");
-            LabFactory.Text(s, $"Estás en el laboratorio {element.Del} <b>{element.Name.ToLower()}</b>", new Vector3(0, 0.38f, -0.01f), 0.1f, Palette.Text, TextAlignmentOptions.Center, 4f, 0.2f);
-            var back = LabFactory.Button(s, "Volver a la tabla periódica", new Vector3(0, -0.12f, -0.03f), new Vector2(3.0f, 0.42f), 0.13f, new Color(0.0f, 0.45f, 0.6f));
+            var s = LabFactory.Screen("PantallaVolver", backAnchor, Vector3.zero, Quaternion.identity, new Vector2(4.2f, 1.3f), "SALIDA DEL LABORATORIO");
+            LabFactory.Text(s, $"Estás en el laboratorio {element.Del} <b>{element.Name.ToLower()}</b>", new Vector3(0, 0.2f, -0.01f), 0.09f, Palette.Text, TextAlignmentOptions.Center, 4f, 0.16f);
+            var back = LabFactory.Button(s, "Volver a la tabla periódica", new Vector3(0, -0.17f, -0.03f), new Vector2(3.0f, 0.36f), 0.12f, new Color(0.0f, 0.45f, 0.6f));
             back.OnClick += LabState.BackToTable;
-            LabFactory.Text(s, "También puedes pulsar el botón B del mando", new Vector3(0, -0.6f, -0.01f), 0.065f, Palette.TextDim, TextAlignmentOptions.Center, 4f, 0.15f);
+            LabFactory.Text(s, "También puedes pulsar el botón B del mando", new Vector3(0, -0.5f, -0.01f), 0.055f, Palette.TextDim, TextAlignmentOptions.Center, 4f, 0.12f);
+        }
+
+        // ---------------- Descubridores con sus retratos (pared izquierda, atras) ----------------
+        void BuildDiscoverers()
+        {
+            if (discoverersAnchor == null) return;
+            var e = element;
+            LabFactory.ClearChildren(discoverersAnchor);
+            var size = new Vector2(5.6f, 3.7f);
+            var people = ElementExtras.Discoverers(e.Z);
+            bool ancient = people.Count > 0 && people.All(p => p.Kind == 'H');
+            string title = ancient ? "CONOCIDO DESDE LA ANTIGÜEDAD" : people.Any(p => p.Kind == 'I') && !people.Any(p => p.IsPerson) ? "DÓNDE LO CREARON" : "QUIÉN LO DESCUBRIÓ";
+            var s = LabFactory.Screen("PantallaDescubridores", discoverersAnchor, Vector3.zero, Quaternion.identity, size, title, Palette.Accent2);
+
+            string header = e.Discoverer.StartsWith("Conocid") ? e.Discoverer : $"{e.Discoverer}  <color=#9FB4CC>· {e.Year}</color>";
+            var line = LabFactory.Text(s, $"<color=#FFC34D><b>{header}</b></color>", new Vector3(0, 1.1f, -0.01f), 0.11f,
+                Color.white, TextAlignmentOptions.Center, size.x - 0.3f, 0.2f);
+            AutoFit(line, 0.12f, 0.07f);
+            line.textWrappingMode = TextWrappingModes.NoWrap;
+
+            int n = Mathf.Clamp(people.Count, 1, 4);
+            float slot = (size.x - 0.3f) / n;
+            float imgH = n <= 2 ? 1.75f : 1.5f;
+            for (int i = 0; i < n; i++)
+            {
+                var p = i < people.Count ? people[i] : null;
+                float x = -size.x / 2 + 0.15f + slot * (i + 0.5f);
+                var cardC = new Vector3(x, -0.36f, 0);
+                LabFactory.Card(s, cardC, new Vector2(slot - 0.12f, 2.6f), new Color(0.1f, 0.16f, 0.26f));
+                var tex = p?.LoadImage();
+                float imgW = slot - 0.3f;
+                var imgCenter = cardC + new Vector3(0, 0.45f, -0.015f);
+                if (tex != null)
+                {
+                    float aspect = tex.width / (float)Mathf.Max(1, tex.height);
+                    float h = imgH, w = h * aspect;
+                    if (w > imgW) { w = imgW; h = w / aspect; }
+                    LabFactory.Box("Marco", s, imgCenter + new Vector3(0, 0, 0.009f), new Vector3(w + 0.06f, h + 0.06f, 0.006f), LabFactory.Mat("ScreenFrame"));
+                    LabFactory.Shape("Retrato", PrimitiveType.Quad, s, imgCenter, new Vector3(w, h, 1f), ElementSample.PhotoMaterial(tex));
+                }
+                else
+                {
+                    // Silueta cuando no existe un retrato conocido
+                    var sil = LabFactory.Tinted("Card", new Color(0.25f, 0.32f, 0.44f));
+                    LabFactory.Shape("Cabeza", PrimitiveType.Sphere, s, imgCenter + new Vector3(0, 0.3f, 0), new Vector3(0.42f, 0.5f, 0.02f), sil);
+                    LabFactory.Shape("Hombros", PrimitiveType.Sphere, s, imgCenter + new Vector3(0, -0.4f, 0), new Vector3(0.9f, 0.6f, 0.02f), sil);
+                    LabFactory.Text(s, p != null && !p.IsPerson ? "Sin imagen" : "Sin retrato conocido", imgCenter + new Vector3(0, -0.85f, -0.01f), 0.06f, Palette.TextDim, TextAlignmentOptions.Center, imgW, 0.12f);
+                }
+                string name = p == null ? e.Discoverer : p.Name;
+                string info = p == null ? "" : p.IsPerson ? $"{p.Years}\n{p.Description}" : "";
+                var nameText = LabFactory.Text(s, $"<b>{name}</b>", cardC + new Vector3(0, -0.72f, -0.015f), 0.1f, Color.white, TextAlignmentOptions.Center, slot - 0.2f, p != null && !p.IsPerson ? 0.5f : 0.3f);
+                AutoFit(nameText, p != null && !p.IsPerson ? 0.075f : 0.1f, 0.05f);
+                if (info.Length > 0)
+                {
+                    var infoText = LabFactory.Text(s, info, cardC + new Vector3(0, -1.08f, -0.015f), 0.075f, Palette.TextDim, TextAlignmentOptions.Center, slot - 0.2f, 0.38f);
+                    AutoFit(infoText, 0.075f, 0.045f);
+                }
+                if (p != null && tex != null)
+                {
+                    var credit = LabFactory.Text(s, ElementExtras.Credit(p.Author, p.License), cardC + new Vector3(0, -1.47f, -0.015f), 0.035f, new Color(0.45f, 0.53f, 0.65f),
+                        TextAlignmentOptions.Center, slot - 0.2f, 0.12f);
+                    AutoFit(credit, 0.035f, 0.025f);
+                }
+            }
+        }
+
+        // ---------------- Donde se encuentra en la naturaleza (pared derecha, atras) ----------------
+        void BuildNature()
+        {
+            if (natureAnchor == null) return;
+            var e = element;
+            var sample = ElementExtras.Sample(e);
+            var land = ElementExtras.Landscape(sample.Landscape);
+            LabFactory.ClearChildren(natureAnchor);
+            var size = new Vector2(5.6f, 3.7f);
+            var s = LabFactory.Screen("PantallaNaturaleza", natureAnchor, Vector3.zero, Quaternion.identity, size, "¿DÓNDE SE ENCUENTRA?", Palette.Good);
+
+            // Vista del paisaje (parte central de la foto 360)
+            var tex = land?.Load();
+            var imgC = new Vector3(-1.25f, 0.35f, -0.015f);
+            if (tex != null)
+            {
+                var m = ElementSample.PhotoMaterial(tex);
+                m.mainTextureScale = new Vector2(0.32f, 0.5f);
+                m.mainTextureOffset = new Vector2(0.34f, 0.27f);
+                LabFactory.Box("Marco", s, imgC + new Vector3(0, 0, 0.009f), new Vector3(2.66f, 1.66f, 0.006f), LabFactory.Mat("ScreenFrame"));
+                LabFactory.Shape("Paisaje", PrimitiveType.Quad, s, imgC, new Vector3(2.6f, 1.6f, 1f), m);
+                LabFactory.Text(s, $"<b>{land.Title}</b>\n<size=60%><color=#7F93AD>{ElementExtras.Credit(land.Author, land.License)}</color></size>",
+                    imgC + new Vector3(0, -1.02f, 0), 0.1f, Palette.Accent2, TextAlignmentOptions.Center, 2.6f, 0.3f);
+            }
+            var nature = LabFactory.Text(s, sample.Nature, new Vector3(1.4f, 0.55f, -0.015f), 0.13f, Color.white, TextAlignmentOptions.TopLeft, 2.5f, 1.6f);
+            AutoFit(nature, 0.13f, 0.07f);
+            nature.rectTransform.sizeDelta = new Vector2(2.5f, 0.95f);
+            nature.rectTransform.localPosition = new Vector3(1.4f, 0.62f, -0.015f);
+            var looks = LabFactory.Text(s, $"<color=#7FE0A0><b>¿Cómo es?</b></color> {sample.Looks}", new Vector3(1.4f, -0.45f, -0.015f), 0.11f, Palette.Text,
+                TextAlignmentOptions.TopLeft, 2.5f, 0.85f);
+            AutoFit(looks, 0.11f, 0.06f);
+
+            // Datos rapidos
+            string origin = e.IsSynthetic && e.Z != 43 && e.Z != 61 ? "Sintético: se crea en laboratorios" :
+                            e.Z == 43 || e.Z == 61 ? "Casi no existe natural: se fabrica" : "Natural: existe en la Tierra";
+            string[] chips =
+            {
+                origin,
+                $"Estado a 25 °C: {e.StateName.ToLower()}",
+                e.IsRadioactive ? "<color=#FFB04D>Radiactivo</color>" : "No radiactivo",
+                $"Densidad: {e.Density}"
+            };
+            for (int i = 0; i < chips.Length; i++)
+            {
+                var c = new Vector3(-size.x / 2 + 0.2f + (size.x - 0.4f) / 4f * (i + 0.5f), -1.42f, 0);
+                LabFactory.Card(s, c, new Vector2((size.x - 0.4f) / 4f - 0.08f, 0.42f), new Color(0.1f, 0.24f, 0.2f));
+                var t = LabFactory.Text(s, chips[i], c + new Vector3(0, 0, -0.015f), 0.075f, Color.white, TextAlignmentOptions.Center, (size.x - 0.4f) / 4f - 0.16f, 0.36f);
+                AutoFit(t, 0.075f, 0.045f);
+            }
+        }
+
+        // ---------------- Ventana con el paisaje del elemento (pared de atras) ----------------
+        void BuildLandscape()
+        {
+            if (landscapeAnchor == null) return;
+            LabFactory.ClearChildren(landscapeAnchor);
+            var land = ElementExtras.Landscape(ElementExtras.Sample(element).Landscape);
+            var tex = land?.Load();
+            if (tex == null) return;
+            var m = new Material(LabFactory.Mat("Panorama")) { mainTexture = tex, name = "Paisaje_" + land.Key };
+            // Se dibuja al final para que solo cueste lo que se ve por la ventana.
+            m.renderQueue = 2450;
+            LabFactory.MeshObject("Paisaje360", MeshKit.PanoSphere(), landscapeAnchor, Vector3.zero, Vector3.one * 40f, m);
         }
 
         static void AutoFit(TextMeshPro t, float max, float min)

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -25,7 +25,7 @@ namespace LabQuimicaVR.EditorTools
             EditorApplication.playModeStateChanged += OnPlayMode;
         }
 
-        [MenuItem("Laboratorio VR/Probar en modo Play", priority = 41)]
+        [MenuItem("Quimikaze/Probar en modo Play", priority = 41)]
         public static void Run()
         {
             Directory.CreateDirectory(Dir);
@@ -89,61 +89,71 @@ namespace LabQuimicaVR.EditorTools
                     Next();
                     break;
                 case 2:
-                    if (!After(3.0)) return;
+                    if (!After(2.4)) return;
+                    ShotFromRig("3a_transicion_paisaje");
+                    Next();
+                    break;
+                case 3:
+                    // Espera a que termine la transicion con el paisaje
+                    if (ElementIntro.Active && !After(8.0)) return;
+                    if (!After(0.8)) return;
                     ShotFromRig("3_hierro_bohr");
+                    Shot("3b_hierro_vitrina", new Vector3(1.4f, 1.65f, 1.3f), new Vector3(10, 38, 0));
+                    Shot("3c_hierro_descubridores", new Vector3(-0.6f, 1.8f, -3.2f), new Vector3(-4, -90, 0));
+                    Shot("3d_hierro_naturaleza", new Vector3(0.6f, 1.8f, -3.2f), new Vector3(-4, 90, 0));
                     Shot("4_hierro_bohr_cerca", new Vector3(0, 1.9f, 3.2f), new Vector3(0, 0, 0));
                     Object.FindFirstObjectByType<ElementDetailController>()?.SetMode(AtomViewMode.Cloud);
                     Next();
                     break;
-                case 3:
+                case 4:
                     if (!After(1.5)) return;
                     Shot("5_hierro_nube", new Vector3(0, 1.9f, 3.2f), Vector3.zero);
                     Object.FindFirstObjectByType<ElementDetailController>()?.SetMode(AtomViewMode.Nucleus);
                     Next();
                     break;
-                case 4:
+                case 5:
                     if (!After(1.5)) return;
                     Shot("6_hierro_nucleo", new Vector3(0, 1.9f, 3.2f), Vector3.zero);
                     Object.FindFirstObjectByType<ReactionStation>()?.Run(8);
                     Next();
                     break;
-                case 5:
+                case 6:
                     if (!After(1.35)) return;
                     ShotReaction("7_reaccion_efecto");
                     Next();
                     break;
-                case 6:
+                case 7:
                     if (!After(2.5)) return;
                     ShotReaction("8_reaccion_resultado");
                     Object.FindFirstObjectByType<ReactionStation>()?.Run(17);
                     Next();
                     break;
-                case 7:
+                case 8:
                     if (!After(4.0)) return;
                     ShotReaction("9_reaccion_cloro");
                     LabState.OpenElement(1);
                     Next();
                     break;
-                case 8:
-                    if (!After(3.0)) return;
+                case 9:
+                    if (!After(6.5)) return;
                     ShotFromRig("10_hidrogeno");
                     Object.FindFirstObjectByType<ElementDetailController>()?.SetMode(AtomViewMode.Cloud);
                     Next();
                     break;
-                case 9:
+                case 10:
                     if (!After(1.5)) return;
                     Shot("11_hidrogeno_nube", new Vector3(0, 1.9f, 3.2f), Vector3.zero);
                     LabState.OpenElement(92);
                     Next();
                     break;
-                case 10:
-                    if (!After(3.0)) return;
+                case 11:
+                    if (!After(6.5)) return;
                     ShotFromRig("12_uranio");
                     Shot("13_uranio_cerca", new Vector3(0, 1.9f, 3.2f), Vector3.zero);
                     LabState.BackToTable();
                     Next();
                     break;
-                case 11:
+                case 12:
                     if (!After(2.5)) return;
                     ShotFromRig("14_tabla_regreso");
                     Next();

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEditor;
@@ -13,7 +13,7 @@ namespace LabQuimicaVR.EditorTools
     /// Construye las dos escenas del laboratorio:
     ///  1) TablaPeriodica: la sala blanca con la tabla completa al frente y pantallas a los costados.
     ///  2) ElementoDetalle: el "nivel" de cada elemento (modelo 3D, historia, propiedades y reacciones).
-    /// Menu: Laboratorio VR > Construir escenas.
+    /// Menu: Quimikaze > Construir escenas.
     /// </summary>
     public static class LabSceneBuilder
     {
@@ -23,7 +23,7 @@ namespace LabQuimicaVR.EditorTools
         static readonly Color Navy = new Color(0.09f, 0.14f, 0.24f);
         static readonly Color NavyDim = new Color(0.3f, 0.38f, 0.5f);
 
-        [MenuItem("Laboratorio VR/Construir escenas", priority = 1)]
+        [MenuItem("Quimikaze/Construir escenas", priority = 1)]
         public static void BuildAll()
         {
             LabAssets.EnsureFolders();
@@ -34,6 +34,7 @@ namespace LabQuimicaVR.EditorTools
                 LabAssets.CreateMaterials();
                 LabAssets.CreateMeshes();
                 ElementDatabase.Reload();
+                ElementExtras.Reload();
                 ConfigureProject();
                 BuildTableScene();
                 BuildElementScene();
@@ -44,7 +45,7 @@ namespace LabQuimicaVR.EditorTools
                 };
                 AssetDatabase.SaveAssets();
                 ShowLab();
-                Debug.Log("Laboratorio VR: escenas construidas.");
+                Debug.Log("Quimikaze: escenas construidas.");
             }
             finally
             {
@@ -57,13 +58,8 @@ namespace LabQuimicaVR.EditorTools
         // =====================================================================
         static void ConfigureProject()
         {
-            PlayerSettings.companyName = "LabQuimicaPeru";
-            PlayerSettings.productName = "Laboratorio Químico VR";
-            PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
-            PlayerSettings.allowedAutorotateToPortrait = false;
-            PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
+            LabBuild.ApplyPlayerSettings();
             PlayerSettings.runInBackground = true;
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "com.labquimicaperu.laboratoriovr");
             try
             {
                 PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
@@ -153,7 +149,7 @@ namespace LabQuimicaVR.EditorTools
         }
 
         /// <summary>Abre la escena principal y encuadra la vista para ver todo el laboratorio.</summary>
-        [MenuItem("Laboratorio VR/Mostrar laboratorio", priority = 2)]
+        [MenuItem("Quimikaze/Mostrar laboratorio", priority = 2)]
         public static void ShowLab()
         {
             if (EditorApplication.isPlaying) return;
@@ -181,14 +177,39 @@ namespace LabQuimicaVR.EditorTools
         }
 
         /// <summary>La "caja" del laboratorio: piso, techo y cuatro paredes con colision.</summary>
-        static Transform Room(float halfWidth, float zMin, float zMax, float height)
+        static Transform Room(float halfWidth, float zMin, float zMax, float height, Rect? backWindow = null)
         {
             var room = new GameObject("Laboratorio").transform;
             float depth = zMax - zMin, cz = (zMin + zMax) / 2f, t = 0.2f;
             LabFactory.Box("Piso", room, new Vector3(0, -t / 2, cz), new Vector3(halfWidth * 2 + 2 * t, t, depth + 2 * t), FloorMaterial(halfWidth * 2, depth), true);
             LabFactory.Box("Techo", room, new Vector3(0, height + t / 2, cz), new Vector3(halfWidth * 2 + 2 * t, t, depth + 2 * t), LabFactory.Mat("Ceiling"), true);
             LabFactory.Box("ParedFrente", room, new Vector3(0, height / 2, zMax + t / 2), new Vector3(halfWidth * 2, height, t), LabFactory.Mat("Wall"), true);
-            LabFactory.Box("ParedAtras", room, new Vector3(0, height / 2, zMin - t / 2), new Vector3(halfWidth * 2, height, t), LabFactory.Mat("Wall"), true);
+            if (backWindow.HasValue)
+            {
+                // Pared de atras con un hueco (ventana al paisaje del elemento): cuatro piezas alrededor.
+                var w = backWindow.Value;
+                float z = zMin - t / 2;
+                var wall = LabFactory.Mat("Wall");
+                LabFactory.Box("ParedAtrasAbajo", room, new Vector3(0, w.yMin / 2, z), new Vector3(halfWidth * 2, w.yMin, t), wall, true);
+                LabFactory.Box("ParedAtrasArriba", room, new Vector3(0, (w.yMax + height) / 2, z), new Vector3(halfWidth * 2, height - w.yMax, t), wall, true);
+                LabFactory.Box("ParedAtrasIzq", room, new Vector3((-halfWidth + w.xMin) / 2, (w.yMin + w.yMax) / 2, z), new Vector3(w.xMin + halfWidth, w.height, t), wall, true);
+                LabFactory.Box("ParedAtrasDer", room, new Vector3((halfWidth + w.xMax) / 2, (w.yMin + w.yMax) / 2, z), new Vector3(halfWidth - w.xMax, w.height, t), wall, true);
+                // Marco de la ventana y una baranda (invisible) para que nadie "salga" por ella
+                var frame = LabFactory.Mat("ScreenFrame");
+                float fz = zMin + 0.02f;
+                LabFactory.Box("MarcoInf", room, new Vector3(w.center.x, w.yMin - 0.05f, fz), new Vector3(w.width + 0.3f, 0.1f, 0.3f), frame);
+                LabFactory.Box("MarcoSup", room, new Vector3(w.center.x, w.yMax + 0.05f, fz), new Vector3(w.width + 0.3f, 0.1f, 0.14f), frame);
+                LabFactory.Box("MarcoIzq", room, new Vector3(w.xMin - 0.05f, w.center.y, fz), new Vector3(0.1f, w.height, 0.14f), frame);
+                LabFactory.Box("MarcoDer", room, new Vector3(w.xMax + 0.05f, w.center.y, fz), new Vector3(0.1f, w.height, 0.14f), frame);
+                for (int i = 1; i < 3; i++)
+                    LabFactory.Box("Parteluz", room, new Vector3(w.xMin + w.width * i / 3f, w.center.y, fz), new Vector3(0.05f, w.height, 0.06f), frame);
+                var block = new GameObject("BloqueoVentana").AddComponent<BoxCollider>();
+                block.transform.SetParent(room, false);
+                block.center = new Vector3(w.center.x, w.center.y, zMin - t / 2);
+                block.size = new Vector3(w.width, w.height, t);
+            }
+            else
+                LabFactory.Box("ParedAtras", room, new Vector3(0, height / 2, zMin - t / 2), new Vector3(halfWidth * 2, height, t), LabFactory.Mat("Wall"), true);
             LabFactory.Box("ParedIzquierda", room, new Vector3(-halfWidth - t / 2, height / 2, cz), new Vector3(t, height, depth), LabFactory.Mat("Wall"), true);
             LabFactory.Box("ParedDerecha", room, new Vector3(halfWidth + t / 2, height / 2, cz), new Vector3(t, height, depth), LabFactory.Mat("Wall"), true);
 
@@ -401,6 +422,7 @@ namespace LabQuimicaVR.EditorTools
             var spawn = GameObject.Find("ZonaDeInicio");
             if (spawn != null) MarkStatic(spawn.transform);
 
+            BakeReflections(new Vector3(0, 2.2f, 3f), "Assets/Laboratorio/ReflejoTabla.cubemap");
             EditorSceneManager.SaveScene(scene, TableScenePath);
         }
 
@@ -613,8 +635,11 @@ namespace LabQuimicaVR.EditorTools
                 "<color=#FFC34D>MANTÉN PULSADO</color> el botón del visor o <color=#FFCC33>Y</color>: recentrar la vista.\n" +
                 "<color=#FFC34D>JOYSTICK IZQUIERDO</color>: caminar.   <color=#FFC34D>DERECHO</color>: girar.\n" +
                 "<color=#F25959>B</color>: volver a la tabla.   <color=#4D99FF>X</color>: cambiar modelo del átomo.\n" +
-                "<color=#FFC34D>L1 / R1</color>: ajustar las lentes si ves doble.";
-            LabFactory.Text(s, text, new Vector3(0, -0.8f, -0.02f), 0.13f, Palette.Text, TextAlignmentOptions.Left, 4.9f, 2.0f);
+                "<color=#FFC34D>L1 / R1</color>: ajustar las lentes si ves doble.\n" +
+                "Pon el celular en el visor <color=#FFC34D>del lado que quieras</color>: la pantalla gira sola.";
+            LabFactory.Text(s, text, new Vector3(0, -0.62f, -0.02f), 0.12f, Palette.Text, TextAlignmentOptions.Left, 4.9f, 2.0f);
+            var orient = LabFactory.Button(s, "Pantalla: Automática", new Vector3(0, -1.75f, -0.03f), new Vector2(3.0f, 0.3f), 0.1f, new Color(0.25f, 0.3f, 0.4f));
+            orient.gameObject.AddComponent<OrientationButton>();
         }
 
         static void BuildFactsScreen(Transform parent, Vector3 pos)
@@ -628,8 +653,8 @@ namespace LabQuimicaVR.EditorTools
         static void BuildBackWall(Transform parent, float zMin)
         {
             var wall = LabFactory.Node("ParedAtras", parent, new Vector3(0, 0, zMin + 0.12f), Quaternion.Euler(0, 180f, 0)).transform;
-            WallText(wall, "LABORATORIO VIRTUAL DE QUÍMICA", new Vector3(0, 6.75f, 0), 0.5f, Navy, 16f);
-            WallText(wall, "Explora los 118 elementos de la tabla periódica", new Vector3(0, 6.05f, 0), 0.22f, NavyDim, 16f, false);
+            WallText(wall, "QUIMIKAZE", new Vector3(0, 6.85f, 0), 0.62f, Navy, 16f);
+            WallText(wall, "Laboratorio virtual de química  ·  Explora los 118 elementos de la tabla periódica", new Vector3(0, 6.05f, 0), 0.2f, NavyDim, 16f, false);
             LabFactory.Box("LineaTitulo", wall, new Vector3(0, 5.7f, 0.02f), new Vector3(9f, 0.04f, 0.02f), LabFactory.Mat("Trim"));
 
             var numbers = LabFactory.Screen("PantallaNumeros", wall, new Vector3(-5.2f, 3.2f, 0), Quaternion.identity, new Vector2(4.6f, 3.4f), "LA TABLA EN NÚMEROS");
@@ -665,8 +690,9 @@ namespace LabQuimicaVR.EditorTools
         static void BuildElementScene()
         {
             var scene = NewScene();
-            const float halfW = 5f, zMin = -4f, zMax = 10f, height = 5.6f;
-            Room(halfW, zMin, zMax, height);
+            const float halfW = 5f, zMin = -6.5f, zMax = 10f, height = 5.6f;
+            var window = new Rect(-3.6f, 1.95f, 7.2f, 2.95f);
+            Room(halfW, zMin, zMax, height, window);
             Lights();
             SpawnAndRig(Vector3.zero, 0.9f);
 
@@ -690,16 +716,33 @@ namespace LabQuimicaVR.EditorTools
             controller.propsAnchor = LabFactory.Node("Propiedades", content, new Vector3(halfW - 0.12f, 2.55f, 4.0f), Quaternion.Euler(0, 90f, 0)).transform;
             controller.reactionAnchor = LabFactory.Node("Reacciones", content, new Vector3(-3.35f, 2.2f, 8.3f), Quaternion.Euler(0, -24f, 0)).transform;
             controller.controlsAnchor = LabFactory.Node("Controles", content, new Vector3(3.45f, 1.95f, 8.3f), Quaternion.Euler(0, 24f, 0)).transform;
-            controller.backAnchor = LabFactory.Node("Salida", content, new Vector3(0, 2.3f, zMin + 0.12f), Quaternion.Euler(0, 180f, 0)).transform;
+            controller.backAnchor = LabFactory.Node("Salida", content, new Vector3(0, 1.05f, zMin + 0.12f), Quaternion.Euler(0, 180f, 0)).transform;
+            controller.discoverersAnchor = LabFactory.Node("Descubridores", content, new Vector3(-halfW + 0.12f, 2.55f, -3.2f), Quaternion.Euler(0, -90f, 0)).transform;
+            controller.natureAnchor = LabFactory.Node("Naturaleza", content, new Vector3(halfW - 0.12f, 2.55f, -3.2f), Quaternion.Euler(0, 90f, 0)).transform;
+            // Centro de la esfera del paisaje: detras de la ventana, a la altura de los ojos
+            controller.landscapeAnchor = LabFactory.Node("Paisaje", content, new Vector3(0, 1.6f, zMin - 2f)).transform;
+            var windowLabel = LabFactory.Node("RotuloVentana", content, new Vector3(0, window.yMax + 0.32f, zMin + 0.05f), Quaternion.Euler(0, 180f, 0)).transform;
+            WallText(windowLabel, "VENTANA A LA NATURALEZA", Vector3.zero, 0.16f, Navy, 7f);
+
+            // Luz de la vitrina: realza el brillo de los metales
+            var spot = new GameObject("LuzVitrina").AddComponent<Light>();
+            spot.type = LightType.Spot;
+            spot.transform.position = new Vector3(2.7f, 3.6f, 2.4f);
+            spot.transform.rotation = Quaternion.LookRotation(new Vector3(0, -1f, 0.15f));
+            spot.spotAngle = 38f;
+            spot.range = 5f;
+            spot.intensity = 1.0f;
+            spot.color = new Color(1f, 0.97f, 0.92f);
+            spot.shadows = LightShadows.None;
 
             // Indicacion en el piso
-            var floorHint = LabFactory.Text(content, "Usa el joystick para acercarte a las pantallas  ·  Mira a los lados", new Vector3(0, 0.03f, 1.6f), 0.11f,
+            var floorHint = LabFactory.Text(content, "Usa el joystick para acercarte a las pantallas  ·  Mira a los lados y atrás", new Vector3(0, 0.03f, 1.6f), 0.11f,
                 new Color(0.2f, 0.45f, 0.6f), TextAlignmentOptions.Center, 5f, 0.3f, true);
             floorHint.transform.localRotation = Quaternion.Euler(90f, 0, 0);
 
             var benches = LabFactory.Node("Mesas", null).transform;
-            Bench(benches, new Vector3(-3.3f, 0, zMin + 0.6f), 180f, 2.8f, 5);
-            Bench(benches, new Vector3(3.3f, 0, zMin + 0.6f), 180f, 2.8f, 6);
+            Bench(benches, new Vector3(-3.3f, 0, zMin + 0.6f), 180f, 2.6f, 5);
+            Bench(benches, new Vector3(3.3f, 0, zMin + 0.6f), 180f, 2.6f, 6);
             MarkStatic(benches);
             MarkStatic(ped);
             var spawn = GameObject.Find("ZonaDeInicio");
@@ -707,11 +750,42 @@ namespace LabQuimicaVR.EditorTools
 
             controller.previewZ = 6;
             controller.Populate(controller.previewZ);
+            BakeReflections(new Vector3(0, 1.8f, 3f), "Assets/Laboratorio/ReflejoLaboratorio.cubemap", 0.72f);
             EditorSceneManager.SaveScene(scene, ElementScenePath);
         }
 
+        /// <summary>
+        /// Sin cielo, los metales no tienen nada que reflejar y se ven grises y opacos. Se captura la
+        /// sala en un cubemap y se usa como reflejo de todo el laboratorio.
+        /// </summary>
+        static Cubemap CaptureCubemap(Vector3 position, string path)
+        {
+            var camGo = new GameObject("CamaraReflejo");
+            camGo.transform.position = position;
+            var cam = camGo.AddComponent<Camera>();
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.92f, 0.94f, 0.97f);
+            cam.nearClipPlane = 0.05f;
+            cam.farClipPlane = 80f;
+            var cube = new Cubemap(128, TextureFormat.RGBA32, true) { name = System.IO.Path.GetFileNameWithoutExtension(path) };
+            cam.RenderToCubemap(cube);
+            cube.Apply(true);
+            Object.DestroyImmediate(camGo);
+            if (AssetDatabase.LoadAssetAtPath<Cubemap>(path) != null) AssetDatabase.DeleteAsset(path);
+            AssetDatabase.CreateAsset(cube, path);
+            return AssetDatabase.LoadAssetAtPath<Cubemap>(path);
+        }
+
+        static void BakeReflections(Vector3 position, string path, float intensity = 1f)
+        {
+            var saved = CaptureCubemap(position, path);
+            RenderSettings.defaultReflectionMode = UnityEngine.Rendering.DefaultReflectionMode.Custom;
+            RenderSettings.customReflectionTexture = saved;
+            RenderSettings.reflectionIntensity = intensity;
+        }
+
         /// <summary>Muestra otro elemento en la escena de detalle (solo en el editor).</summary>
-        [MenuItem("Laboratorio VR/Vista previa: siguiente elemento", priority = 20)]
+        [MenuItem("Quimikaze/Vista previa: siguiente elemento", priority = 20)]
         public static void PreviewNext()
         {
             var c = Object.FindFirstObjectByType<ElementDetailController>();

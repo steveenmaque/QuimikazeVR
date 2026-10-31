@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -10,17 +10,17 @@ using UnityEngine;
 namespace LabQuimicaVR.EditorTools
 {
     /// <summary>
-    /// Compila el APK del prototipo en Builds/LaboratorioQuimicaVR.apk.
-    /// Desde Unity: menu Laboratorio VR > Compilar APK (Android).
+    /// Compila el APK del prototipo en Builds/QuimikazeVR.apk.
+    /// Desde Unity: menu Quimikaze > Compilar APK (Android).
     /// Desde consola: Unity.exe -batchmode -quit -projectPath ... -buildTarget Android
     ///                -executeMethod LabQuimicaVR.EditorTools.LabBuild.BuildApkBatch
     /// </summary>
     public static class LabBuild
     {
-        public const string ApkPath = "Builds/LaboratorioQuimicaVR.apk";
+        public const string ApkPath = "Builds/QuimikazeVR.apk";
         const string ResultFile = "AutoSync/build_result.txt";
 
-        [MenuItem("Laboratorio VR/Compilar APK (Android)", priority = 60)]
+        [MenuItem("Quimikaze/Compilar APK (Android)", priority = 60)]
         public static void BuildApkMenu() => BuildApk();
 
         /// <summary>Punto de entrada para la linea de comandos: sale con codigo 0 si el APK se creo.</summary>
@@ -87,16 +87,55 @@ namespace LabQuimicaVR.EditorTools
             return ok;
         }
 
+        public const string ProductName = "Quimikaze";
+        public const string Version = "1.1.0";
+        public const int VersionCode = 2;
+
+        /// <summary>
+        /// Nombre, version y orientacion. La pantalla gira sola entre las dos posiciones horizontales
+        /// (botones de volumen hacia abajo o hacia arriba): asi la imagen sale derecha al transmitir la
+        /// pantalla y cada ojo del visor ve su propia imagen.
+        /// </summary>
+        public static void ApplyPlayerSettings()
+        {
+            // El identificador no cambia: la version 1.1 se instala encima de la 1.0.
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "com.labquimicaperu.laboratoriovr");
+            PlayerSettings.productName = ProductName;
+            PlayerSettings.companyName = "LabQuimicaPeru";
+            PlayerSettings.bundleVersion = Version;
+            PlayerSettings.Android.bundleVersionCode = VersionCode;
+            PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
+            PlayerSettings.allowedAutorotateToPortrait = false;
+            PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
+            PlayerSettings.allowedAutorotateToLandscapeLeft = true;
+            PlayerSettings.allowedAutorotateToLandscapeRight = true;
+            PlayerSettings.useAnimatedAutorotation = false;
+            SetSensorRotation();
+            // Icono de la app (atomo con la Q de Quimikaze)
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Laboratorio/Icono/icono_quimikaze.png");
+            if (icon != null) PlayerSettings.SetIcons(NamedBuildTarget.Unknown, new[] { icon }, IconKind.Any);
+        }
+
+        /// <summary>
+        /// Gira segun el sensor aunque el celular tenga activado el "bloqueo de rotacion" (dentro del
+        /// visor no se puede tocar ese ajuste). Se usa por reflexion por si la version de Unity no lo trae.
+        /// </summary>
+        static void SetSensorRotation()
+        {
+            try
+            {
+                var prop = typeof(PlayerSettings.Android).GetProperty("autoRotationBehavior");
+                if (prop == null) return;
+                prop.SetValue(null, Enum.Parse(prop.PropertyType, "Sensor"));
+            }
+            catch (Exception e) { Debug.LogWarning("Rotacion por sensor: " + e.Message); }
+        }
+
         /// <summary>Ajustes para celulares Android de gama media/baja dentro de un visor.</summary>
         static void ConfigureAndroid()
         {
             var android = NamedBuildTarget.Android;
-            PlayerSettings.SetApplicationIdentifier(android, "com.labquimicaperu.laboratoriovr");
-            PlayerSettings.productName = "Laboratorio Químico VR";
-            PlayerSettings.companyName = "LabQuimicaPeru";
-            PlayerSettings.bundleVersion = "0.1.0";
-            PlayerSettings.Android.bundleVersionCode = 1;
-            PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
+            ApplyPlayerSettings();
             PlayerSettings.SetScriptingBackend(android, ScriptingImplementation.IL2CPP);
             // ARMv7 + ARM64: funciona en celulares antiguos de 32 bits y en los nuevos que solo aceptan 64 bits.
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
@@ -111,7 +150,7 @@ namespace LabQuimicaVR.EditorTools
         }
 
         /// <summary>Guarda todo y cierra el editor (para poder compilar por linea de comandos).</summary>
-        [MenuItem("Laboratorio VR/Guardar y cerrar Unity", priority = 61)]
+        [MenuItem("Quimikaze/Guardar y cerrar Unity", priority = 61)]
         public static void SaveAndQuit()
         {
             // Solo guarda escenas que ya tienen archivo: nunca abre el dialogo "Guardar escena".

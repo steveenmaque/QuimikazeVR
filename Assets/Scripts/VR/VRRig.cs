@@ -36,6 +36,11 @@ namespace LabQuimicaVR
         public bool Stereo { get; private set; }
 
         const string LensKey = "LabVR.LensMm";
+        const string OrientKey = "LabVR.Orientacion";
+
+        /// <summary>0 = automatica (gira con el celular), 1 = fija a la izquierda, 2 = fija a la derecha.</summary>
+        public static int OrientationMode { get; private set; }
+        public static readonly string[] OrientationNames = { "Automática", "Fija: botones abajo", "Fija: botones arriba" };
 
         // Se conservan al cambiar de escena para que la vista no "salte".
         static bool centered;
@@ -47,6 +52,9 @@ namespace LabQuimicaVR
         bool useGyro, useTilt;
         float yawOffset, tiltPitch, stickPitch;
         float uprightTime;
+        bool rollFix;
+        float rollFixTime;
+        ScreenOrientation lastOrientation;
         float mouseYaw, mousePitch;
         int layoutWidth;
         TextMeshPro toast;
@@ -82,6 +90,8 @@ namespace LabQuimicaVR
             background.allowMSAA = false;
 
             bool mobile = Application.isMobilePlatform;
+            if (mobile) ConfigureOrientation();
+            lastOrientation = Screen.orientation;
             useGyro = mobile && SystemInfo.supportsGyroscope;
             if (useGyro) Input.gyro.enabled = true;
             useTilt = mobile && !useGyro && SystemInfo.supportsAccelerometer;
@@ -96,6 +106,42 @@ namespace LabQuimicaVR
         void OnDestroy()
         {
             if (Instance == this) Instance = null;
+        }
+
+        /// <summary>
+        /// El celular puede ir en el visor con los botones de volumen hacia abajo o hacia arriba.
+        /// Por defecto la pantalla gira sola entre las dos posiciones horizontales: asi la imagen
+        /// queda derecha tambien al transmitir la pantalla (Meet, Zoom...) y cada ojo ve su imagen.
+        /// </summary>
+        static void ConfigureOrientation()
+        {
+            Input.compensateSensors = true;
+            Screen.autorotateToPortrait = false;
+            Screen.autorotateToPortraitUpsideDown = false;
+            Screen.autorotateToLandscapeLeft = true;
+            Screen.autorotateToLandscapeRight = true;
+            ApplyOrientation(PlayerPrefs.GetInt(OrientKey, 0));
+        }
+
+        static void ApplyOrientation(int mode)
+        {
+            OrientationMode = Mathf.Clamp(mode, 0, 2);
+            if (!Application.isMobilePlatform) return;
+            Screen.orientation = OrientationMode switch
+            {
+                1 => ScreenOrientation.LandscapeLeft,
+                2 => ScreenOrientation.LandscapeRight,
+                _ => ScreenOrientation.AutoRotation
+            };
+        }
+
+        /// <summary>Cambia entre automatica / fija a un lado / fija al otro lado (se guarda).</summary>
+        public static void CycleOrientation()
+        {
+            ApplyOrientation((OrientationMode + 1) % 3);
+            PlayerPrefs.SetInt(OrientKey, OrientationMode);
+            PlayerPrefs.Save();
+            if (Instance != null) Instance.ShowToast("Orientación de pantalla: " + OrientationNames[OrientationMode], 2.5f);
         }
 
         static void ReduceResolutionOnDenseScreens()
@@ -185,11 +231,39 @@ namespace LabQuimicaVR
         static Quaternion GyroToUnity(Quaternion q) =>
             Quaternion.Euler(90f, 0f, 0f) * new Quaternion(q.x, q.y, -q.z, -q.w);
 
+        static readonly Quaternion Roll180 = Quaternion.Euler(0f, 0f, 180f);
+
+        /// <summary>Orientacion de la cabeza segun el giroscopio, ya ajustada al lado en que esta la pantalla.</summary>
+        Quaternion GyroHead(Quaternion att)
+        {
+            var q = GyroToUnity(att);
+            return rollFix ? q * Roll180 : q;
+        }
+
+        /// <summary>
+        /// Red de seguridad: Unity gira el giroscopio segun la orientacion de la pantalla. Si en algun
+        /// celular no lo hiciera al voltear la pantalla, el mundo se veria de cabeza; el acelerometro
+        /// (que si se ajusta) lo detecta y se corrige solo.
+        /// </summary>
+        void CheckRoll(Quaternion att, float dt)
+        {
+            var a = Input.acceleration;
+            float upY = (GyroHead(att) * Vector3.up).y;
+            // Pantalla derecha segun la gravedad, pero la camara quedo de cabeza.
+            bool wrong = a.y < -0.7f && Mathf.Abs(a.z) < 0.6f && upY < -0.4f;
+            rollFixTime = wrong ? rollFixTime + dt : 0f;
+            if (rollFixTime > 0.4f)
+            {
+                rollFix = !rollFix;
+                rollFixTime = 0f;
+            }
+        }
+
         public void Recenter()
         {
             if (useGyro)
             {
-                var f = GyroToUnity(Input.gyro.attitude) * Vector3.forward;
+                var f = GyroHead(Input.gyro.attitude) * Vector3.forward;
                 yawOffset = -Mathf.Atan2(f.x, f.z) * Mathf.Rad2Deg;
                 savedYaw = yawOffset;
                 centered = true;
@@ -208,24 +282,28 @@ namespace LabQuimicaVR
             if (useGyro)
             {
                 var att = Input.gyro.attitude;
-                if (!centered)
+                float n = att.x * att.x + att.y * att.y + att.z * att.z + att.w * att.w;
+                bool valid = n > 0.9f && n < 1.1f;
+                if (valid) CheckRoll(att, dt);
+                if (!centered && valid)
                 {
                     // Se recentra solo cuando el celular lleva medio segundo derecho, como dentro del visor
                     // (no mientras esta en la mano o sobre la mesa).
-                    float n = att.x * att.x + att.y * att.y + att.z * att.z + att.w * att.w;
-                    var u = GyroToUnity(att);
+                    var u = GyroHead(att);
                     Vector3 f = u * Vector3.forward, up = u * Vector3.up;
-                    bool upright = n > 0.9f && n < 1.1f && Mathf.Abs(f.y) < 0.5f && up.y > 0.85f;
+                    bool upright = Mathf.Abs(f.y) < 0.5f && up.y > 0.85f;
                     uprightTime = upright ? uprightTime + dt : 0f;
                     if (uprightTime >= 0.5f) Recenter();
                 }
-                head.localRotation = Quaternion.Euler(0f, yawOffset, 0f) * GyroToUnity(att);
+                head.localRotation = Quaternion.Euler(0f, yawOffset, 0f) * GyroHead(att);
             }
             else if (useTilt)
             {
-                // Sin giroscopio: el acelerometro da la inclinacion (mirar arriba/abajo).
+                // Sin giroscopio: el acelerometro da la inclinacion (mirar arriba/abajo). Se usa la
+                // componente perpendicular a la pantalla, que es igual con el celular de un lado o del otro.
                 var a = Input.acceleration;
-                float target = Mathf.Clamp(-Mathf.Atan2(a.z, -a.y) * Mathf.Rad2Deg, -80f, 80f);
+                float inPlane = Mathf.Sqrt(a.x * a.x + a.y * a.y);
+                float target = Mathf.Clamp(-Mathf.Atan2(a.z, inPlane) * Mathf.Rad2Deg, -80f, 80f);
                 tiltPitch = Mathf.LerpAngle(tiltPitch, target, 1f - Mathf.Exp(-8f * dt));
                 stickPitch = Mathf.Clamp(stickPitch + LabInput.LookVertical * lookSpeed * dt, -60f, 60f);
                 head.localRotation = Quaternion.Euler(Mathf.Clamp(tiltPitch + stickPitch, -80f, 80f), 0f, 0f);
@@ -266,7 +344,15 @@ namespace LabQuimicaVR
                 if (Stereo) LayoutEyes();
                 ShowToast($"Separación de lentes: {lensSeparationMm:0} mm", 2f);
             }
+            if (LabInput.OrientationDown) CycleOrientation();
             if (Stereo && Screen.width != layoutWidth) LayoutEyes();
+            // Al voltear el celular la pantalla gira sola; se reacomodan los ojos por si cambio el tamano.
+            if (Screen.orientation != lastOrientation)
+            {
+                lastOrientation = Screen.orientation;
+                rollFixTime = 0f;
+                if (Stereo) LayoutEyes();
+            }
 
             if (toastRoot != null && toastRoot.activeSelf && Time.unscaledTime > toastUntil) toastRoot.SetActive(false);
         }

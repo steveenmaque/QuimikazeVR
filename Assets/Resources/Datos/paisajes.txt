@@ -1,0 +1,18 @@
+# Clave|Archivo en Paisajes/|Nombre|Autor|Licencia|Fuente
+espacio|eso_milkyway|El espacio|ESO/S. Brunier|CC BY 4.0|https://www.eso.org/public/images/eso0932a/
+noche|rogland_clear_night|Cielo estrellado|Greg Zaal|CC0|https://polyhaven.com/a/rogland_clear_night
+pradera|meadow_2|Al aire libre|Sergej Majboroda|CC0|https://polyhaven.com/a/meadow_2
+bosque|rainforest_trail|El bosque|Dimitrios Savva, Jarod Guest|CC0|https://polyhaven.com/a/rainforest_trail
+rio|lauter_waterfall|Ríos del bosque|Andreas Mischok|CC0|https://polyhaven.com/a/lauter_waterfall
+playa|fish_hoek_beach|El mar|Greg Zaal, Rico Cilliers|CC0|https://polyhaven.com/a/fish_hoek_beach
+salar|flamingo_pan|Lagunas salinas|Dimitrios Savva, Jarod Guest|CC0|https://polyhaven.com/a/flamingo_pan
+desierto|goegap|El desierto|Greg Zaal|CC0|https://polyhaven.com/a/goegap
+montana|kiara_1_dawn|Montañas mineras|Greg Zaal|CC0|https://polyhaven.com/a/kiara_1_dawn
+tajo|quarry_01|Mina a tajo abierto|Sergej Majboroda|CC0|https://polyhaven.com/a/quarry_01
+creta|sunset_in_the_chalk_quarry|Cantera de caliza|Sergej Majboroda|CC0|https://polyhaven.com/a/sunset_in_the_chalk_quarry
+cueva|small_cave|Cuevas de roca|Andreas Mischok|CC0|https://polyhaven.com/a/small_cave
+ciudad|shanghai_bund|La ciudad de noche|Greg Zaal|CC0|https://polyhaven.com/a/shanghai_bund
+industria|peppermint_powerplant|La industria|Andreas Mischok|CC0|https://polyhaven.com/a/peppermint_powerplant
+lab_antiguo|vintage_measuring_lab|Laboratorio antiguo|Oliksiy Yakovlyev|CC0|https://polyhaven.com/a/vintage_measuring_lab
+lunar|moon_lab|Exploración espacial|Greg Zaal|CC0|https://polyhaven.com/a/moon_lab
+tunel|concrete_tunnel_02|Acelerador de partículas|Andreas Mischok|CC0|https://polyhaven.com/a/concrete_tunnel_02
