@@ -46,14 +46,14 @@ namespace LabQuimicaVR
                 var p = ElementDatabase.BySymbol(Partners[i]);
                 int r = i / cols, c = i % cols;
                 var pos = new Vector3((c - (cols - 1) / 2f) * 0.41f, 0.72f - r * 0.35f, -0.03f);
-                var b = LabFactory.Button(screen, p.Symbol, pos, bsize, 0.12f, CategoryInfo.Color(p.Category) * 0.55f);
+                var b = LabFactory.Button(screen, p.Symbol, pos, bsize, 0.12f, CategoryInfo.Color(p.Category) * 0.55f, TextRole.Symbol);
                 int z = p.Z;
                 b.OnClick += () => Run(z);
                 buttons.Add(b);
             }
 
             LabFactory.Box("Separador", screen, new Vector3(0, -0.28f, -0.005f), new Vector3(size.x * 0.92f, 0.01f, 0.005f), LabFactory.Tinted("GlowBase", Palette.Accent2, 1.2f));
-            equationText = LabFactory.Text(screen, "", new Vector3(0, -0.45f, -0.01f), 0.13f, Color.white, TextAlignmentOptions.Center, size.x - 0.2f, 0.25f, true);
+            equationText = LabFactory.Text(screen, "", new Vector3(0, -0.45f, -0.01f), 0.13f, Color.white, TextAlignmentOptions.Center, size.x - 0.2f, 0.25f, true, TextRole.Symbol);
             productText = LabFactory.Text(screen, "Mira un botón y púlsalo para ver la reacción.", new Vector3(0, -0.66f, -0.01f), 0.085f, Palette.Accent2, TextAlignmentOptions.Center, size.x - 0.2f, 0.2f, true);
             descriptionText = LabFactory.Text(screen, "", new Vector3(0, -0.98f, -0.01f), 0.08f, Palette.Text, TextAlignmentOptions.Top, size.x - 0.3f, 0.5f);
             descriptionText.enableAutoSizing = true;
@@ -100,7 +100,7 @@ namespace LabQuimicaVR
             label.gameObject.AddComponent<FaceCamera>();
             var dark = e.CpkColor.grayscale > 0.55f;
             LabFactory.Text(label, e.Symbol, new Vector3(0, 0, -radius * 1.1f), radius * 0.8f, dark ? Color.black : Color.white,
-                TextAlignmentOptions.Center, radius * 3f, radius * 2f, true);
+                TextAlignmentOptions.Center, radius * 3f, radius * 2f, true, TextRole.Symbol);
             return ball;
         }
 
@@ -367,7 +367,7 @@ namespace LabQuimicaVR
             label.localScale = Vector3.one / (radius * 2f);
             label.gameObject.AddComponent<FaceCamera>();
             var dark = e.CpkColor.grayscale > 0.55f;
-            LabFactory.Text(label, e.Symbol, new Vector3(0, 0, -radius * 1.1f), radius * 0.75f, dark ? Color.black : Color.white, TextAlignmentOptions.Center, radius * 3f, radius * 2f, true);
+            LabFactory.Text(label, e.Symbol, new Vector3(0, 0, -radius * 1.1f), radius * 0.75f, dark ? Color.black : Color.white, TextAlignmentOptions.Center, radius * 3f, radius * 2f, true, TextRole.Symbol);
         }
     }
 }

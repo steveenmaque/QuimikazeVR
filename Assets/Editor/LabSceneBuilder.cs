@@ -33,6 +33,7 @@ namespace LabQuimicaVR.EditorTools
                 LabAssets.CreateTextures();
                 LabAssets.CreateMaterials();
                 LabAssets.CreateMeshes();
+                if (LabType.Title == null || LabType.Body == null) LabFonts.Build();
                 ElementDatabase.Reload();
                 ElementExtras.Reload();
                 ConfigureProject();
@@ -511,7 +512,7 @@ namespace LabQuimicaVR.EditorTools
             var ptile = LabFactory.Box("Casilla", content, new Vector3(tileX, 0, -0.03f), new Vector3(1.3f, 1.3f, 0.05f), LabFactory.Mat("Cat_NM"));
             view.previewTile = ptile.GetComponent<Renderer>();
             view.previewNumber = LabFactory.Text(content, "6", new Vector3(tileX, 0.48f, -0.06f), 0.13f, dark, TextAlignmentOptions.TopLeft, 1.15f, 0.22f, true);
-            view.previewSymbol = LabFactory.Text(content, "C", new Vector3(tileX, 0.04f, -0.06f), 0.55f, dark, TextAlignmentOptions.Center, 1.3f, 0.7f, true);
+            view.previewSymbol = LabFactory.Text(content, "C", new Vector3(tileX, 0.04f, -0.06f), 0.55f, dark, TextAlignmentOptions.Center, 1.3f, 0.7f, true, TextRole.Symbol);
             view.previewName = LabFactory.Text(content, "Carbono", new Vector3(tileX, -0.46f, -0.06f), 0.11f, dark, TextAlignmentOptions.Center, 1.25f, 0.18f);
             float textX = tileX + 0.8f + (size.x - 1.7f) / 2f;
             view.previewTitle = LabFactory.Text(content, "Carbono", new Vector3(textX, 0.5f, -0.02f), 0.22f, Color.white, TextAlignmentOptions.Left, size.x - 1.8f, 0.35f);

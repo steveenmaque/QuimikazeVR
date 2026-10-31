@@ -201,6 +201,7 @@ Unity 6 (6000.6.0f1) · Built-in Render Pipeline · Android en horizontal · IL2
 | `Assets/Resources/Datos` | Textos de los 118 elementos, editables |
 | `Assets/Resources/Fotos` | Fotos reales de los elementos y retratos de los descubridores |
 | `Assets/Resources/Paisajes` | Paisajes 360° de la transición y de la ventana |
+| `Assets/Laboratorio/Fuentes`, `Assets/Resources/Fuentes` | Fuentes Fredoka y Atkinson Hyperlegible Next (.ttf y su versión para TextMeshPro); ver [TIPOGRAFIA.md](TIPOGRAFIA.md) |
 | `Assets/Resources/LabMaterials`, `LabMeshes` | Materiales y modelos 3D generados |
 | `Assets/Scenes` | `TablaPeriodica` y `ElementoDetalle` |
 
@@ -213,6 +214,7 @@ Unity 6 (6000.6.0f1) · Built-in Render Pipeline · Android en horizontal · IL2
 ### Menú "Quimikaze" en Unity
 - **Construir escenas**: regenera desde el código los materiales, las mallas y las dos escenas.
 - **Mostrar laboratorio**: abre la escena principal y encuadra la vista.
+- **Crear fuentes**: regenera las fuentes de TextMeshPro con todos los caracteres que usan los textos (después, vuelve a construir las escenas).
 - **Vista previa: siguiente elemento**: con `ElementoDetalle` abierta, muestra el siguiente elemento.
 - **Capturar vistas** / **Probar en modo Play**: guardan imágenes de control en `AutoSync/`.
 - **Capturar muestras (118)**: foto de cada muestra 3D en `AutoSync/muestras`, para compararlas con las fotos reales.
@@ -228,7 +230,7 @@ Los textos están en `Assets/Resources/Datos`, en archivos separados por `|`:
 - `descubridores.txt` y `personas.txt`: retratos, años de vida y descripción de los descubridores.
 - `paisajes.txt` y `fotos_elementos.txt`: nombre, autor y licencia de cada paisaje y foto.
 
-Los créditos de todas las imágenes están en [CREDITOS_IMAGENES.txt](CREDITOS_IMAGENES.txt).
+Los créditos de todas las imágenes están en [CREDITOS_IMAGENES.txt](CREDITOS_IMAGENES.txt). Las fuentes tienen licencia SIL Open Font License; los textos de la licencia están en `Assets/Laboratorio/Fuentes`.
 
 La configuración electrónica se calcula con la regla de Moeller e incluye las excepciones reales (Cr, Cu, Pd, Au…). Las reacciones más comunes están escritas a mano en `ReactionDatabase.cs`. Las demás combinaciones se predicen con las valencias, y en pantalla se indica que es una predicción.
 

@@ -55,13 +55,16 @@ namespace LabQuimicaVR
             var titleRoot = LabFactory.Node("Titulo", null, head.position + front * new Vector3(0, 0.15f, 3.2f), front).transform;
             titleRoot.SetParent(root, true);
             var catColor = CategoryInfo.Color(e.Category);
-            var t1 = LabFactory.Text(titleRoot, $"<b>{e.Name.ToUpper()}</b>", new Vector3(0, 0.45f, 0), 0.42f, Color.white, TextAlignmentOptions.Center, 6f, 0.7f);
+            var t1 = LabFactory.Text(titleRoot, e.Name.ToUpper(), new Vector3(0, 0.45f, 0), 0.42f, Color.white, TextAlignmentOptions.Center, 6f, 0.7f, true);
             var t2 = LabFactory.Text(titleRoot, $"<color=#{ColorUtility.ToHtmlStringRGB(catColor)}>{e.Symbol}</color>  ·  Z = {e.Z}  ·  {CategoryInfo.Name(e.Category)}",
                 new Vector3(0, -0.05f, 0), 0.17f, Color.white, TextAlignmentOptions.Center, 6f, 0.3f);
             var t3 = LabFactory.Text(titleRoot, $"<color=#FFC34D>{land.Title}</color>\n<size=70%>{ElementExtras.Sample(e).Nature}</size>",
                 new Vector3(0, -0.6f, 0), 0.12f, Color.white, TextAlignmentOptions.Center, 4.6f, 0.8f);
             var t4 = LabFactory.Text(titleRoot, "Toca el botón del visor para entrar al laboratorio", new Vector3(0, -1.2f, 0), 0.07f,
                 new Color(0.8f, 0.88f, 1f), TextAlignmentOptions.Center, 4f, 0.2f);
+            // Sobre el paisaje (a veces un cielo claro) el halo blanco se pierde: sombra oscura y degradado al color del grupo.
+            LabType.OverImage(t1);
+            t1.colorGradient = new VertexGradient(Color.white, Color.white, Color.Lerp(Color.white, catColor, 0.75f), Color.Lerp(Color.white, catColor, 0.75f));
             texts = new[] { t1, t2, t3, t4 };
             foreach (var tx in texts)
             {

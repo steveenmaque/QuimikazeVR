@@ -106,7 +106,8 @@ namespace LabQuimicaVR
         /// El texto se lee mirando hacia +Z del padre.
         /// </summary>
         public static TextMeshPro Text(Transform parent, string text, Vector3 localPos, float size, Color color,
-            TextAlignmentOptions align = TextAlignmentOptions.Center, float width = 4f, float height = 1f, bool bold = false)
+            TextAlignmentOptions align = TextAlignmentOptions.Center, float width = 4f, float height = 1f, bool bold = false,
+            TextRole role = TextRole.Auto)
         {
             var go = new GameObject("Texto", typeof(RectTransform));
             go.transform.SetParent(parent, false);
@@ -121,6 +122,7 @@ namespace LabQuimicaVR
             tmp.overflowMode = TextOverflowModes.Overflow;
             tmp.richText = true;
             if (bold) tmp.fontStyle = FontStyles.Bold;
+            LabType.Apply(tmp, role, bold);
             var r = tmp.GetComponent<MeshRenderer>();
             r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             r.receiveShadows = false;
@@ -163,7 +165,7 @@ namespace LabQuimicaVR
         }
 
         public static GazeButton Button(Transform parent, string label, Vector3 localPos, Vector2 size, float textSize = 0.12f,
-            Color? color = null)
+            Color? color = null, TextRole role = TextRole.Title)
         {
             var root = Node("Boton_" + label, parent, localPos);
             var col = root.AddComponent<BoxCollider>();
@@ -172,7 +174,9 @@ namespace LabQuimicaVR
             var body = Box("Fondo", root.transform, new Vector3(0, 0, 0.01f), new Vector3(size.x, size.y, 0.04f), idle);
             var outline = Box("Contorno", root.transform, new Vector3(0, 0, 0.025f), new Vector3(size.x + 0.05f, size.y + 0.05f, 0.02f), Mat("TileHover"));
             outline.SetActive(false);
-            var text = Text(root.transform, label, new Vector3(0, 0, -0.02f), textSize, Color.white, TextAlignmentOptions.Center, size.x - 0.04f, size.y, true);
+            var text = Text(root.transform, label, new Vector3(0, 0, -0.02f), textSize, Color.white, TextAlignmentOptions.Center, size.x - 0.04f, size.y, true, role);
+            // En los botones, sombra en vez de halo: el texto pequeno se lee mas nitido.
+            if (text.font == LabType.Title) text.fontSharedMaterial = LabType.Shadow(text.font);
             var b = root.AddComponent<GazeButton>();
             b.Setup(body.GetComponent<Renderer>(), outline, text, idle);
             return b;

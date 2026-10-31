@@ -83,7 +83,7 @@ namespace LabQuimicaVR
             var tile = LabFactory.Box("Casilla", root, new Vector3(-2.2f, 0, -0.02f), new Vector3(1.15f, 1.15f, 0.04f), LabFactory.Mat("Cat_" + CategoryInfo.Code(e.Category)));
             tile.name = "Casilla";
             LabFactory.Text(root, e.Z.ToString(), new Vector3(-2.2f, 0.41f, -0.05f), 0.14f, DarkText, TextAlignmentOptions.TopLeft, 1.0f, 0.2f, true);
-            LabFactory.Text(root, e.Symbol, new Vector3(-2.2f, 0.03f, -0.05f), 0.46f, DarkText, TextAlignmentOptions.Center, 1.1f, 0.65f, true);
+            LabFactory.Text(root, e.Symbol, new Vector3(-2.2f, 0.03f, -0.05f), 0.46f, DarkText, TextAlignmentOptions.Center, 1.1f, 0.65f, true, TextRole.Symbol);
             LabFactory.Text(root, e.MassText, new Vector3(-2.2f, -0.42f, -0.05f), 0.09f, DarkText, TextAlignmentOptions.Center, 1.1f, 0.16f);
 
             var name = LabFactory.Text(root, e.Name.ToUpper(), new Vector3(0.55f, 0.32f, -0.02f), 0.44f, Color.white, TextAlignmentOptions.Left, 4.1f, 0.55f, true);

@@ -222,7 +222,7 @@ namespace LabQuimicaVR
             // Etiqueta negra con el numero y el simbolo, como en las colecciones de elementos
             var label = LabFactory.Node("Etiqueta", h, new Vector3(-size * 0.22f, size * 0.12f, -size / 2 - 0.002f)).transform;
             LabFactory.Box("Fondo", label, Vector3.zero, new Vector3(0.09f, 0.04f, 0.002f), LabFactory.Mat("Screen"));
-            LabFactory.Text(label, $"<b>{e.Z}</b> {e.Symbol}", new Vector3(0, 0, -0.003f), 0.022f, Color.white, TextAlignmentOptions.Center, 0.09f, 0.04f, true);
+            LabFactory.Text(label, $"<b>{e.Z}</b> {e.Symbol}", new Vector3(0, 0, -0.003f), 0.022f, Color.white, TextAlignmentOptions.Center, 0.09f, 0.04f, true, TextRole.Symbol);
         }
 
         static void Ampoule(Transform h, SampleInfo s, int seed)
