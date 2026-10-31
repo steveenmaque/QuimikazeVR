@@ -498,14 +498,21 @@ namespace LabQuimicaVR.EditorTools
             var center = new Vector3((a.x + b.x) / 2f, (topY + bottomY) / 2f, -0.02f);
             var size = new Vector2(b.x - a.x + tile, topY - bottomY);
             var preview = LabFactory.Node("VistaPrevia", root, center).transform;
-            LabFactory.Card(preview, Vector3.zero, size, new Color(0.11f, 0.19f, 0.3f));
-            LabFactory.Box("Borde", preview, new Vector3(0, 0, 0.004f), new Vector3(size.x + 0.04f, size.y + 0.04f, 0.004f), LabFactory.Tinted("GlowBase", Palette.Accent, 1.2f));
+            // Globo de aviso: violeta vivo con borde amarillo (llama la atencion sin perder contraste con el texto blanco).
+            LabFactory.Panel("Borde", preview, new Vector3(0, 0, 0.006f), size + new Vector2(0.08f, 0.08f), 0.24f, 0.01f,
+                new Color(1f, 0.86f, 0.35f), new Color(1f, 0.62f, 0.2f));
+            LabFactory.Panel("Globo", preview, new Vector3(0, 0, -0.004f), size, 0.2f, 0.012f,
+                new Color(0.5f, 0.32f, 0.95f), new Color(0.27f, 0.16f, 0.62f), "Panel");
 
             var hint = LabFactory.Node("Ayuda", preview).transform;
-            LabFactory.Text(hint, "<b>Mira un elemento</b> y pulsa el <color=#FFC34D>botón del visor</color> para entrar a su laboratorio",
-                new Vector3(0, 0.2f, -0.02f), 0.2f, Color.white, TextAlignmentOptions.Center, size.x - 0.3f, 0.75f);
+            var ojo = LabFactory.Panel("Icono", hint, new Vector3(-size.x / 2 + 0.62f, 0.12f, -0.02f), new Vector2(0.78f, 0.78f), 0.39f, 0.02f,
+                new Color(1f, 0.88f, 0.4f), new Color(1f, 0.6f, 0.2f));
+            LabFactory.Text(ojo.transform, "?", new Vector3(0, 0.02f, -0.02f), 0.5f, Palette.Ink, TextAlignmentOptions.Center, 0.7f, 0.7f, true);
+            var mainHint = LabFactory.Text(hint, "<b>Mira un elemento</b> y pulsa el <color=#FFD54D><b>botón del visor</b></color> para entrar a su laboratorio",
+                new Vector3(0.45f, 0.2f, -0.02f), 0.2f, Color.white, TextAlignmentOptions.Center, size.x - 1.5f, 0.75f);
+            LabType.OverImage(mainHint);
             LabFactory.Text(hint, "Usa el joystick izquierdo del mando para acercarte a la tabla",
-                new Vector3(0, -0.48f, -0.02f), 0.12f, Palette.TextDim, TextAlignmentOptions.Center, size.x - 0.3f, 0.3f);
+                new Vector3(0.45f, -0.48f, -0.02f), 0.12f, new Color(0.88f, 0.86f, 1f), TextAlignmentOptions.Center, size.x - 1.5f, 0.3f);
 
             var content = LabFactory.Node("Ficha", preview).transform;
             float tileX = -size.x / 2 + 0.8f;
@@ -544,7 +551,7 @@ namespace LabQuimicaVR.EditorTools
                 "<color=#FFD94D><b>p</b></color>  grupos 13 al 18\n" +
                 "<color=#59B3FF><b>d</b></color>  metales de transición (3 al 12)\n" +
                 "<color=#73E68C><b>f</b></color>  lantánidos y actínidos\n" +
-                "<size=80%><color=#9FB4CC>El bloque indica el último subnivel que se llena de electrones.</color></size>";
+                "<size=80%><color=#CCD4FF>El bloque indica el último subnivel que se llena de electrones.</color></size>";
             LabFactory.Text(s, text, new Vector3(0, -1.4f, -0.02f), 0.16f, Palette.Text, TextAlignmentOptions.Left, 4.0f, 1.4f);
         }
 
@@ -559,7 +566,7 @@ namespace LabQuimicaVR.EditorTools
                 var c = Color.Lerp(new Color(0.3f, 0.85f, 1f), new Color(0.75f, 0.45f, 1f), (n - 1) / 6f);
                 LabFactory.Circle("Nivel" + n, diagram, r, 0.014f, c);
             }
-            LabFactory.Text(s, "Hay <b>7 periodos</b>. El número del periodo indica cuántos <color=#FFC34D>niveles de energía</color> (capas K, L, M, N, O, P, Q) tiene el átomo.\n<size=80%><color=#9FB4CC>Ejemplo: el sodio (Na) está en el periodo 3, así que tiene 3 niveles con electrones.</color></size>",
+            LabFactory.Text(s, "Hay <b>7 periodos</b>. El número del periodo indica cuántos <color=#FFC34D>niveles de energía</color> (capas K, L, M, N, O, P, Q) tiene el átomo.\n<size=80%><color=#CCD4FF>Ejemplo: el sodio (Na) está en el periodo 3, así que tiene 3 niveles con electrones.</color></size>",
                 new Vector3(0, -1.42f, -0.02f), 0.15f, Palette.Text, TextAlignmentOptions.Center, 4.1f, 1.4f);
         }
 
@@ -576,7 +583,7 @@ namespace LabQuimicaVR.EditorTools
                 var item = LabFactory.Node("Leyenda_" + CategoryInfo.Code(cats[i]), s, p);
                 var bc = item.AddComponent<BoxCollider>();
                 bc.size = new Vector3(2.4f, 0.54f, 0.08f);
-                LabFactory.Card(item.transform, Vector3.zero, new Vector2(2.4f, 0.54f), new Color(0.12f, 0.2f, 0.32f));
+                LabFactory.Card(item.transform, Vector3.zero, new Vector2(2.4f, 0.54f), Palette.CardBg);
                 var outline = LabFactory.Box("Contorno", item.transform, new Vector3(0, 0, 0.002f), new Vector3(2.46f, 0.6f, 0.004f), LabFactory.Mat("TileHover"));
                 outline.SetActive(false);
                 LabFactory.Box("Color", item.transform, new Vector3(-0.92f, 0, -0.03f), new Vector3(0.38f, 0.38f, 0.04f), LabFactory.Mat("Cat_" + CategoryInfo.Code(cats[i])));
@@ -610,8 +617,9 @@ namespace LabQuimicaVR.EditorTools
         {
             var s = LabFactory.Screen("PantallaControles", parent, pos, Quaternion.Euler(0, 90f, 0), new Vector2(5.2f, 4.2f), "¿CÓMO SE USA?");
             // Mando dibujado con piezas simples
-            var pad = LabFactory.Node("Mando", s, new Vector3(0, 0.95f, -0.04f)).transform;
-            var body = LabFactory.Tinted("Card", new Color(0.22f, 0.27f, 0.35f));
+            var pad = LabFactory.Node("Mando", s, new Vector3(0, 1.08f, -0.04f)).transform;
+            pad.localScale = Vector3.one * 0.72f;
+            var body = LabFactory.Tinted("Card", new Color(0.36f, 0.38f, 0.78f));
             LabFactory.Box("Cuerpo", pad, Vector3.zero, new Vector3(1.6f, 0.62f, 0.05f), body);
             LabFactory.Shape("AsaIzq", PrimitiveType.Cylinder, pad, new Vector3(-0.72f, -0.18f, 0), new Vector3(0.5f, 0.025f, 0.5f), body).transform.localRotation = Quaternion.Euler(90, 0, 0);
             LabFactory.Shape("AsaDer", PrimitiveType.Cylinder, pad, new Vector3(0.72f, -0.18f, 0), new Vector3(0.5f, 0.025f, 0.5f), body).transform.localRotation = Quaternion.Euler(90, 0, 0);
@@ -630,16 +638,28 @@ namespace LabQuimicaVR.EditorTools
                 LabFactory.Shape("Boton" + label, PrimitiveType.Cylinder, pad, p, new Vector3(0.12f, 0.02f, 0.12f), LabFactory.Tinted("Card", c)).transform.localRotation = Quaternion.Euler(90, 0, 0);
                 LabFactory.Text(pad, label, p + new Vector3(0, 0, -0.03f), 0.06f, Color.black, TextAlignmentOptions.Center, 0.12f, 0.1f, true);
             }
-            string text =
-                "<color=#FFC34D>MIRA</color> un elemento: se ilumina y aparece su ficha.\n" +
-                "<color=#FFC34D>TOCA EL BOTÓN DEL VISOR</color> o <color=#4DCC66>A</color>: entrar / pulsar.\n" +
-                "<color=#FFC34D>MANTÉN PULSADO</color> el botón del visor o <color=#FFCC33>Y</color>: recentrar la vista.\n" +
-                "<color=#FFC34D>JOYSTICK IZQUIERDO</color>: caminar.   <color=#FFC34D>DERECHO</color>: girar.\n" +
-                "<color=#F25959>B</color>: volver a la tabla.   <color=#4D99FF>X</color>: cambiar modelo del átomo.\n" +
-                "<color=#FFC34D>L1 / R1</color>: ajustar las lentes si ves doble.\n" +
-                "Pon el celular en el visor <color=#FFC34D>del lado que quieras</color>: la pantalla gira sola.";
-            LabFactory.Text(s, text, new Vector3(0, -0.62f, -0.02f), 0.12f, Palette.Text, TextAlignmentOptions.Left, 4.9f, 2.0f);
-            var orient = LabFactory.Button(s, "Pantalla: Automática", new Vector3(0, -1.75f, -0.03f), new Vector2(3.0f, 0.3f), 0.1f, new Color(0.25f, 0.3f, 0.4f));
+            // Cada accion en una fila: etiqueta de color (como las teclas de un juego) y su explicacion.
+            (string key, Color c, string what)[] rows =
+            {
+                ("MIRA", Palette.Accent2, "un elemento: se ilumina y aparece su ficha"),
+                ("VISOR · A", new Color(0.35f, 0.85f, 0.45f), "toca el botón para entrar o pulsar"),
+                ("MANTÉN · Y", new Color(1f, 0.8f, 0.25f), "mantén pulsado para recentrar la vista"),
+                ("JOYSTICK", Palette.Accent, "izquierdo: caminar  ·  derecho: girar"),
+                ("B", new Color(1f, 0.42f, 0.42f), "volver a la tabla"),
+                ("X", new Color(0.4f, 0.65f, 1f), "cambiar el modelo del átomo"),
+                ("L1 / R1", Palette.Violet, "ajustar las lentes si ves doble"),
+            };
+            for (int i = 0; i < rows.Length; i++)
+            {
+                float y = 0.42f - i * 0.27f;
+                var chip = LabFactory.Panel("Tecla", s, new Vector3(-1.75f, y, -0.02f), new Vector2(1.3f, 0.23f), 0.11f, 0.012f,
+                    Color.Lerp(rows[i].c, Color.white, 0.3f), rows[i].c);
+                LabFactory.Text(chip.transform, rows[i].key, new Vector3(0, 0, -0.012f), 0.12f, Palette.Ink, TextAlignmentOptions.Center, 1.25f, 0.22f, true);
+                LabFactory.Text(s, rows[i].what, new Vector3(0.82f, y, -0.02f), 0.12f, Palette.Text, TextAlignmentOptions.Left, 3.4f, 0.24f);
+            }
+            LabFactory.Text(s, "Pon el celular en el visor <color=#FFD54D><b>del lado que quieras</b></color>: la pantalla gira sola.",
+                new Vector3(0, -1.47f, -0.02f), 0.105f, Palette.TextDim, TextAlignmentOptions.Center, 4.9f, 0.2f);
+            var orient = LabFactory.Button(s, "Pantalla: Automática", new Vector3(0, -1.75f, -0.03f), new Vector2(3.0f, 0.3f), 0.1f, Palette.ButtonAlt);
             orient.gameObject.AddComponent<OrientationButton>();
         }
 
@@ -647,8 +667,14 @@ namespace LabQuimicaVR.EditorTools
         {
             var s = LabFactory.Screen("PantallaDatos", parent, pos, Quaternion.Euler(0, 90f, 0), new Vector2(5.2f, 4.2f), "¿SABÍAS QUE...?", Palette.Accent2);
             var screen = s.gameObject.AddComponent<FunFactsScreen>();
-            screen.text = LabFactory.Text(s, FunFactsScreen.Facts[0], new Vector3(0, 0.05f, -0.02f), 0.2f, Color.white, TextAlignmentOptions.Center, 4.6f, 2.6f);
-            screen.counter = LabFactory.Text(s, "Dato 1", new Vector3(0, -1.6f, -0.02f), 0.08f, Palette.TextDim, TextAlignmentOptions.Center, 4.6f, 0.2f);
+            // Insignia redonda con signo de exclamacion, como un aviso de logro.
+            var badge = LabFactory.Panel("Insignia", s, new Vector3(0, 0.95f, -0.02f), new Vector2(0.7f, 0.7f), 0.35f, 0.03f,
+                new Color(1f, 0.9f, 0.45f), new Color(1f, 0.6f, 0.15f));
+            LabFactory.Text(badge.transform, "!", new Vector3(0, 0.02f, -0.02f), 0.45f, Palette.Ink, TextAlignmentOptions.Center, 0.6f, 0.6f, true);
+            screen.text = LabFactory.Text(s, FunFactsScreen.Facts[0], new Vector3(0, -0.3f, -0.02f), 0.2f, Color.white, TextAlignmentOptions.Center, 4.6f, 1.7f);
+            var chip = LabFactory.Panel("Contador", s, new Vector3(0, -1.55f, -0.02f), new Vector2(1.5f, 0.28f), 0.14f, 0.012f,
+                new Color(0.55f, 0.45f, 0.95f), new Color(0.38f, 0.3f, 0.78f));
+            screen.counter = LabFactory.Text(chip.transform, "Dato 1", new Vector3(0, 0, -0.012f), 0.12f, Color.white, TextAlignmentOptions.Center, 1.4f, 0.24f);
         }
 
         static void BuildBackWall(Transform parent, float zMin)

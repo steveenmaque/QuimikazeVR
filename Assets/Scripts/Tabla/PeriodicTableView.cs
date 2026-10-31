@@ -71,7 +71,7 @@ namespace LabQuimicaVR
             if (previewNumber != null) previewNumber.text = e.Z.ToString();
             if (previewSymbol != null) previewSymbol.text = e.Symbol;
             if (previewName != null) previewName.text = e.Name;
-            if (previewTitle != null) previewTitle.text = $"<b>{e.Name}</b>  <color=#9FB4CC><size=60%>{CategoryInfo.Name(e.Category)}</size></color>";
+            if (previewTitle != null) previewTitle.text = $"<b>{e.Name}</b>  <color=#CCD4FF><size=60%>{CategoryInfo.Name(e.Category)}</size></color>";
             if (previewInfo != null)
             {
                 previewInfo.text =

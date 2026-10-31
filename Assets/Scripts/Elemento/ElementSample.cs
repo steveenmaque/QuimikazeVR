@@ -571,8 +571,9 @@ namespace LabQuimicaVR
             float textH = 0.5f;
             float total = 0.16f + photoH + (photo != null ? 0.12f : 0) + textH;
             float top = total / 2f;
-            LabFactory.Box("Fondo", card, new Vector3(0, 0, 0.02f), new Vector3(w, total, 0.02f), LabFactory.Mat("Screen"));
-            LabFactory.Box("Borde", card, new Vector3(0, top + 0.006f, 0.02f), new Vector3(w, 0.012f, 0.025f), LabFactory.Tinted("GlowBase", Palette.Accent2, 1.5f));
+            LabFactory.Panel("Fondo", card, new Vector3(0, 0, 0.02f), new Vector2(w, total), 0.05f, 0.02f, Palette.PanelTop, Palette.PanelBottom, "Panel");
+            LabFactory.Panel("Borde", card, new Vector3(0, 0, 0.032f), new Vector2(w + 0.04f, total + 0.04f), 0.07f, 0.008f,
+                new Color(1f, 0.86f, 0.4f), new Color(0.95f, 0.6f, 0.15f));
             LabFactory.Text(card, "<b>ASÍ SE VE EN LA REALIDAD</b>", new Vector3(0, top - 0.07f, 0), 0.06f, Palette.Accent2, TextAlignmentOptions.Center, w - 0.06f, 0.1f);
             float y = top - 0.15f;
             if (photo != null)
@@ -583,12 +584,12 @@ namespace LabQuimicaVR
                 var quad = LabFactory.Shape("Foto", PrimitiveType.Quad, card, new Vector3(0, y - photoH / 2, 0.005f), new Vector3(pw, ph, 1f), PhotoMaterial(photo));
                 quad.name = "FotoReal";
                 y -= photoH;
-                var cap = LabFactory.Text(card, $"{s.PhotoCaption}\n<size=70%><color=#7F93AD>{ElementExtras.PhotoCredit(e.Z)}</color></size>",
+                var cap = LabFactory.Text(card, $"{s.PhotoCaption}\n<size=70%><color=#9CA6E0>{ElementExtras.PhotoCredit(e.Z)}</color></size>",
                     new Vector3(0, y - 0.06f, 0), 0.034f, Palette.TextDim, TextAlignmentOptions.Center, w - 0.08f, 0.12f);
                 cap.enableAutoSizing = true; cap.fontSizeMax = 0.34f; cap.fontSizeMin = 0.2f;
                 y -= 0.12f;
             }
-            var looks = LabFactory.Text(card, s.Looks + "\n<size=75%><color=#9FB4CC>(El modelo 3D está ampliado; la muestra real mide unos centímetros.)</color></size>",
+            var looks = LabFactory.Text(card, s.Looks + "\n<size=75%><color=#CCD4FF>(El modelo 3D está ampliado; la muestra real mide unos centímetros.)</color></size>",
                 new Vector3(0, y - textH / 2, 0), 0.05f, Color.white, TextAlignmentOptions.Center, w - 0.1f, textH - 0.04f);
             looks.enableAutoSizing = true; looks.fontSizeMax = 0.5f; looks.fontSizeMin = 0.3f;
         }

@@ -162,7 +162,7 @@ namespace LabQuimicaVR
             // Descubrimiento
             var card = new Vector3(0, -0.15f, 0);
             LabFactory.Card(s, card, new Vector2(right - left, 0.66f), Palette.CardBg);
-            var disc = LabFactory.Text(s, $"<color=#FFC34D><b>Descubridor:</b></color> {e.Discoverer}  <color=#9FB4CC>({e.Year})</color>",
+            var disc = LabFactory.Text(s, $"<color=#FFC34D><b>Descubridor:</b></color> {e.Discoverer}  <color=#CCD4FF>({e.Year})</color>",
                 card + new Vector3(0, 0.2f, -0.02f), 0.12f, Color.white, TextAlignmentOptions.Left, right - left - 0.2f, 0.2f);
             AutoFit(disc, 0.12f, 0.06f);
             var hist = LabFactory.Text(s, e.History, card + new Vector3(0, -0.09f, -0.02f), 0.1f, Palette.Text, TextAlignmentOptions.TopLeft, right - left - 0.2f, 0.4f);
@@ -171,7 +171,7 @@ namespace LabQuimicaVR
             // Tres tarjetas
             string[] titles = { "ORIGEN DEL NOMBRE", "APORTES Y VALOR", "¿SABÍAS QUE...?" };
             string[] bodies = { e.NameOrigin, e.Value, e.Curiosity };
-            Color[] colors = { new Color(0.13f, 0.24f, 0.36f), new Color(0.12f, 0.3f, 0.26f), new Color(0.32f, 0.2f, 0.36f) };
+            Color[] colors = { new Color(0.2f, 0.36f, 0.75f), new Color(0.1f, 0.5f, 0.42f), new Color(0.55f, 0.25f, 0.6f) };
             float cw = (right - left - 0.2f) / 3f;
             for (int i = 0; i < 3; i++)
             {
@@ -228,7 +228,7 @@ namespace LabQuimicaVR
 
             Prop(3, 0, 1, "Densidad", e.Density);
             Prop(3, 1, 2, "Protones · Neutrones · Electrones", $"{e.Z} p<sup>+</sup>   ·   {e.Neutrons} n<sup>0</sup>   ·   {e.Z} e<sup>-</sup>");
-            Prop(3, 3, 1, "Radiactivo", e.IsRadioactive ? "Sí" : "No", e.IsRadioactive ? new Color(0.45f, 0.22f, 0.12f) : (Color?)null);
+            Prop(3, 3, 1, "Radiactivo", e.IsRadioactive ? "Sí" : "No", e.IsRadioactive ? new Color(0.7f, 0.3f, 0.15f) : (Color?)null);
 
             Prop(4, 0, 2, "Configuración electrónica (Moeller)", ElectronConfiguration.Full(e));
             Prop(4, 2, 1, "Configuración abreviada", ElectronConfiguration.Kernel(e));
@@ -276,10 +276,10 @@ namespace LabQuimicaVR
             }
 
             int z = element.Z;
-            var prev = LabFactory.Button(s, "« Anterior", new Vector3(-0.56f, -0.55f, -0.03f), new Vector2(1.0f, 0.3f), 0.09f, new Color(0.25f, 0.3f, 0.4f));
+            var prev = LabFactory.Button(s, "« Anterior", new Vector3(-0.56f, -0.55f, -0.03f), new Vector2(1.0f, 0.3f), 0.09f, Palette.ButtonAlt);
             prev.interactable = z > 1;
             prev.OnClick += () => LabState.OpenElement(z - 1);
-            var next = LabFactory.Button(s, "Siguiente »", new Vector3(0.56f, -0.55f, -0.03f), new Vector2(1.0f, 0.3f), 0.09f, new Color(0.25f, 0.3f, 0.4f));
+            var next = LabFactory.Button(s, "Siguiente »", new Vector3(0.56f, -0.55f, -0.03f), new Vector2(1.0f, 0.3f), 0.09f, Palette.ButtonAlt);
             next.interactable = z < 118;
             next.OnClick += () => LabState.OpenElement(z + 1);
 
@@ -310,7 +310,7 @@ namespace LabQuimicaVR
             string title = ancient ? "CONOCIDO DESDE LA ANTIGÜEDAD" : people.Any(p => p.Kind == 'I') && !people.Any(p => p.IsPerson) ? "DÓNDE LO CREARON" : "QUIÉN LO DESCUBRIÓ";
             var s = LabFactory.Screen("PantallaDescubridores", discoverersAnchor, Vector3.zero, Quaternion.identity, size, title, Palette.Accent2);
 
-            string header = e.Discoverer.StartsWith("Conocid") ? e.Discoverer : $"{e.Discoverer}  <color=#9FB4CC>· {e.Year}</color>";
+            string header = e.Discoverer.StartsWith("Conocid") ? e.Discoverer : $"{e.Discoverer}  <color=#CCD4FF>· {e.Year}</color>";
             var line = LabFactory.Text(s, $"<color=#FFC34D><b>{header}</b></color>", new Vector3(0, 1.1f, -0.01f), 0.11f,
                 Color.white, TextAlignmentOptions.Center, size.x - 0.3f, 0.2f);
             AutoFit(line, 0.12f, 0.07f);
@@ -324,7 +324,7 @@ namespace LabQuimicaVR
                 var p = i < people.Count ? people[i] : null;
                 float x = -size.x / 2 + 0.15f + slot * (i + 0.5f);
                 var cardC = new Vector3(x, -0.36f, 0);
-                LabFactory.Card(s, cardC, new Vector2(slot - 0.12f, 2.6f), new Color(0.1f, 0.16f, 0.26f));
+                LabFactory.Card(s, cardC, new Vector2(slot - 0.12f, 2.6f), new Color(0.22f, 0.24f, 0.58f));
                 var tex = p?.LoadImage();
                 float imgW = slot - 0.3f;
                 var imgCenter = cardC + new Vector3(0, 0.45f, -0.015f);
@@ -339,7 +339,7 @@ namespace LabQuimicaVR
                 else
                 {
                     // Silueta cuando no existe un retrato conocido
-                    var sil = LabFactory.Tinted("Card", new Color(0.25f, 0.32f, 0.44f));
+                    var sil = LabFactory.Tinted("Card", new Color(0.35f, 0.38f, 0.7f));
                     LabFactory.Shape("Cabeza", PrimitiveType.Sphere, s, imgCenter + new Vector3(0, 0.3f, 0), new Vector3(0.42f, 0.5f, 0.02f), sil);
                     LabFactory.Shape("Hombros", PrimitiveType.Sphere, s, imgCenter + new Vector3(0, -0.4f, 0), new Vector3(0.9f, 0.6f, 0.02f), sil);
                     LabFactory.Text(s, p != null && !p.IsPerson ? "Sin imagen" : "Sin retrato conocido", imgCenter + new Vector3(0, -0.85f, -0.01f), 0.06f, Palette.TextDim, TextAlignmentOptions.Center, imgW, 0.12f);
@@ -355,7 +355,7 @@ namespace LabQuimicaVR
                 }
                 if (p != null && tex != null)
                 {
-                    var credit = LabFactory.Text(s, ElementExtras.Credit(p.Author, p.License), cardC + new Vector3(0, -1.47f, -0.015f), 0.035f, new Color(0.45f, 0.53f, 0.65f),
+                    var credit = LabFactory.Text(s, ElementExtras.Credit(p.Author, p.License), cardC + new Vector3(0, -1.47f, -0.015f), 0.035f, new Color(0.62f, 0.66f, 0.9f),
                         TextAlignmentOptions.Center, slot - 0.2f, 0.12f);
                     AutoFit(credit, 0.035f, 0.025f);
                 }
@@ -383,7 +383,7 @@ namespace LabQuimicaVR
                 m.mainTextureOffset = new Vector2(0.34f, 0.27f);
                 LabFactory.Box("Marco", s, imgC + new Vector3(0, 0, 0.009f), new Vector3(2.66f, 1.66f, 0.006f), LabFactory.Mat("ScreenFrame"));
                 LabFactory.Shape("Paisaje", PrimitiveType.Quad, s, imgC, new Vector3(2.6f, 1.6f, 1f), m);
-                LabFactory.Text(s, $"<b>{land.Title}</b>\n<size=60%><color=#7F93AD>{ElementExtras.Credit(land.Author, land.License)}</color></size>",
+                LabFactory.Text(s, $"<b>{land.Title}</b>\n<size=60%><color=#9CA6E0>{ElementExtras.Credit(land.Author, land.License)}</color></size>",
                     imgC + new Vector3(0, -1.02f, 0), 0.1f, Palette.Accent2, TextAlignmentOptions.Center, 2.6f, 0.3f);
             }
             var nature = LabFactory.Text(s, sample.Nature, new Vector3(1.4f, 0.55f, -0.015f), 0.13f, Color.white, TextAlignmentOptions.TopLeft, 2.5f, 1.6f);
@@ -407,7 +407,7 @@ namespace LabQuimicaVR
             for (int i = 0; i < chips.Length; i++)
             {
                 var c = new Vector3(-size.x / 2 + 0.2f + (size.x - 0.4f) / 4f * (i + 0.5f), -1.42f, 0);
-                LabFactory.Card(s, c, new Vector2((size.x - 0.4f) / 4f - 0.08f, 0.42f), new Color(0.1f, 0.24f, 0.2f));
+                LabFactory.Card(s, c, new Vector2((size.x - 0.4f) / 4f - 0.08f, 0.42f), new Color(0.1f, 0.45f, 0.38f));
                 var t = LabFactory.Text(s, chips[i], c + new Vector3(0, 0, -0.015f), 0.075f, Color.white, TextAlignmentOptions.Center, (size.x - 0.4f) / 4f - 0.16f, 0.36f);
                 AutoFit(t, 0.075f, 0.045f);
             }

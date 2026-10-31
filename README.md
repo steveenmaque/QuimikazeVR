@@ -202,6 +202,7 @@ Unity 6 (6000.6.0f1) · Built-in Render Pipeline · Android en horizontal · IL2
 | `Assets/Resources/Fotos` | Fotos reales de los elementos y retratos de los descubridores |
 | `Assets/Resources/Paisajes` | Paisajes 360° de la transición y de la ventana |
 | `Assets/Laboratorio/Fuentes`, `Assets/Resources/Fuentes` | Fuentes Fredoka y Atkinson Hyperlegible Next (.ttf y su versión para TextMeshPro); ver [TIPOGRAFIA.md](TIPOGRAFIA.md) |
+| `Assets/Laboratorio/Shaders` | Shader de los paneles redondeados (degradado y patrón hexagonal); los colores se explican en [COLORES.md](COLORES.md) |
 | `Assets/Resources/LabMaterials`, `LabMeshes` | Materiales y modelos 3D generados |
 | `Assets/Scenes` | `TablaPeriodica` y `ElementoDetalle` |
 
