@@ -202,7 +202,7 @@ namespace LabQuimicaVR.EditorTools
             Unlit("Screen", "0D1624");
             Unlit("Card", "1C3350");
             Unlit("ButtonIdle", "1F3B5C");
-            Unlit("ButtonActive", "00A86B");
+            Unlit("ButtonActive", "006B4F");
             // Iconos y etiquetas redondeadas (PanelMesh): el color va en los vertices y el material solo lo multiplica.
             var panel = GetMat("PanelPlain", FindShader("Quimikaze/Panel"));
             panel.color = Color.white;

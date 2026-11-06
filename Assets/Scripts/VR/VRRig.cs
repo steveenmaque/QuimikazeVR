@@ -278,7 +278,9 @@ namespace LabQuimicaVR
         {
             float dt = Time.deltaTime;
 
-            // Orientacion de la cabeza
+            // Orientacion de la cabeza (HU09 / XAUR: el eje vertical del joystick derecho tambien permite
+            // inclinar la mirada arriba/abajo sin exigir inclinar el cuello, incluso cuando hay giroscopio).
+            stickPitch = Mathf.Clamp(stickPitch - LabInput.LookVertical * lookSpeed * dt, -65f, 65f);
             if (useGyro)
             {
                 var att = Input.gyro.attitude;
@@ -295,7 +297,7 @@ namespace LabQuimicaVR
                     uprightTime = upright ? uprightTime + dt : 0f;
                     if (uprightTime >= 0.5f) Recenter();
                 }
-                head.localRotation = Quaternion.Euler(0f, yawOffset, 0f) * GyroHead(att);
+                head.localRotation = Quaternion.Euler(0f, yawOffset, 0f) * GyroHead(att) * Quaternion.Euler(stickPitch, 0f, 0f);
             }
             else if (useTilt)
             {
@@ -305,7 +307,6 @@ namespace LabQuimicaVR
                 float inPlane = Mathf.Sqrt(a.x * a.x + a.y * a.y);
                 float target = Mathf.Clamp(-Mathf.Atan2(a.z, inPlane) * Mathf.Rad2Deg, -80f, 80f);
                 tiltPitch = Mathf.LerpAngle(tiltPitch, target, 1f - Mathf.Exp(-8f * dt));
-                stickPitch = Mathf.Clamp(stickPitch + LabInput.LookVertical * lookSpeed * dt, -60f, 60f);
                 head.localRotation = Quaternion.Euler(Mathf.Clamp(tiltPitch + stickPitch, -80f, 80f), 0f, 0f);
             }
             else
@@ -315,8 +316,7 @@ namespace LabQuimicaVR
                     mouseYaw += Input.GetAxis("Mouse X") * mouseSensitivity;
                     mousePitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
                 }
-                mousePitch = Mathf.Clamp(mousePitch + LabInput.LookVertical * lookSpeed * dt, -80f, 80f);
-                head.localRotation = Quaternion.Euler(mousePitch, mouseYaw, 0f);
+                head.localRotation = Quaternion.Euler(Mathf.Clamp(mousePitch + stickPitch, -80f, 80f), mouseYaw, 0f);
             }
 
             // Giro del cuerpo con el joystick derecho
@@ -333,6 +333,11 @@ namespace LabQuimicaVR
 
             if (LabInput.RecenterDown) Recenter();
             if (LabInput.ToggleStereoDown) SetStereo(!Stereo);
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                LabInput.InvertRightStickY = !LabInput.InvertRightStickY;
+                ShowToast("Eje Y del joystick derecho: " + (LabInput.InvertRightStickY ? "Invertido" : "Normal"), 2f);
+            }
 
             // Ajuste de la separacion de las lentes (L1 / R1 del mando, o [ y ])
             int lens = LabInput.LensAdjust;

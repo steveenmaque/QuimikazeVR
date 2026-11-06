@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -79,7 +79,7 @@ namespace LabQuimicaVR.EditorTools
                 case 0:
                     if (!After(2.5)) return;
                     ShotFromRig("1_tabla_inicio");
-                    Object.FindFirstObjectByType<PeriodicTableView>()?.ShowPreview(26);
+                    Object.FindAnyObjectByType<PeriodicTableView>()?.ShowPreview(26);
                     Next();
                     break;
                 case 1:
@@ -102,19 +102,19 @@ namespace LabQuimicaVR.EditorTools
                     Shot("3c_hierro_descubridores", new Vector3(-0.6f, 1.8f, -3.2f), new Vector3(-4, -90, 0));
                     Shot("3d_hierro_naturaleza", new Vector3(0.6f, 1.8f, -3.2f), new Vector3(-4, 90, 0));
                     Shot("4_hierro_bohr_cerca", new Vector3(0, 1.9f, 3.2f), new Vector3(0, 0, 0));
-                    Object.FindFirstObjectByType<ElementDetailController>()?.SetMode(AtomViewMode.Cloud);
+                    Object.FindAnyObjectByType<ElementDetailController>()?.SetMode(AtomViewMode.Cloud);
                     Next();
                     break;
                 case 4:
                     if (!After(1.5)) return;
                     Shot("5_hierro_nube", new Vector3(0, 1.9f, 3.2f), Vector3.zero);
-                    Object.FindFirstObjectByType<ElementDetailController>()?.SetMode(AtomViewMode.Nucleus);
+                    Object.FindAnyObjectByType<ElementDetailController>()?.SetMode(AtomViewMode.Nucleus);
                     Next();
                     break;
                 case 5:
                     if (!After(1.5)) return;
                     Shot("6_hierro_nucleo", new Vector3(0, 1.9f, 3.2f), Vector3.zero);
-                    Object.FindFirstObjectByType<ReactionStation>()?.Run(8);
+                    Object.FindAnyObjectByType<ReactionStation>()?.Run(8);
                     Next();
                     break;
                 case 6:
@@ -125,7 +125,7 @@ namespace LabQuimicaVR.EditorTools
                 case 7:
                     if (!After(2.5)) return;
                     ShotReaction("8_reaccion_resultado");
-                    Object.FindFirstObjectByType<ReactionStation>()?.Run(17);
+                    Object.FindAnyObjectByType<ReactionStation>()?.Run(17);
                     Next();
                     break;
                 case 8:
@@ -137,7 +137,7 @@ namespace LabQuimicaVR.EditorTools
                 case 9:
                     if (!After(6.5)) return;
                     ShotFromRig("10_hidrogeno");
-                    Object.FindFirstObjectByType<ElementDetailController>()?.SetMode(AtomViewMode.Cloud);
+                    Object.FindAnyObjectByType<ElementDetailController>()?.SetMode(AtomViewMode.Cloud);
                     Next();
                     break;
                 case 10:
@@ -164,14 +164,14 @@ namespace LabQuimicaVR.EditorTools
 
         static void ShotFromRig(string name)
         {
-            var rig = Object.FindFirstObjectByType<VRRig>();
+            var rig = Object.FindAnyObjectByType<VRRig>();
             if (rig == null) { log.Add("No se encontró el JugadorVR para la captura " + name); return; }
             Shot(name, rig.head.position, rig.head.eulerAngles);
         }
 
         static void ShotReaction(string name)
         {
-            var station = Object.FindFirstObjectByType<ReactionStation>();
+            var station = Object.FindAnyObjectByType<ReactionStation>();
             if (station == null) return;
             var t = station.transform;
             var pos = t.position - t.forward * 2.6f + Vector3.down * 0.5f;

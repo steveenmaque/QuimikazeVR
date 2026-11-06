@@ -21,7 +21,8 @@ namespace LabQuimicaVR
         ElementInfo element;
         Transform chamberCenter;
         Transform actors;
-        TextMeshPro equationText, productText, descriptionText, typeText;
+        TextMeshPro equationText, productText, descriptionText, typeText, chamberBanner;
+        Renderer chamberRing;
         readonly List<GazeButton> buttons = new List<GazeButton>();
         Coroutine running;
         Light flash;
@@ -54,23 +55,32 @@ namespace LabQuimicaVR
 
             LabFactory.Box("Separador", screen, new Vector3(0, -0.28f, -0.005f), new Vector3(size.x * 0.92f, 0.01f, 0.005f), LabFactory.Tinted("GlowBase", Palette.Accent2, 1.2f));
             equationText = LabFactory.Text(screen, "", new Vector3(0, -0.45f, -0.01f), 0.13f, Color.white, TextAlignmentOptions.Center, size.x - 0.2f, 0.25f, true, TextRole.Symbol);
-            productText = LabFactory.Text(screen, "Mira un botón y púlsalo para ver la reacción.", new Vector3(0, -0.66f, -0.01f), 0.085f, Palette.Accent2, TextAlignmentOptions.Center, size.x - 0.2f, 0.2f, true);
+            productText = LabFactory.Text(screen, "▼ Pulsa un reactivo y observa el resultado abajo en la CAMPANA DE REACCIÓN ▼", new Vector3(0, -0.66f, -0.01f), 0.082f, Palette.Accent2, TextAlignmentOptions.Center, size.x - 0.2f, 0.22f, true);
             descriptionText = LabFactory.Text(screen, "", new Vector3(0, -0.98f, -0.01f), 0.08f, Palette.Text, TextAlignmentOptions.Top, size.x - 0.3f, 0.5f);
             descriptionText.enableAutoSizing = true;
             descriptionText.fontSizeMax = 0.8f;
             descriptionText.fontSizeMin = 0.5f;
             typeText = LabFactory.Text(screen, "", new Vector3(0, -1.32f, -0.01f), 0.06f, Palette.TextDim, TextAlignmentOptions.Center, size.x - 0.2f, 0.12f);
 
-            // Camara de reaccion delante de la pantalla
+            // Camara de reaccion delante de la pantalla (con rotulo visible HU11 / HA3 / HA7)
             var station = LabFactory.Node("CamaraDeReaccion", transform, new Vector3(0, 0, -1.15f)).transform;
             float floorY = -transform.position.y;
             LabFactory.Box("Mesa", station, new Vector3(0, floorY + 0.45f, 0), new Vector3(1.3f, 0.9f, 0.7f), LabFactory.Mat("BenchBody"), true);
             LabFactory.Box("Cubierta", station, new Vector3(0, floorY + 0.92f, 0), new Vector3(1.36f, 0.05f, 0.76f), LabFactory.Mat("BenchTop"));
             LabFactory.Shape("Base", PrimitiveType.Cylinder, station, new Vector3(0, floorY + 0.97f, 0), new Vector3(0.62f, 0.03f, 0.62f), LabFactory.Mat("ScreenFrame"));
             var ring = LabFactory.LoadMesh("Anillo");
-            if (ring != null) LabFactory.MeshObject("Aro", ring, station, new Vector3(0, floorY + 1.0f, 0), Vector3.one * 0.32f, LabFactory.Tinted("GlowBase", Palette.Accent2, 1.5f));
+            if (ring != null)
+            {
+                var ringGo = LabFactory.MeshObject("Aro", ring, station, new Vector3(0, floorY + 1.0f, 0), Vector3.one * 0.32f, LabFactory.Tinted("GlowBase", Palette.Accent2, 1.5f));
+                chamberRing = ringGo.GetComponent<Renderer>();
+            }
             var dome = LabFactory.LoadMesh("Dome");
             if (dome != null) LabFactory.MeshObject("Cupula", dome, station, new Vector3(0, floorY + 1.0f, 0), Vector3.one * 0.3f, LabFactory.Mat("Glass"));
+            var bannerRoot = LabFactory.Node("RotuloCampana", station, new Vector3(0, floorY + 0.72f, -0.36f)).transform;
+            LabFactory.Box("FondoRotulo", bannerRoot, Vector3.zero, new Vector3(1.22f, 0.24f, 0.014f), LabFactory.Mat("Screen"));
+            LabFactory.Box("BordeRotulo", bannerRoot, new Vector3(0, 0, 0.003f), new Vector3(1.26f, 0.27f, 0.01f), LabFactory.Tinted("GlowBase", Palette.Accent2, 1.5f));
+            chamberBanner = LabFactory.Text(bannerRoot, $"<b>CAMPANA DE REACCIÓN</b>\n<size=78%><color=#FFC34D>Muestra lista: {e.Name} ({e.Symbol})</color></size>",
+                new Vector3(0, 0, -0.012f), 0.068f, Color.white, TextAlignmentOptions.Center, 1.18f, 0.22f);
             chamberCenter = LabFactory.Node("Centro", station, new Vector3(0, floorY + 1.18f, 0)).transform;
             actors = LabFactory.Node("Actores", chamberCenter).transform;
 
@@ -116,9 +126,13 @@ namespace LabQuimicaVR
             foreach (var b in buttons) b.SetSelected(b.Label != null && b.Label.text == partner.Symbol);
 
             equationText.text = $"{element.Symbol} + {partner.Symbol}";
-            productText.text = "Mezclando...";
+            productText.text = "▼ Mezclando en la CAMPANA DE REACCIÓN... ▼";
             descriptionText.text = "";
             typeText.text = "";
+            if (chamberBanner != null)
+                chamberBanner.text = $"<b>¡MEZCLANDO EN LA CAMPANA!</b>\n<size=78%><color=#00E5FF>{element.Symbol} + {partner.Symbol}</color></size>";
+            if (chamberRing != null)
+                chamberRing.sharedMaterial = LabFactory.Tinted("GlowBase", Palette.Accent, 2.2f);
 
             LabFactory.ClearChildren(actors);
             yield return null;
@@ -147,11 +161,17 @@ namespace LabQuimicaVR
             }
 
             equationText.text = ReactionDatabase.FormatEquation(result.Equation);
-            productText.text = result.ProductName;
+            productText.text = reacts ? $"▼ Resultado en la campana: {result.ProductName} ▼" : $"▼ {result.ProductName} (sin reacción química) ▼";
             descriptionText.text = result.Description;
             typeText.text = result.Predicted
                 ? "Predicción usando las valencias: puede requerir calor u otras condiciones."
                 : "Reacción real y conocida.";
+            if (chamberBanner != null)
+                chamberBanner.text = reacts
+                    ? $"<b>RESULTADO EN CAMPANA:</b>\n<size=78%><color=#5FD6A8>{result.ProductName}</color></size>"
+                    : $"<b>SIN REACCIÓN QUÍMICA</b>\n<size=78%><color=#FFC34D>{element.Symbol} + {partner.Symbol} no reaccionan</color></size>";
+            if (chamberRing != null)
+                chamberRing.sharedMaterial = LabFactory.Tinted("GlowBase", reacts ? Palette.Good : Palette.Accent2, 1.8f);
             LabAudio.Play(LabSound.Chime, 0.6f);
             running = null;
         }

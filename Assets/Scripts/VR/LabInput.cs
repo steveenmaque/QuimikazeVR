@@ -51,8 +51,21 @@ namespace LabQuimicaVR
 
         // En Android el joystick derecho suele ser los ejes 3/4 y la cruceta los ejes 5/6.
         // En Windows (mando tipo Xbox) el joystick derecho es 4/5 y la cruceta 6/7.
+        // Nota: en Windows (XInput), Joy5 devuelve +1 al empujar arriba, mientras que en Android
+        // (MotionEvent.AXIS_RZ) devuelve -1 al empujar arriba. Invertimos en Windows para que
+        // ambos sistemas tengan la misma convencion (negativo = mirar arriba) y además se pueda
+        // alternar en vivo con InvertRightStickY (tecla I).
+        public static bool InvertRightStickY;
+
         static float RightStickX => Axis(Android ? "Joy3" : "Joy4");
-        static float RightStickY => Axis(Android ? "Joy4" : "Joy5");
+        static float RightStickY
+        {
+            get
+            {
+                float raw = Android ? Axis("Joy4") : -Axis("Joy5");
+                return InvertRightStickY ? -raw : raw;
+            }
+        }
         static float DPadX => Axis(Android ? "Joy5" : "Joy6");
         static float DPadY => Android ? -Axis("Joy6") : Axis("Joy7");
 
@@ -100,13 +113,16 @@ namespace LabQuimicaVR
             }
         }
 
-        /// <summary>Joystick derecho vertical (negativo = mirar arriba).</summary>
+        /// <summary>Joystick derecho vertical (negativo = mirar arriba). Tambien responde a T/G o RePag/AvPag.</summary>
         public static float LookVertical
         {
             get
             {
                 float v = RightStickY;
-                return Mathf.Abs(v) < 0.25f ? 0f : v;
+                if (Mathf.Abs(v) < 0.25f) v = 0f;
+                if (Input.GetKey(KeyCode.T) || Input.GetKey(KeyCode.PageUp)) v -= 1f;
+                if (Input.GetKey(KeyCode.G) || Input.GetKey(KeyCode.PageDown)) v += 1f;
+                return Mathf.Clamp(v, -1f, 1f);
             }
         }
 

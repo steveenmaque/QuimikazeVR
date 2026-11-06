@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -24,12 +24,13 @@ namespace LabQuimicaVR
         public Transform discoverersAnchor;
         public Transform natureAnchor;
         public Transform landscapeAnchor;
+        public Transform challengeAnchor;
 
         [Tooltip("Elemento que se muestra en el editor (vista previa)")]
         public int previewZ = 6;
 
         AtomModel atom;
-        TextMeshPro modeTitle, modeInfo;
+        TextMeshPro modeInfo;
         readonly List<(AtomViewMode mode, GazeButton button)> modeButtons = new List<(AtomViewMode, GazeButton)>();
         ElementInfo element;
 
@@ -69,6 +70,12 @@ namespace LabQuimicaVR
                 if (station == null) station = reactionAnchor.gameObject.AddComponent<ReactionStation>();
                 station.Build(element);
             }
+            if (challengeAnchor != null)
+            {
+                var challenge = challengeAnchor.GetComponent<ElementChallengeStation>();
+                if (challenge == null) challenge = challengeAnchor.gameObject.AddComponent<ElementChallengeStation>();
+                challenge.Build(element);
+            }
             SetMode(AtomViewMode.Bohr);
         }
 
@@ -97,7 +104,6 @@ namespace LabQuimicaVR
             AutoFit(chipText, 0.14f, 0.08f);
             chipText.textWrappingMode = TextWrappingModes.NoWrap;
 
-            modeTitle = null;
             modeInfo = LabFactory.Text(root, "", new Vector3(0.55f, -0.4f, -0.02f), 0.12f, Color.white, TextAlignmentOptions.Left, 4.1f, 0.34f);
             AutoFit(modeInfo, 0.12f, 0.07f);
         }
@@ -283,8 +289,8 @@ namespace LabQuimicaVR
             next.interactable = z < 118;
             next.OnClick += () => LabState.OpenElement(z + 1);
 
-            LabFactory.Text(s, "Mira un botón y toca el botón del visor (o A)\nX: cambiar modelo  ·  B: volver a la tabla", new Vector3(0, -0.98f, -0.01f), 0.075f, Palette.TextDim,
-                TextAlignmentOptions.Center, size.x - 0.2f, 0.3f);
+            LabFactory.Text(s, "<b>A / Visor:</b> elegir modo   ·   <b>X:</b> cambiar modelo   ·   <b>B:</b> volver a la tabla\n<size=85%><color=#9FB4CC>Joystick der.: apuntar sin girar el cuello (XAUR)</color></size>", new Vector3(0, -0.96f, -0.01f), 0.088f, Palette.Text,
+                TextAlignmentOptions.Center, size.x - 0.15f, 0.36f);
         }
 
         // ---------------- Pared de atras ----------------
@@ -292,7 +298,11 @@ namespace LabQuimicaVR
         {
             LabFactory.ClearChildren(backAnchor);
             var s = LabFactory.Screen("PantallaVolver", backAnchor, Vector3.zero, Quaternion.identity, new Vector2(4.2f, 1.3f), "SALIDA DEL LABORATORIO");
-            LabFactory.Text(s, $"Estás en el laboratorio {element.Del} <b>{element.Name.ToLower()}</b>", new Vector3(0, 0.2f, -0.01f), 0.09f, Palette.Text, TextAlignmentOptions.Center, 4f, 0.16f);
+            int stars = LabState.GetStars(element.Z);
+            string challengeLine = stars > 0
+                ? $"<color=#5FD6A8>Reto completado ({stars}/3 medallas)</color>"
+                : "<color=#FFC34D>¡No olvides resolver el Reto de la Sesión (3 preguntas)!</color>";
+            LabFactory.Text(s, $"Estás en el laboratorio {element.Del} <b>{element.Name.ToLower()}</b>  ·  {challengeLine}", new Vector3(0, 0.2f, -0.01f), 0.082f, Palette.Text, TextAlignmentOptions.Center, 4f, 0.18f);
             var back = LabFactory.Button(s, "Volver a la tabla periódica", new Vector3(0, -0.17f, -0.03f), new Vector2(3.0f, 0.36f), 0.12f, new Color(0.0f, 0.45f, 0.6f));
             back.OnClick += LabState.BackToTable;
             LabFactory.Text(s, "También puedes pulsar el botón B del mando", new Vector3(0, -0.5f, -0.01f), 0.055f, Palette.TextDim, TextAlignmentOptions.Center, 4f, 0.12f);

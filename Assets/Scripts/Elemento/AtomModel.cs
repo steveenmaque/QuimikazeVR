@@ -106,8 +106,10 @@ namespace LabQuimicaVR
                     new Vector3(Mathf.Cos(a) * radius, 0f, Mathf.Sin(a) * radius), Vector3.one * 0.075f, mat);
             }
 
+            float labelAngle = (n - 1) * 0.85f;
+            var labelPos = new Vector3(Mathf.Cos(labelAngle) * (radius + 0.14f), 0.04f * ((n % 2 == 0) ? 1 : -1), Mathf.Sin(labelAngle) * (radius + 0.14f));
             var label = LabFactory.Text(shell, $"<b>{ElectronConfiguration.ShellLetters[n - 1]}</b> {electrons}e<sup>-</sup>",
-                new Vector3(radius + 0.12f, 0f, 0f), 0.085f, color, TextAlignmentOptions.Center, 0.6f, 0.2f);
+                labelPos, 0.095f, color, TextAlignmentOptions.Center, 0.65f, 0.22f);
             label.gameObject.AddComponent<FaceCamera>();
 
             shells.Add((electronsRoot, 70f / (n + 0.5f)));

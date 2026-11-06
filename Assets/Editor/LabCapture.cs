@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -40,6 +40,18 @@ namespace LabQuimicaVR.EditorTools
             Shot("elemento_ventana", new Vector3(0, 1.7f, -1.0f), new Vector3(-10, 180, 0), 85);
             FaceCards(new Vector3(1.5f, 1.6f, 1.2f));
             Shot("elemento_vitrina", new Vector3(1.5f, 1.6f, 1.2f), new Vector3(8, 34, 0), 60);
+            var retoCamPos = new Vector3(-1.95f, 1.85f, -2.15f);
+            var retoCamEuler = new Vector3(2, -148, 0);
+            Shot("elemento_reto", retoCamPos, retoCamEuler, 65);
+            var ch = Object.FindAnyObjectByType<ElementChallengeStation>();
+            if (ch != null)
+            {
+                ch.SetDemoState(ElementDatabase.Get(6), true);
+                Prepare();
+                Shot("elemento_reto_correcto", retoCamPos, retoCamEuler, 65);
+                ch.SetDemoState(ElementDatabase.Get(6), false);
+                Prepare();
+            }
 
             if (!string.IsNullOrEmpty(current)) EditorSceneManager.OpenScene(current);
             LabAutoSync.WriteStatus("Capturas guardadas en " + Dir);
@@ -59,7 +71,7 @@ namespace LabQuimicaVR.EditorTools
             if (EditorSceneManager.GetActiveScene().path != LabSceneBuilder.ElementScenePath)
                 EditorSceneManager.OpenScene(LabSceneBuilder.ElementScenePath);
             ElementExtras.Reload();
-            var c = Object.FindFirstObjectByType<ElementDetailController>();
+            var c = Object.FindAnyObjectByType<ElementDetailController>();
             if (c == null || c.sampleAnchor == null) { LabAutoSync.WriteStatus("ERROR: no hay ElementDetailController"); return; }
             var anchor = c.sampleAnchor;
             for (int z = from; z <= to; z++)
@@ -87,7 +99,7 @@ namespace LabQuimicaVR.EditorTools
             if (EditorSceneManager.GetActiveScene().path != LabSceneBuilder.ElementScenePath)
                 EditorSceneManager.OpenScene(LabSceneBuilder.ElementScenePath);
             ElementExtras.Reload();
-            var c = Object.FindFirstObjectByType<ElementDetailController>();
+            var c = Object.FindAnyObjectByType<ElementDetailController>();
             foreach (int z in new[] { 1, 8, 18, 29, 40, 79, 88, 94, 113, 118 })
             {
                 c.Populate(z);
@@ -103,7 +115,7 @@ namespace LabQuimicaVR.EditorTools
         /// <summary>Las fichas que miran a la camara (FaceCamera) solo giran en Play; aqui se orientan a mano.</summary>
         static void FaceCards(Vector3 eye)
         {
-            foreach (var f in Object.FindObjectsByType<FaceCamera>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            foreach (var f in Object.FindObjectsByType<FaceCamera>(FindObjectsInactive.Exclude))
             {
                 var d = f.transform.position - eye;
                 if (d.sqrMagnitude > 0.001f) f.transform.rotation = Quaternion.LookRotation(d, Vector3.up);
@@ -112,7 +124,7 @@ namespace LabQuimicaVR.EditorTools
 
         static void Prepare()
         {
-            foreach (var t in Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            foreach (var t in Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Exclude))
                 t.ForceMeshUpdate(true, true);
         }
 
@@ -120,6 +132,7 @@ namespace LabQuimicaVR.EditorTools
 
         static void Shot(string name, Vector3 pos, Vector3 euler, float fov, int w, int h, string dir)
         {
+            FaceCards(pos);
             var go = new GameObject("CapturaTemporal");
             var cam = go.AddComponent<Camera>();
             cam.transform.SetPositionAndRotation(pos, Quaternion.Euler(euler));

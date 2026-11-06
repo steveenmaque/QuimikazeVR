@@ -71,15 +71,24 @@ namespace LabQuimicaVR
             if (previewNumber != null) previewNumber.text = e.Z.ToString();
             if (previewSymbol != null) previewSymbol.text = e.Symbol;
             if (previewName != null) previewName.text = e.Name;
-            if (previewTitle != null) previewTitle.text = $"<b>{e.Name}</b>  <color=#9FB4CC><size=60%>{CategoryInfo.Name(e.Category)}</size></color>";
+            if (previewTitle != null)
+            {
+                int stars = LabState.GetStars(e.Z);
+                string starBadge = stars > 0 ? $"  {ElementChallengeStation.FormatMedals(stars)}" : "";
+                previewTitle.text = $"<b>{e.Name}</b>{starBadge}  <color=#9FB4CC><size=60%>[{CategoryInfo.ShortTag(e.Category)}] {CategoryInfo.Name(e.Category)}</size></color>";
+            }
             if (previewInfo != null)
             {
+                int stars = LabState.GetStars(e.Z);
+                string challengeStatus = stars > 0
+                    ? $"<color=#5FD6A8><b>Reto superado ({stars}/3 pts)</b></color>"
+                    : "<color=#FFC34D><b>Reto de 3 preguntas disponible</b></color>";
                 previewInfo.text =
-                    $"Número atómico: <b>{e.Z}</b>     Masa atómica: <b>{e.MassText} u</b>\n" +
-                    $"Grupo: <b>{PeriodicLayout.GroupLabel(e)}</b>  ·  Periodo (fila): <b>{e.Period}</b>  ·  Bloque <b>{e.Block}</b>\n" +
-                    $"Familia: <b>{PeriodicLayout.GroupFamilyName(e)}</b>\n" +
-                    $"Configuración: <b>{ElectronConfiguration.Kernel(e)}</b>\n" +
-                    $"<color=#FFC34D>Pulsa el botón para entrar a su laboratorio</color>";
+                    $"Número atómico: <b>{e.Z}</b>     Masa atómica: <b>{e.MassText} u</b>     Estado: <b>{e.StateName}</b>\n" +
+                    $"Familia química: <color=#FFC34D><b>[{CategoryInfo.ShortTag(e.Category)}] {CategoryInfo.Name(e.Category)}</b></color>  ·  {PeriodicLayout.GroupFamilyName(e)}\n" +
+                    $"Grupo: <b>{PeriodicLayout.GroupLabel(e)}</b>  ·  Periodo (fila): <b>{e.Period}</b>  ·  {challengeStatus}\n" +
+                    $"Sesión: <b>{LabState.MasteredElementsCount} retos</b> ({LabState.TotalStars} medallas)  ·  Rango: <color=#00E5FF><b>{LabState.StudentRank}</b></color>\n" +
+                    $"<color=#00E5FF><b>A / Visor:</b> entrar al nivel</color>  ·  <color=#9FB4CC><b>Joystick der.:</b> apuntar sin girar cabeza</color>";
             }
         }
 

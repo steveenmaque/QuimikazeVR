@@ -315,6 +315,22 @@ namespace LabQuimicaVR
             _ => "NM"
         };
 
+        /// <summary>Abreviatura espanola de 3 letras para identificar la familia sin depender solo del color (WCAG 1.4.1 / HU10).</summary>
+        public static string ShortTag(ElementCategory c) => c switch
+        {
+            ElementCategory.AlkaliMetal => "ALC",
+            ElementCategory.AlkalineEarth => "AET",
+            ElementCategory.Transition => "TRA",
+            ElementCategory.PostTransition => "BLP",
+            ElementCategory.Metalloid => "MET",
+            ElementCategory.Nonmetal => "NOM",
+            ElementCategory.Halogen => "HAL",
+            ElementCategory.NobleGas => "GAS",
+            ElementCategory.Lanthanide => "LAN",
+            ElementCategory.Actinide => "ACT",
+            _ => "NOM"
+        };
+
         public static Color Color(ElementCategory c) => Hex(c switch
         {
             ElementCategory.AlkaliMetal => "FF8787",

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -109,7 +109,6 @@ namespace LabQuimicaVR.EditorTools
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
             PlayerSettings.allowedAutorotateToLandscapeLeft = true;
             PlayerSettings.allowedAutorotateToLandscapeRight = true;
-            PlayerSettings.useAnimatedAutorotation = false;
             SetSensorRotation();
             // Icono de la app (atomo con la Q de Quimikaze)
             var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Laboratorio/Icono/icono_quimikaze.png");

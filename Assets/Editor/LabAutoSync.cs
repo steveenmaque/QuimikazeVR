@@ -59,7 +59,9 @@ namespace LabQuimicaVR.EditorTools
             var pkg = Path.Combine(info.resolvedPath, "Package Resources", "TMP Essential Resources.unitypackage");
             if (!File.Exists(pkg)) return;
             SessionState.SetBool(TmpImportedKey, true);
+#pragma warning disable CS0618
             AssetDatabase.ImportPackage(pkg, false);
+#pragma warning restore CS0618
             WriteStatus("TMP Essential Resources importados");
         }
 

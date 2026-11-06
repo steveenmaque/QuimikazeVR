@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEditor;
@@ -448,10 +448,11 @@ namespace LabQuimicaVR.EditorTools
                 var body = LabFactory.Box("Cuerpo", go.transform, Vector3.zero, new Vector3(tile, tile, 0.06f), mat);
                 var outline = LabFactory.Box("Contorno", go.transform, new Vector3(0, 0, 0.025f), new Vector3(tile + 0.07f, tile + 0.07f, 0.03f), LabFactory.Mat("TileHover"));
                 outline.SetActive(false);
-                // Un solo texto por casilla (numero, simbolo y nombre): tres veces menos objetos que dibujar.
+                // Un solo texto por casilla (numero + codigo de familia WCAG 1.4.1, simbolo y nombre): tres veces menos objetos que dibujar.
                 int nameSize = Mathf.Min(30, Mathf.FloorToInt(330f / Mathf.Max(1, e.Name.Length)));
+                string famTag = CategoryInfo.ShortTag(e.Category);
                 var label = LabFactory.Text(go.transform,
-                    $"<align=left><size=34%><b>{e.Z}</b></size></align>\n<b>{e.Symbol}</b>\n<size={nameSize}%>{e.Name}</size>",
+                    $"<align=left><size=30%><b>{e.Z}</b> · {famTag}</size></align>\n<b>{e.Symbol}</b>\n<size={nameSize}%>{e.Name}</size>",
                     new Vector3(0, 0.005f, -0.035f), 0.2f, dark, TextAlignmentOptions.Center, tile - 0.05f, tile - 0.02f);
                 label.textWrappingMode = TextWrappingModes.NoWrap;
                 label.lineSpacing = -18f;
@@ -502,13 +503,17 @@ namespace LabQuimicaVR.EditorTools
             LabFactory.Box("Borde", preview, new Vector3(0, 0, 0.004f), new Vector3(size.x + 0.04f, size.y + 0.04f, 0.004f), LabFactory.Tinted("GlowBase", Palette.Accent, 1.2f));
 
             var hint = LabFactory.Node("Ayuda", preview).transform;
-            var ojo = LabFactory.Panel("Icono", hint, new Vector3(-size.x / 2 + 0.62f, 0.12f, -0.02f), new Vector2(0.78f, 0.78f), 0.39f, 0.02f,
+            var ojo = LabFactory.Panel("Icono", hint, new Vector3(-size.x / 2 + 0.62f, 0.22f, -0.02f), new Vector2(0.74f, 0.74f), 0.37f, 0.02f,
                 new Color(1f, 0.88f, 0.4f), new Color(1f, 0.6f, 0.2f));
-            LabFactory.Text(ojo.transform, "?", new Vector3(0, 0.02f, -0.02f), 0.5f, Palette.Ink, TextAlignmentOptions.Center, 0.7f, 0.7f, true);
-            LabFactory.Text(hint, "<b>Mira un elemento</b> y pulsa el <color=#FFC34D>botón del visor</color> para entrar a su laboratorio",
-                new Vector3(0.45f, 0.2f, -0.02f), 0.2f, Color.white, TextAlignmentOptions.Center, size.x - 1.5f, 0.75f);
-            LabFactory.Text(hint, "Usa el joystick izquierdo del mando para acercarte a la tabla",
-                new Vector3(0.45f, -0.48f, -0.02f), 0.12f, Palette.TextDim, TextAlignmentOptions.Center, size.x - 1.5f, 0.3f);
+            LabFactory.Text(ojo.transform, "?", new Vector3(0, 0.02f, -0.02f), 0.48f, Palette.Ink, TextAlignmentOptions.Center, 0.65f, 0.65f, true);
+            LabFactory.Text(hint, "<b>Mira un elemento</b> (o apunta con el <color=#00E5FF>joystick derecho</color>) y pulsa <color=#FFC34D>A / botón del visor</color>",
+                new Vector3(0.45f, 0.38f, -0.02f), 0.165f, Color.white, TextAlignmentOptions.Center, size.x - 1.5f, 0.52f);
+            LabFactory.Text(hint, "Controles: <color=#5FD6A8><b>A</b></color> entrar  ·  <color=#7DC4F5><b>X</b></color> cambiar modelo atómico  ·  <color=#FF7878><b>B</b></color> volver a la tabla  ·  <color=#FFC34D><b>Y</b></color> centrar vista",
+                new Vector3(0.45f, -0.02f, -0.02f), 0.11f, Palette.Text, TextAlignmentOptions.Center, size.x - 1.5f, 0.25f);
+            LabFactory.Text(hint, "<color=#FFC34D><b>● Misión de la sesión:</b></color> Explora elementos y supera el <b>Reto de 3 preguntas</b> en cada sala para ganar medallas (<color=#FFC34D>● ● ●</color>)",
+                new Vector3(0.0f, -0.30f, -0.02f), 0.102f, Palette.Accent2, TextAlignmentOptions.Center, size.x - 0.3f, 0.24f);
+            LabFactory.Text(hint, "Código de familia en cada casilla (WCAG 1.4.1): <b>ALC</b> Alcalino · <b>AET</b> Alcalinotérreo · <b>TRA</b> Transición · <b>NOM</b> No metal · <b>HAL</b> Halógeno · <b>GAS</b> Gas noble",
+                new Vector3(0.0f, -0.56f, -0.02f), 0.088f, Palette.TextDim, TextAlignmentOptions.Center, size.x - 0.3f, 0.24f);
 
             var content = LabFactory.Node("Ficha", preview).transform;
             float tileX = -size.x / 2 + 0.8f;
@@ -583,7 +588,8 @@ namespace LabQuimicaVR.EditorTools
                 var outline = LabFactory.Box("Contorno", item.transform, new Vector3(0, 0, 0.002f), new Vector3(2.46f, 0.6f, 0.004f), LabFactory.Mat("TileHover"));
                 outline.SetActive(false);
                 LabFactory.Box("Color", item.transform, new Vector3(-0.92f, 0, -0.03f), new Vector3(0.38f, 0.38f, 0.04f), LabFactory.Mat("Cat_" + CategoryInfo.Code(cats[i])));
-                LabFactory.Text(item.transform, CategoryInfo.Name(cats[i]), new Vector3(0.28f, 0, -0.03f), 0.15f, Color.white, TextAlignmentOptions.Left, 1.8f, 0.45f, true);
+                LabFactory.Text(item.transform, CategoryInfo.ShortTag(cats[i]), new Vector3(-0.92f, 0, -0.055f), 0.095f, Palette.Dark, TextAlignmentOptions.Center, 0.36f, 0.36f, true);
+                LabFactory.Text(item.transform, $"{CategoryInfo.Name(cats[i])} <size=75%><color=#9FB4CC>[{CategoryInfo.ShortTag(cats[i])}]</color></size>", new Vector3(0.28f, 0, -0.03f), 0.14f, Color.white, TextAlignmentOptions.Left, 1.8f, 0.45f, true);
                 var li = item.AddComponent<LegendItem>();
                 li.category = cats[i];
                 li.outline = outline;
@@ -737,6 +743,7 @@ namespace LabQuimicaVR.EditorTools
             controller.propsAnchor = LabFactory.Node("Propiedades", content, new Vector3(halfW - 0.12f, 2.55f, 4.0f), Quaternion.Euler(0, 90f, 0)).transform;
             controller.reactionAnchor = LabFactory.Node("Reacciones", content, new Vector3(-3.35f, 2.2f, 8.3f), Quaternion.Euler(0, -24f, 0)).transform;
             controller.controlsAnchor = LabFactory.Node("Controles", content, new Vector3(3.45f, 1.95f, 8.3f), Quaternion.Euler(0, 24f, 0)).transform;
+            controller.challengeAnchor = LabFactory.Node("RetoSesion", content, new Vector3(-3.35f, 1.90f, -4.4f), Quaternion.Euler(0, -148f, 0)).transform;
             controller.backAnchor = LabFactory.Node("Salida", content, new Vector3(0, 1.05f, zMin + 0.12f), Quaternion.Euler(0, 180f, 0)).transform;
             controller.discoverersAnchor = LabFactory.Node("Descubridores", content, new Vector3(-halfW + 0.12f, 2.55f, -3.2f), Quaternion.Euler(0, -90f, 0)).transform;
             controller.natureAnchor = LabFactory.Node("Naturaleza", content, new Vector3(halfW - 0.12f, 2.55f, -3.2f), Quaternion.Euler(0, 90f, 0)).transform;
@@ -809,7 +816,7 @@ namespace LabQuimicaVR.EditorTools
         [MenuItem("Quimikaze/Vista previa: siguiente elemento", priority = 20)]
         public static void PreviewNext()
         {
-            var c = Object.FindFirstObjectByType<ElementDetailController>();
+            var c = Object.FindAnyObjectByType<ElementDetailController>();
             if (c == null) { Debug.LogWarning("Abre la escena ElementoDetalle primero."); return; }
             LabFactory.PersistHook = LabAssets.PersistTinted;
             c.previewZ = c.previewZ % 118 + 1;
