@@ -126,7 +126,7 @@ namespace LabQuimicaVR
                         try
                         {
                             socket.SendTimeout = 200;
-                            byte[] reject = Encoding.UTF8.GetBytes("{\"version\":1,\"type\":\"error\",\"message\":\"Aula llena: máximo 8 jugadores.\"}\n");
+                            byte[] reject = Encoding.UTF8.GetBytes("{\"version\":" + LanSession.ProtocolVersion + ",\"type\":\"error\",\"message\":\"Aula llena: máximo 8 jugadores.\"}\n");
                             socket.GetStream().Write(reject, 0, reject.Length);
                         }
                         catch (Exception ex) when (ex is IOException || ex is SocketException || ex is InvalidOperationException) { }

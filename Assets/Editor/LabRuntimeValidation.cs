@@ -33,11 +33,11 @@ namespace LabQuimicaVR.EditorTools
         {
             public bool executed, success, preferencesRestored, nativeCsvVerified, testSocketsClosed;
             public string startedUtc, finishedUtc, error, captureDirectory, csvArtifact;
-            public int checks, assertionExecutions, lastStep, lanParticipants, lanQuestionsCompleted;
-            public string scope = "Unity Editor Play: UI por callbacks, transiciones, persistencia nativa, modelos, reacción y tres sesiones TCP loopback reales";
+            public int checks, assertionExecutions, lastStep, lanParticipants, lanQuestionsCompleted, menuRayTargetsVerified, skinsVerified, tutorialStepsVerified, sourcePagesVerified;
+            public string scope = "Unity Editor Play v1.3: menú VR con raycasts físicos, tutorial, skins, opciones, murales fijos y tres sesiones TCP loopback reales";
             public string[] assertions = new string[0], runtimeErrors = new string[0], screenshots = new string[0];
             public string[] limitations = { "No prueba el mando físico ni sensores", "No verifica Android/IL2CPP ni Wi-Fi entre celulares",
-                "Los botones se activan por sus callbacks: no prueba la precisión del raycast de mirada", "PNG monoculares requieren inspección visual; no validan la óptica estereoscópica" };
+                "Los raycasts desde Head verifican colliders de botones del menú; los clics usan callbacks y no prueban Bluetooth ni sensores", "PNG monoculares requieren inspección visual; no validan la óptica estereoscópica" };
         }
         [Serializable] class Pref
         {
@@ -54,7 +54,7 @@ namespace LabQuimicaVR.EditorTools
         static readonly HashSet<string> assertionNames = new HashSet<string>();
         static readonly List<string> runtimeErrors = new List<string>();
         static readonly List<string> screenshots = new List<string>();
-        static int step, questionIndex, completedQuizzes, firstScore, closedOnFrame, assertionExecutions, lanQuestion, lanPanelFrame;
+        static int step, questionIndex, completedQuizzes, firstScore, closedOnFrame, assertionExecutions, lanQuestion, lanPanelFrame, skinCycle, sourcePage;
         static double stepStart;
         static bool ending;
         static List<ChallengeQuestion> quiz;
@@ -101,7 +101,8 @@ namespace LabQuimicaVR.EditorTools
             File.WriteAllText(RecoveryPath, JsonUtility.ToJson(new PrefBackup
             {
                 values = new[] { Snapshot(LearningKey, "text"), Snapshot(InputKey, "int"),
-                    Snapshot("LabVR.LensMm", "float"), Snapshot("LabVR.Orientacion", "int") }
+                    Snapshot("LabVR.LensMm", "float"), Snapshot("LabVR.Orientacion", "int"),
+                    Snapshot(AvatarSkins.PreferenceKey, "int"), Snapshot(MainMenuController.TutorialPreferenceKey, "int"), Snapshot("LabVR.Stereo", "int") }
             }));
             SessionState.SetString(Key + "scenes", JsonUtility.ToJson(new SceneBackup { setup = EditorSceneManager.GetSceneManagerSetup() }));
             SessionState.SetBool(Key + "batch", batch);
@@ -119,7 +120,7 @@ namespace LabQuimicaVR.EditorTools
             Attach();
             try
             {
-                EditorSceneManager.OpenScene(LabSceneBuilder.TableScenePath);
+                EditorSceneManager.OpenScene(LabSceneBuilder.MenuScenePath);
                 EditorApplication.EnterPlaymode();
             }
             catch (Exception ex) { Finish(ex.ToString()); }
@@ -177,6 +178,7 @@ namespace LabQuimicaVR.EditorTools
                 Directory.CreateDirectory(result.captureDirectory);
                 assertions.Clear(); assertionNames.Clear(); screenshots.Clear();
                 step = questionIndex = completedQuizzes = firstScore = assertionExecutions = lanQuestion = 0;
+                step = -20; skinCycle = sourcePage = 0;
                 stepStart = EditorApplication.timeSinceStartup;
                 Attach();
             }
@@ -198,7 +200,7 @@ namespace LabQuimicaVR.EditorTools
             if (assertionNames.Add(description)) assertions.Add(description);
         }
         static bool After(double seconds) => EditorApplication.timeSinceStartup - stepStart >= seconds;
-        static void Next(int target = -1) { step = target < 0 ? step + 1 : target; stepStart = EditorApplication.timeSinceStartup; }
+        static void Next(int? target = null) { step = target ?? step + 1; stepStart = EditorApplication.timeSinceStartup; }
         static T Find<T>() where T : Object => Object.FindAnyObjectByType<T>();
         static T Field<T>(object instance, string field) => (T)instance.GetType().GetField(field, BindingFlags.Instance | BindingFlags.NonPublic).GetValue(instance);
         static GazeButton Button(Transform root, Func<string, bool> match)
@@ -208,6 +210,26 @@ namespace LabQuimicaVR.EditorTools
             return button;
         }
         static void Click(Transform root, Func<string, bool> match) => Button(root, match).Click();
+        static MainMenuController Menu => Find<MainMenuController>();
+        static bool MenuReady(string page) => SceneManager.GetActiveScene().name == LabState.MenuScene && !ScreenFader.Busy && Menu != null && Menu.CurrentPage == page;
+        static void AssertRayTarget(GazeButton button)
+        {
+            Assert(VRRig.Instance != null && VRRig.Instance.head != null, "Head real disponible para raycast del menú");
+            Physics.SyncTransforms();
+            var collider = button.GetComponent<Collider>();
+            Assert(collider != null && collider.enabled, "Collider VR activo: " + button.Label.text);
+            Vector3 origin = VRRig.Instance.head.position;
+            Vector3 delta = collider.bounds.center - origin;
+            bool hit = Physics.Raycast(origin, delta.normalized, out var resultHit, delta.magnitude + 0.25f, ~0, QueryTriggerInteraction.Collide);
+            Assert(hit && resultHit.collider.GetComponentInParent<GazeTarget>() == button,
+                "Raycast físico desde Head alcanza: " + (Menu != null ? Menu.CurrentPage : "sala") + "/" + button.Label.text);
+        }
+        static void RayClick(Transform root, Func<string, bool> match)
+        {
+            var button = Button(root, match);
+            AssertRayTarget(button);
+            button.Click();
+        }
         static void RequireScene(string scene)
         {
             if (!After(15)) return;
@@ -238,25 +260,155 @@ namespace LabQuimicaVR.EditorTools
                 if (runtimeErrors.Count > 0) throw new InvalidOperationException("Unity emitió un error durante la ejecución; revisar runtimeErrors.");
                 switch (step)
                 {
+                    case -20:
+                        if (!WaitFor(MenuReady("home") && VRRig.Instance != null && VRRig.Instance.head != null &&
+                            HasButton(Menu.transform, s => s == "Jugar") && After(0.25), "El menú principal no quedó listo")) return;
+                        Assert(Find<ScientificLibrary>() == null && Find<LearningMissionBoard>() == null && Find<PeriodicTableView>() == null,
+                            "Inicio independiente sin bibliografía, tabla ni misiones flotantes");
+                        foreach (string label in new[] { "Jugar", "Tutorial", "Aula LAN", "Mi personaje", "Opciones", "Salir" })
+                            AssertRayTarget(Button(Menu.transform, s => s == label));
+                        result.menuRayTargetsVerified = 6;
+                        Shot("00a_menu_inicio", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
+                        RayClick(Menu.transform, s => s == "Opciones");
+                        Next(); break;
+                    case -19:
+                        if (!WaitFor(MenuReady("options") && HasButton(Menu.transform, s => s.StartsWith("Eje Y:")), "No abrieron las opciones VR")) return;
+                        Shot("00b_opciones", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
+                        RayClick(Menu.transform, s => s.StartsWith("Eje Y:"));
+                        Assert(LabInput.InvertRightStickY && PlayerPrefs.GetInt(InputKey) == 1, "Opciones invierte y guarda el eje Y");
+                        RayClick(Menu.transform, s => s.StartsWith("Eje Y:"));
+                        Assert(!LabInput.InvertRightStickY && PlayerPrefs.GetInt(InputKey) == 0, "Opciones restablece y guarda el eje Y");
+                        RayClick(Menu.transform, s => s.StartsWith("Vista:"));
+                        Assert(VRRig.Instance.Stereo && VRRig.Instance.rightEye.enabled && PlayerPrefs.GetInt("LabVR.Stereo") == 1, "Opciones activa visor y persiste estéreo");
+                        RayClick(Menu.transform, s => s.StartsWith("Vista:"));
+                        Assert(!VRRig.Instance.Stereo && !VRRig.Instance.rightEye.enabled && PlayerPrefs.GetInt("LabVR.Stereo") == 0, "Opciones activa una pantalla y persiste la elección");
+                        RayClick(Menu.transform, s => s.StartsWith("Vista:"));
+                        float lensBefore = VRRig.Instance.lensSeparationMm;
+                        RayClick(Menu.transform, s => s == "Lentes +");
+                        Assert(Mathf.Approximately(VRRig.Instance.lensSeparationMm, lensBefore + 1) && Mathf.Approximately(PlayerPrefs.GetFloat("LabVR.LensMm"), lensBefore + 1), "Ajuste de lentes +1 mm guardado desde menú");
+                        RayClick(Menu.transform, s => s == "Lentes −");
+                        Assert(Mathf.Approximately(VRRig.Instance.lensSeparationMm, lensBefore), "Ajuste de lentes permite volver al valor previo");
+                        RayClick(Menu.transform, s => s == "Recentrar vista");
+                        int orientationBefore = VRRig.OrientationMode;
+                        RayClick(Menu.transform, s => s.StartsWith("Pantalla:"));
+                        Assert(VRRig.OrientationMode == (orientationBefore + 1) % 3 && PlayerPrefs.GetInt("LabVR.Orientacion") == VRRig.OrientationMode,
+                            "Orientación de pantalla se cambia y guarda por botón VR");
+                        VRRig.ToggleRightStickYAxis();
+                        VRRig.Instance.SetStereo(false);
+                        VRRig.CycleOrientation();
+                        closedOnFrame = Time.frameCount;
+                        Next(-9); break;
+                    case -9:
+                        if (!WaitFor(Time.frameCount > closedOnFrame && MenuReady("options") && HasButton(Menu.transform, s => s == "Eje Y: invertido") &&
+                            HasButton(Menu.transform, s => s == "Vista: una pantalla") &&
+                            HasButton(Menu.transform, s => s == "Pantalla: " + VRRig.OrientationNames[VRRig.OrientationMode]), "Opciones no reflejó los cambios externos R3/V/O")) return;
+                        Assert(true, "Etiquetas de opciones se sincronizan al cambiar el estado fuera de sus botones");
+                        VRRig.ToggleRightStickYAxis();
+                        VRRig.Instance.SetStereo(true);
+                        VRRig.CycleOrientation();
+                        closedOnFrame = Time.frameCount;
+                        Next(-8); break;
+                    case -8:
+                        if (!WaitFor(Time.frameCount > closedOnFrame && MenuReady("options") && HasButton(Menu.transform, s => s == "Eje Y: normal") &&
+                            HasButton(Menu.transform, s => s == "Vista: visor") &&
+                            HasButton(Menu.transform, s => s == "Pantalla: " + VRRig.OrientationNames[VRRig.OrientationMode]), "Opciones no reflejó el restablecimiento externo")) return;
+                        Assert(!LabInput.InvertRightStickY && VRRig.Instance.Stereo, "Restablecer métodos de entrada actualiza la UI y conserva visor activo");
+                        RayClick(Menu.transform, s => s == "Volver");
+                        RayClick(Menu.transform, s => s == "Salir");
+                        Next(-18); break;
+                    case -18:
+                        if (!WaitFor(MenuReady("exit"), "No apareció la confirmación de salida")) return;
+                        Assert(HasButton(Menu.transform, s => s == "Salir del juego"), "Salir requiere una segunda confirmación");
+                        RayClick(Menu.transform, s => s == "Seguir jugando");
+                        Assert(Menu.CurrentPage == "home", "Cancelar salida regresa al inicio sin cerrar el juego");
+                        RayClick(Menu.transform, s => s == "Mi personaje");
+                        Next(); break;
+                    case -17:
+                        if (!WaitFor(MenuReady("skins") && HasButton(Menu.transform, s => s == "Siguiente"), "No abrió la selección de personaje")) return;
+                        Assert(AvatarSkins.Count == 4, "Cuatro personajes disponibles sin bloqueo");
+                        RayClick(Menu.transform, s => s == "Siguiente");
+                        Next(); break;
+                    case -16:
+                        if (!After(0.15)) return;
+                        int expectedSkin = (skinCycle + 1) % 4;
+                        Assert(AvatarSkins.SelectedIndex == expectedSkin && PlayerPrefs.GetInt(AvatarSkins.PreferenceKey) == expectedSkin,
+                            "Personaje seleccionado y guardado: " + AvatarSkins.Name(expectedSkin));
+                        Assert(Menu.GetComponentsInChildren<Transform>(false).Any(t => t.name == "Personaje_" + expectedSkin) &&
+                            Menu.GetComponentsInChildren<TMP_Text>(false).Any(t => t.text == AvatarSkins.Name(expectedSkin)),
+                            "Vista previa 3D y nombre del personaje: " + AvatarSkins.Name(expectedSkin));
+                        Shot("00c_personaje_" + expectedSkin, VRRig.Instance.head.position, VRRig.Instance.head.rotation);
+                        result.skinsVerified++; skinCycle++;
+                        if (skinCycle < 4) { RayClick(Menu.transform, s => s == "Siguiente"); stepStart = EditorApplication.timeSinceStartup; return; }
+                        RayClick(Menu.transform, s => s == "Volver");
+                        RayClick(Menu.transform, s => s == "Jugar");
+                        Next(); break;
+                    case -15:
+                        if (SceneManager.GetActiveScene().name != LabState.TableScene || ScreenFader.Busy || !After(0.7)) { RequireScene(LabState.TableScene); return; }
+                        Assert(VRRig.Instance.Stereo && AvatarSkins.SelectedIndex == 0, "Ajustes de visor y personaje sobreviven al cambio de escena");
+                        Assert(ScientificLibrary.ActivePanel == null, "Jugar entra al laboratorio sin abrir referencias");
+                        Click(GameObject.Find("AccesoMenuPrincipal").transform, s => s == "Menú principal");
+                        Next(); break;
+                    case -14:
+                        if (!WaitFor(MenuReady("home"), "El acceso de pared no regresó al menú principal")) return;
+                        RayClick(Menu.transform, s => s == "Tutorial");
+                        Next(); break;
+                    case -13:
+                        if (!WaitFor(MenuReady("tutorial") && Menu.TutorialStep == 0, "No inició el tutorial")) return;
+                        Shot("00d_tutorial_mirada", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
+                        RayClick(Menu.transform, s => s == "¡Lo encontré!");
+                        result.tutorialStepsVerified++;
+                        Next(); break;
+                    case -12:
+                        if (!WaitFor(MenuReady("tutorial") && Menu.TutorialStep == 1, "Tutorial: no avanzó al botón derecho")) return;
+                        RayClick(Menu.transform, s => s == "¡Aquí está!");
+                        result.tutorialStepsVerified++;
+                        Next(); break;
+                    case -11:
+                        if (!WaitFor(MenuReady("tutorial") && Menu.TutorialStep == 2, "Tutorial: no llegó a la práctica de movimiento")) return;
+                        Assert(!HasButton(Menu.transform, s => s == "Continuar"), "Continuar caminando permanece bloqueado sin desplazamiento real");
+                        Shot("00e_tutorial_sin_mando", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
+                        RayClick(Menu.transform, s => s == "Uso solo el visor");
+                        result.tutorialStepsVerified++;
+                        Next(); break;
+                    case -10:
+                        if (!WaitFor(MenuReady("tutorial") && Menu.TutorialStep == 3, "Tutorial: no llegó al paso final")) return;
+                        RayClick(Menu.transform, s => s == "¡A explorar!");
+                        Assert(PlayerPrefs.GetInt(MainMenuController.TutorialPreferenceKey) == 1, "Tutorial completo guardado en preferencias nativas");
+                        result.tutorialStepsVerified++;
+                        Next(0); break;
                     case 0:
                         if (!WaitFor(After(0.25) && SceneManager.GetActiveScene().name == LabState.TableScene &&
                             Find<PeriodicTableView>()?.tiles.Count == 118 && VRRig.Instance != null && VRRig.Instance.head != null &&
                             Find<LearningMissionBoard>() != null && Find<LanClassroom>() != null &&
-                            Find<ScientificLibrary>() != null && HasButton(Find<ScientificLibrary>().transform, s => s == "Fuentes científicas") &&
+                            Find<ScientificLibrary>() != null && HasButton(Find<ScientificLibrary>().transform, s => s == ScientificLibrary.LauncherLabel) &&
                             HasButton(Find<LearningMissionBoard>().transform, s => s == "Continuar misión"), "Los paneles iniciales no quedaron listos en 15 s")) return;
                         Assert(SceneManager.GetActiveScene().name == LabState.TableScene, "Escena inicial de tabla");
                         Assert(Find<PeriodicTableView>()?.tiles.Count == 118, "118 casillas activas");
                         Assert(Find<LearningMissionBoard>() != null, "Panel de misiones creado en runtime");
                         Assert(Find<ScientificLibrary>() != null && Find<LanClassroom>() != null, "Biblioteca y acceso LAN inicializados");
                         Assert(LearningProgress.TotalPoints == 0 && LearningProgress.GetAttempts(26) == 0, "Perfil temporal de QA vacío");
-                        Click(Find<ScientificLibrary>().transform, s => s == "Fuentes científicas");
+                        Assert(VRRig.Instance.Stereo, "Tutorial mantiene la opción de visor al entrar a la tabla");
+                        Assert(Vector3.Distance(Find<LearningMissionBoard>().transform.position, LearningMissionBoard.WallPosition) < 0.001f &&
+                            Vector3.Distance(Find<ScientificLibrary>().transform.position, ScientificLibrary.TableWallPosition) < 0.001f,
+                            "Misiones y acceso docente están en las paredes de la tabla");
+                        Assert(ScientificLibrary.ActivePanel == null && !Find<ScientificLibrary>().GetComponentsInChildren<TMP_Text>(false).Any(t => t.text.Contains("doi.org")),
+                            "Las citas están ocultas antes de elegir Para docentes");
+                        Click(Find<ScientificLibrary>().transform, s => s == ScientificLibrary.LauncherLabel);
                         Assert(ScientificLibrary.HandlesBackNavigation && GameObject.Find("BibliotecaCientifica") != null, "Biblioteca abre y captura navegación atrás");
-                        Shot("01_fuentes", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
+                        Assert(Vector3.Distance(ScientificLibrary.ActivePanel.position, ScientificLibrary.TableWallPosition) < 0.001f, "Las fuentes se abren en pared y no delante de la cámara");
+                        ShotPanel("01_fuentes", ScientificLibrary.ActivePanel, 4.0f);
+                        result.sourcePagesVerified++;
                         Next(); break;
                     case 1:
                         if (!After(0.2)) return;
                         Click(Find<ScientificLibrary>().transform, s => s == "Siguiente");
-                        Assert(Find<ScientificLibrary>().GetComponentsInChildren<TMP_Text>(false).Any(t => t.text.Contains(ScientificLibrary.Entries[1].Citation)), "Biblioteca cambia de referencia");
+                        sourcePage++;
+                        Assert(ScientificLibrary.ActivePanel.GetComponentsInChildren<TMP_Text>(false).Any(t => sourcePage < ScientificLibrary.Entries.Length
+                            ? t.text.Contains(ScientificLibrary.Entries[sourcePage].Citation) : t.text.Contains("LÍMITES DEL MODELO")),
+                            "Referencia o límites disponibles en pared de tabla: " + sourcePage);
+                        ShotPanel("01a_fuente_tabla_" + sourcePage, ScientificLibrary.ActivePanel, 4.0f);
+                        result.sourcePagesVerified++;
+                        if (sourcePage < ScientificLibrary.Entries.Length) { stepStart = EditorApplication.timeSinceStartup; return; }
                         Click(Find<ScientificLibrary>().transform, s => s == "Cerrar");
                         Assert(ScientificLibrary.HandlesBackNavigation, "Cerrar fuente consume el frame de navegación");
                         closedOnFrame = Time.frameCount;
@@ -265,19 +417,11 @@ namespace LabQuimicaVR.EditorTools
                         if (Time.frameCount <= closedOnFrame) { if (After(15)) throw new TimeoutException("Unity no avanza frames después de cerrar fuentes."); return; }
                         if (!After(0.15)) return;
                         Assert(!ScientificLibrary.HandlesBackNavigation, "Cerrar fuente libera navegación al frame siguiente");
-                        var launcher = GameObject.Find("AccesoAulaLAN");
-                        Assert(launcher != null, "Acceso LAN presente en la tabla");
-                        Click(launcher.transform, s => s.StartsWith("Aula LAN"));
-                        Assert(GameObject.Find("PanelAulaLAN") != null && LanClassroom.HandlesBackNavigation, "Panel LAN abre y captura navegación atrás");
-                        Shot("02_lan", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
-                        Click(GameObject.Find("PanelAulaLAN").transform, s => s == "Cerrar panel");
-                        Assert(LanClassroom.HandlesBackNavigation, "Cerrar LAN consume el frame de navegación");
-                        closedOnFrame = Time.frameCount;
+                        Assert(GameObject.Find("AccesoAulaLAN") == null && LanClassroom.ActivePanel == null, "La partida no contiene un acceso LAN flotante");
                         Next(); break;
                     case 3:
-                        if (Time.frameCount <= closedOnFrame) { if (After(15)) throw new TimeoutException("Unity no avanza frames después de cerrar LAN."); return; }
                         if (!After(0.15)) return;
-                        Assert(!LanClassroom.HandlesBackNavigation, "Cerrar LAN libera navegación al frame siguiente");
+                        Assert(!LanClassroom.HandlesBackNavigation, "La navegación normal queda libre en la partida");
                         LabInput.InvertRightStickY = true;
                         Assert(PlayerPrefs.GetInt(InputKey) == 1, "Invertir eje guarda la preferencia nativa");
                         LabInput.InvertRightStickY = false;
@@ -287,6 +431,22 @@ namespace LabQuimicaVR.EditorTools
                     case 4:
                         if (SceneManager.GetActiveScene().name != LabState.ElementScene || ScreenFader.Busy || ElementIntro.Active || !After(0.8)) { RequireScene(LabState.ElementScene); return; }
                         Assert(Find<ElementDetailController>() != null && LabState.SelectedZ == 26, "Entrada al nivel real de Fe y fin de introducción");
+                        Assert(GameObject.Find("AccesoAulaLAN") == null && ScientificLibrary.ActivePanel == null &&
+                            Vector3.Distance(Find<ScientificLibrary>().transform.position, ScientificLibrary.ElementWallPosition) < 0.001f,
+                            "Detalle mantiene el acceso docente en pared y no muestra HUD LAN");
+                        Click(Find<ScientificLibrary>().transform, s => s == ScientificLibrary.LauncherLabel);
+                        Assert(Vector3.Distance(ScientificLibrary.ActivePanel.position, ScientificLibrary.ElementWallPosition) < 0.001f, "Referencias de Fe se despliegan sobre la pared izquierda");
+                        for (int entry = 0; entry <= ScientificLibrary.Entries.Length; entry++)
+                        {
+                            if (entry > 0) Click(Find<ScientificLibrary>().transform, s => s == "Siguiente");
+                            int pageIndex = entry;
+                            Assert(ScientificLibrary.ActivePanel.GetComponentsInChildren<TMP_Text>(false).Any(t => pageIndex < ScientificLibrary.Entries.Length
+                                ? t.text.Contains(ScientificLibrary.Entries[pageIndex].Citation) : t.text.Contains("LÍMITES DEL MODELO")),
+                                "Referencia o límites disponibles en pared compacta de Fe: " + entry);
+                            Shot("01b_fuente_detalle_" + entry, new Vector3(-2.2f, 2.65f, 9.3f), Quaternion.LookRotation(ScientificLibrary.ElementWallPosition - new Vector3(-2.2f, 2.65f, 9.3f)));
+                            result.sourcePagesVerified++;
+                        }
+                        Click(Find<ScientificLibrary>().transform, s => s == "Cerrar");
                         Assert(Find<AtomModel>()?.Mode == AtomViewMode.Bohr, "Modelo Bohr inicial");
                         Shot("04_bohr", new Vector3(0, 1.9f, 3.2f), Quaternion.identity);
                         Find<ElementDetailController>().SetMode(AtomViewMode.Cloud); Next(); break;
@@ -336,79 +496,96 @@ namespace LabQuimicaVR.EditorTools
                         if (SceneManager.GetActiveScene().name != LabState.TableScene || ScreenFader.Busy || !After(0.7)) { RequireScene(LabState.TableScene); return; }
                         Assert(Find<LearningMissionBoard>() != null && LearningProgress.TotalPoints == firstScore, "Tabla final conserva progreso tras segunda transición");
                         Shot("09_tabla_final", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
-                        Click(GameObject.Find("AccesoAulaLAN").transform, s => s.StartsWith("Aula LAN"));
+                        Click(GameObject.Find("AccesoMenuPrincipal").transform, s => s == "Menú principal");
+                        Next(); break;
+                    case 13:
+                        if (!WaitFor(MenuReady("home"), "La partida no volvió al menú para abrir LAN")) return;
+                        RayClick(Menu.transform, s => s == "Aula LAN");
+                        Assert(Menu.CurrentPage == "lan" && LanClassroom.ActivePanel != null, "El aula LAN solo se abre desde el menú de pared");
+                        ShotPanel("02_lan_menu", LanClassroom.ActivePanel, 4.0f);
                         Click(LanClassroom.ActivePanel, s => s == "Crear aula");
                         hostSession = Field<LanSession>(Find<LanClassroom>(), "session");
                         Assert(hostSession != null && hostSession.IsHost && hostSession.Connected, "La GUI crea un anfitrión TCP real");
                         Assert(LanClassroom.ActivePanel.TransformPoint(new Vector3(0, -1.9f, 0)).y > 0.05f,
                             "El panel LAN y sus controles quedan por encima del suelo");
                         guestA = new LanSession(); guestB = new LanSession();
-                        guestA.Join("QA Visitante 1", "127.0.0.1", hostSession.Port);
-                        guestB.Join("QA Visitante 2", "127.0.0.1", hostSession.Port);
+                        guestA.Join("QA Visitante 1", "127.0.0.1", hostSession.Port, 1);
+                        guestB.Join("QA Visitante 2", "127.0.0.1", hostSession.Port, 3);
                         Next(); break;
-                    case 13:
+                    case 14:
                         if (!WaitFor(guestA.Connected && guestB.Connected && hostSession.State.members.Length == 3 &&
                             guestA.State.members.Length == 3 && guestB.State.members.Length == 3, "No se unieron ambos clientes TCP al anfitrión de la GUI")) return;
                         Assert(guestA.SelfId != guestB.SelfId && guestA.SelfId != hostSession.SelfId, "Tres identidades asignadas por el servidor real");
+                        Assert(hostSession.State.members.Single(m => m.id == guestA.SelfId).skin == 1 &&
+                            hostSession.State.members.Single(m => m.id == guestB.SelfId).skin == 3 && hostSession.Self.skin == AvatarSkins.SelectedIndex,
+                            "Los personajes elegidos viajan por el protocolo LAN");
                         guestA.SetReady(true); guestB.SetReady(true);
                         result.lanParticipants = 3;
                         Next(); break;
-                    case 14:
+                    case 15:
                         if (!WaitFor(hostSession.State.members.All(m => m.ready) &&
-                            HasButton(LanClassroom.ActivePanel, s => s.StartsWith("Iniciar:")) && AvatarsReady(), "El lobby no reflejó Listo y poses de los dos clientes")) return;
-                        Assert(hostSession.State.members.Count(m => m.hasPose) == 3, "Las tres poses viajan por el protocolo de sesión");
-                        Assert(Field<Dictionary<string, Transform>>(Find<LanClassroom>(), "avatars").Values.All(a =>
-                            a.GetComponentsInChildren<Renderer>().All(r => !r.enabled)), "Avatares ocultos mientras el panel LAN está abierto");
+                            HasButton(LanClassroom.ActivePanel, s => s == "Entrar al laboratorio juntos"), "El lobby no reflejó Listo en los dos clientes")) return;
+                        Assert(!hostSession.State.explorationStarted && SceneManager.GetActiveScene().name == LabState.MenuScene, "La exploración espera al inicio explícito del anfitrión");
                         Assert(LanClassroom.ActivePanel.GetComponentsInChildren<TMP_Text>(false).Any(t => t.text.Contains("QA Visitante 1") && t.text.Contains("QA Visitante 2")), "La GUI muestra ambos participantes reales del lobby");
                         ShotPanel("10_lan_lobby_listo", LanClassroom.ActivePanel, 4.0f);
-                        Click(LanClassroom.ActivePanel, s => s == "Cerrar panel");
-                        closedOnFrame = Time.frameCount;
-                        Next(); break;
-                    case 15:
-                        if (!WaitFor(Time.frameCount > closedOnFrame && AvatarsReady(), "No se pudieron observar los avatares tras cerrar el lobby")) return;
-                        Assert(!LanClassroom.HandlesBackNavigation, "Cerrar lobby no abandona la sesión anfitriona");
-                        Assert(Field<Dictionary<string, Transform>>(Find<LanClassroom>(), "avatars").Values.All(a =>
-                            a.GetComponentsInChildren<Renderer>().All(r => r.enabled)), "Cerrar el panel vuelve a mostrar los avatares");
+                        RayClick(LanClassroom.ActivePanel, s => s == "Entrar al laboratorio juntos");
+                        Next(30); break;
+                    case 30:
+                        if (!WaitFor(SceneManager.GetActiveScene().name == LabState.TableScene && !ScreenFader.Busy &&
+                            hostSession.State.explorationStarted && guestA.State.explorationStarted && guestB.State.explorationStarted &&
+                            guestA.State.worldScene == LabState.TableScene && guestB.State.worldScene == LabState.TableScene && AvatarsReady(),
+                            "Entrar juntos no sincronizó la tabla y los avatares")) return;
+                        Assert(LanClassroom.ActivePanel == null && GameObject.Find("AccesoAulaLAN") == null, "Exploración LAN entra sin ventanas flotantes");
+                        Assert(hostSession.State.members.Count(m => m.hasPose) == 3, "Las tres poses viajan por el protocolo de sesión");
+                        var avatars = Field<Dictionary<string, Transform>>(Find<LanClassroom>(), "avatars");
+                        Assert(avatars[guestA.SelfId].Find("GorroBotanico") != null && avatars[guestB.SelfId].Find("AntenaRobot") != null,
+                            "Los avatares 3D de visitantes coinciden con sus skins de red");
+                        Assert(avatars.Values.All(a => a.GetComponentsInChildren<Renderer>().All(r => r.enabled)), "Avatares visibles al explorar sin paneles");
                         Shot("11_lan_avatares_tabla", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
-                        Click(GameObject.Find("AccesoAulaLAN").transform, s => s.StartsWith("Aula LAN"));
-                        Click(LanClassroom.ActivePanel, s => s.StartsWith("Iniciar:"));
-                        Assert(hostSession.State.phase == "quiz", "El botón de la GUI inicia una ronda autoritativa");
-                        lanQuestion = 0;
+                        Click(GameObject.Find("AccesoMenuPrincipal").transform, s => s == "Menú principal");
                         Next(); break;
+                    case 31:
+                        if (!WaitFor(MenuReady("home"), "No se pudo regresar al menú durante la sesión LAN")) return;
+                        Assert(LanClassroom.HasActiveSession && LanClassroom.CanResumeSession, "Volver al menú conserva la sesión y permite continuar");
+                        RayClick(Menu.transform, s => s == "Aula LAN");
+                        Next(); break;
+                    case 32:
+                        if (!WaitFor(MenuReady("lan") && HasButton(LanClassroom.ActivePanel, s => s.StartsWith("Iniciar reto:")), "El menú no permitió iniciar un reto después de explorar")) return;
+                        RayClick(LanClassroom.ActivePanel, s => s.StartsWith("Iniciar reto:"));
+                        Assert(hostSession.State.phase == "quiz", "El menú inicia una ronda autoritativa después de explorar juntos");
+                        lanQuestion = 0; lanPanelFrame = Time.frameCount;
+                        Next(16); break;
                     case 16:
                         if (!WaitFor(SceneManager.GetActiveScene().name == LabState.ElementScene && !ScreenFader.Busy && !ElementIntro.Active &&
                             hostSession.State.phase == "quiz" && guestA.State.phase == "quiz" && guestB.State.phase == "quiz" &&
-                            guestA.State.worldScene == LabState.ElementScene && guestB.State.worldScene == LabState.ElementScene && After(0.5),
-                            "El inicio LAN no sincronizó el laboratorio real de Fe")) return;
+                            guestA.State.worldScene == LabState.ElementScene && guestB.State.worldScene == LabState.ElementScene &&
+                            LanClassroom.ActiveQuizWall != null && After(0.5), "El menú no llevó al reto LAN mural sincronizado de Fe")) return;
                         Assert(LabState.SelectedZ == 26 && hostSession.State.element == 26 && guestA.State.element == 26 && guestB.State.element == 26,
                             "La ronda sincroniza Fe en anfitrión y ambos clientes TCP");
-                        if (LanClassroom.ActivePanel == null) Click(GameObject.Find("AccesoAulaLAN").transform, s => s.StartsWith("Aula LAN"));
-                        lanPanelFrame = Time.frameCount;
                         Next(); break;
                     case 17:
                         if (!WaitFor(Time.frameCount > lanPanelFrame && After(0.15) && hostSession.State.step == lanQuestion && guestA.State.step == lanQuestion && guestB.State.step == lanQuestion &&
-                            !hostSession.State.revealed && AvatarsReady() && LanClassroom.ActivePanel != null &&
-                            LanClassroom.ActivePanel.GetComponentsInChildren<TMP_Text>(false).Any(t => t.text.Contains(hostSession.State.question)),
-                            "La GUI no mostró la pregunta LAN sincronizada")) return;
+                            !hostSession.State.revealed && LanClassroom.ActiveQuizWall != null &&
+                            LanClassroom.ActiveQuizWall.GetComponentsInChildren<TMP_Text>(false).Any(t => t.text.Contains(hostSession.State.question)),
+                            "El mural no mostró la pregunta LAN sincronizada")) return;
                         int correct = LanCorrectChoice();
                         Assert(correct >= 0 && hostSession.State.options.Distinct().Count() == 3, "Opciones reales de LAN contienen respuesta correcta y son únicas");
-                        Assert(Field<Dictionary<string, Transform>>(Find<LanClassroom>(), "avatars").Values.All(a =>
-                            a.GetComponentsInChildren<Renderer>().All(r => !r.enabled)) &&
-                            !Find<ScientificLibrary>().GetComponentsInChildren<GazeButton>(true).Single(b => b.Label.text == "Fuentes científicas").gameObject.activeInHierarchy,
-                            "Pregunta LAN legible sin avatares ni acceso de fuentes delante del panel");
-                        if (lanQuestion == 0) ShotPanel("12_lan_pregunta", LanClassroom.ActivePanel, 4.0f);
-                        Click(LanClassroom.ActivePanel, s => s == ((char)('A' + correct)) + ") " + hostSession.State.options[correct]);
+                        Assert(LanClassroom.ActivePanel == null && GameObject.Find("AccesoAulaLAN") == null &&
+                            Vector3.Distance(LanClassroom.ActiveQuizWall.position, new Vector3(-3.52f, 2.80f, -6.34f)) < 0.001f,
+                            "La pregunta cooperativa está fija en pared y no usa ventanas delante de la cámara");
+                        if (lanQuestion == 0) ShotPanel("12_lan_pregunta", LanClassroom.ActiveQuizWall, 4.0f);
+                        Click(LanClassroom.ActiveQuizWall, s => s == ((char)('A' + correct)) + ") " + hostSession.State.options[correct]);
                         guestA.Answer(correct); guestB.Answer((correct + 1) % 3);
                         Next(); break;
                     case 18:
                         if (!WaitFor(hostSession.State.revealed && guestA.State.revealed && guestB.State.revealed &&
-                            HasButton(LanClassroom.ActivePanel, s => s == (lanQuestion == 2 ? "Ver resultado" : "Siguiente pregunta")) &&
-                            LanClassroom.ActivePanel.GetComponentsInChildren<TMP_Text>(false).Any(t => t.text == hostSession.State.explanation),
-                            "El feedback LAN no llegó a la GUI y a ambos clientes")) return;
+                            HasButton(LanClassroom.ActiveQuizWall, s => s == (lanQuestion == 2 ? "Ver resultado" : "Siguiente pregunta")) &&
+                            LanClassroom.ActiveQuizWall.GetComponentsInChildren<TMP_Text>(false).Any(t => t.text == hostSession.State.explanation),
+                            "El feedback LAN no llegó al mural y a ambos clientes")) return;
                         Assert(hostSession.Self.points == (lanQuestion + 1) * 100 && guestA.Self.points == (lanQuestion + 1) * 100 && guestB.Self.points == 0,
                             "Puntos LAN reflejan respuestas reales correctas e incorrectas");
-                        if (lanQuestion == 0) ShotPanel("13_lan_feedback", LanClassroom.ActivePanel, 4.0f);
-                        Click(LanClassroom.ActivePanel, s => s == (lanQuestion == 2 ? "Ver resultado" : "Siguiente pregunta"));
+                        if (lanQuestion == 0) ShotPanel("13_lan_feedback", LanClassroom.ActiveQuizWall, 4.0f);
+                        Click(LanClassroom.ActiveQuizWall, s => s == (lanQuestion == 2 ? "Ver resultado" : "Siguiente pregunta"));
                         Next(); break;
                     case 19:
                         if (lanQuestion < 2)
@@ -419,13 +596,18 @@ namespace LabQuimicaVR.EditorTools
                             Next(17); return;
                         }
                         if (!WaitFor(hostSession.State.phase == "summary" && guestA.State.phase == "summary" && guestB.State.phase == "summary" &&
-                            HasButton(LanClassroom.ActivePanel, s => s == "Preparar otra ronda"), "No llegó el resumen de la ronda LAN")) return;
+                            HasButton(LanClassroom.ActiveQuizWall, s => s == "Menú del aula"), "No llegó el resumen mural de la ronda LAN")) return;
                         Assert(hostSession.Self.correct == 3 && guestA.Self.correct == 3 && guestB.Self.correct == 0, "El resumen registra tres respuestas por participante");
                         Assert(LearningProgress.GetAttempts(26) == 3 && LearningProgress.TotalPoints == firstScore, "Ronda LAN registra un intento sin duplicar mejor marca ni puntos");
                         result.lanQuestionsCompleted = 3;
-                        ShotPanel("14_lan_resultado", LanClassroom.ActivePanel, 4.0f);
+                        ShotPanel("14_lan_resultado", LanClassroom.ActiveQuizWall, 4.0f);
+                        Click(LanClassroom.ActiveQuizWall, s => s == "Menú del aula");
+                        Next(33); break;
+                    case 33:
+                        if (!WaitFor(MenuReady("home"), "El resumen mural no volvió al menú del aula")) return;
+                        RayClick(Menu.transform, s => s == "Aula LAN");
                         Click(LanClassroom.ActivePanel, s => s == "Cerrar aula para todos");
-                        Next(); break;
+                        Next(20); break;
                     case 20:
                         if (!WaitFor(!LanClassroom.HasActiveSession && !hostSession.Connected && !guestA.Connected && !guestB.Connected,
                             "Cerrar aula no desconectó a los dos clientes reales")) return;
@@ -565,10 +747,23 @@ namespace LabQuimicaVR.EditorTools
         static void ShotPanel(string name, Transform panel, float distance) =>
             Shot(name, panel.position - panel.forward * distance, panel.rotation);
 
+        static string HierarchyPath(Transform transform)
+        {
+            string path = transform.name + "[" + transform.GetSiblingIndex() + "]";
+            while (transform.parent != null)
+            {
+                transform = transform.parent;
+                path = transform.name + "[" + transform.GetSiblingIndex() + "]/" + path;
+            }
+            return path;
+        }
+
         static void Shot(string name, Vector3 position, Quaternion rotation)
         {
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null) return;
-            foreach (var text in Object.FindObjectsByType<TextMeshPro>())
+            var visibleTexts = Object.FindObjectsByType<TextMeshPro>()
+                .Where(t => t.isActiveAndEnabled && t.GetComponent<Renderer>() != null && t.GetComponent<Renderer>().enabled).ToArray();
+            foreach (var text in visibleTexts)
                 text.ForceMeshUpdate(true, true);
             var cameraObject = new GameObject("CamaraQA");
             var camera = cameraObject.AddComponent<Camera>();
@@ -592,6 +787,10 @@ namespace LabQuimicaVR.EditorTools
                 File.WriteAllBytes(path, image.EncodeToPNG());
                 Assert(new FileInfo(path).Length > 0, "Captura PNG generada:" + name);
                 screenshots.Add(path);
+                // Guardar primero la imagen para poder inspeccionar el fallo real si hay texto cortado.
+                foreach (var text in visibleTexts)
+                    Assert(!text.isTextOverflowing && !text.isTextTruncated, "Texto sin desborde: " + HierarchyPath(text.transform) +
+                        (text.isTextOverflowing || text.isTextTruncated ? " · " + text.text : ""));
             }
             finally
             {

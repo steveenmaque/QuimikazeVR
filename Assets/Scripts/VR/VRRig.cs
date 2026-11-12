@@ -36,6 +36,7 @@ namespace LabQuimicaVR
         public bool Stereo { get; private set; }
 
         const string LensKey = "LabVR.LensMm";
+        public const string StereoPreferenceKey = "LabVR.Stereo";
         const string OrientKey = "LabVR.Orientacion";
 
         /// <summary>0 = automatica (gira con el celular), 1 = fija a la izquierda, 2 = fija a la derecha.</summary>
@@ -107,7 +108,7 @@ namespace LabQuimicaVR
             useTilt = mobile && !useGyro && SystemInfo.supportsAccelerometer;
             if (useGyro && centered) yawOffset = savedYaw;
 
-            SetStereo(mobile);
+            SetStereo(PlayerPrefs.GetInt(StereoPreferenceKey, mobile ? 1 : 0) == 1, false);
 
             if (mobile && !useGyro)
                 ShowToast("Tu celular no tiene giroscopio: inclina la cabeza para mirar arriba o abajo y usa el joystick derecho para girar.", 8f);
@@ -172,9 +173,14 @@ namespace LabQuimicaVR
                 Screen.SetResolution(Mathf.RoundToInt(w * 0.75f), Mathf.RoundToInt(h * 0.75f), true);
         }
 
-        public void SetStereo(bool stereo)
+        public void SetStereo(bool stereo, bool remember = true)
         {
             Stereo = stereo;
+            if (remember)
+            {
+                PlayerPrefs.SetInt(StereoPreferenceKey, stereo ? 1 : 0);
+                PlayerPrefs.Save();
+            }
             if (background != null) background.enabled = stereo;
             if (stereo)
             {
@@ -342,7 +348,7 @@ namespace LabQuimicaVR
             if (turn != 0f) transform.Rotate(0f, turn * turnSpeed * dt, 0f);
 
             // Caminar en la direccion a la que se mira
-            var move = LanClassroom.ActivePanel != null || ScientificLibrary.ActivePanel != null ? Vector2.zero : LabInput.Move;
+            var move = LanClassroom.ActivePanel != null || ScientificLibrary.ActivePanel != null || MainMenuController.BlockMovement ? Vector2.zero : LabInput.Move;
             var fwd = head.forward; fwd.y = 0f;
             var right = head.right; right.y = 0f;
             if (fwd.sqrMagnitude < 0.001f) fwd = transform.forward;
@@ -357,11 +363,7 @@ namespace LabQuimicaVR
             int lens = LabInput.LensAdjust;
             if (lens != 0)
             {
-                lensSeparationMm = ClampLensToScreen(lensSeparationMm + lens, PhysicalDpi());
-                PlayerPrefs.SetFloat(LensKey, lensSeparationMm);
-                PlayerPrefs.Save();
-                if (Stereo) LayoutEyes();
-                ShowToast($"Separación de lentes: {lensSeparationMm:0} mm", 2f);
+                AdjustLensSeparation(lens);
             }
             if (LabInput.OrientationDown) CycleOrientation();
             if (Stereo && Screen.width != layoutWidth) LayoutEyes();
@@ -376,9 +378,19 @@ namespace LabQuimicaVR
             if (toastRoot != null && toastRoot.activeSelf && Time.unscaledTime > toastUntil) toastRoot.SetActive(false);
         }
 
+        public void AdjustLensSeparation(int delta)
+        {
+            lensSeparationMm = ClampLensToScreen(lensSeparationMm + delta, PhysicalDpi());
+            PlayerPrefs.SetFloat(LensKey, lensSeparationMm);
+            PlayerPrefs.Save();
+            if (Stereo) LayoutEyes();
+            ShowToast($"Separación de lentes: {lensSeparationMm:0} mm", 2f);
+        }
+
         /// <summary>Mensaje corto flotando frente a los ojos.</summary>
         public void ShowToast(string message, float seconds)
         {
+            if (MainMenuController.Instance != null) return;
             if (toast == null)
             {
                 toastRoot = new GameObject("Aviso");

@@ -10,7 +10,7 @@ namespace LabQuimicaVR
     {
         public string id, alias;
         public bool ready, answered;
-        public int points, correct;
+        public int points, correct, skin;
         public bool hasPose;
         public float x, y, z, yaw;
     }
@@ -21,27 +21,29 @@ namespace LabQuimicaVR
         public string[] options = new string[0];
         public LanMember[] members = new LanMember[0];
         public int element = 6, step, round, revision;
-        public string worldScene = "TablaPeriodica";
+        public string worldScene = "MenuPrincipal";
         public int worldElement = 6, poseTick;
-        public bool revealed;
+        public bool revealed, explorationStarted;
     }
     [Serializable]
     sealed class LanPacket
     {
-        public int version = 1;
+        public int version = LanSession.ProtocolVersion;
         public string type, alias, self, message;
         public string scene;
         public float px, py, pz, yaw;
         public bool ready;
-        public int choice, round, step, z;
+        public int choice, round, step, z, skin;
         public LanSnapshot state;
     }
 
     /// <summary>Solo el anfitrión decide preguntas, identidad, estado y puntos. Se bombea desde el hilo Unity.</summary>
     public sealed class LanSession : IDisposable
     {
-        public const int ProtocolVersion = 1;
+        public const int ProtocolVersion = 2;
         public const int MaxPlayers = 8;
+        public const int SkinCount = 4;
+        public static bool IsValidSkin(int skin) => skin >= 0 && skin < SkinCount;
         public LanSnapshot State { get; private set; } = new LanSnapshot();
         public string SelfId { get; private set; }
         public string Status { get; private set; } = "Conecta todos los celulares al mismo Wi-Fi o punto de acceso.";
@@ -54,6 +56,7 @@ namespace LabQuimicaVR
 
         LanTransport transport;
         string alias;
+        int selectedSkin;
         string terminalReason;
         float lastHeartbeat;
         float now, lastPoseBroadcast;
@@ -70,25 +73,29 @@ namespace LabQuimicaVR
             return chars.Length == 0 ? "Estudiante" : new string(chars);
         }
 
-        public void Host(string name, int port = LanTransport.DefaultPort)
+        public void Host(string name, int port = LanTransport.DefaultPort, int skin = 0)
         {
             if (transport != null) throw new InvalidOperationException("Cierra la sesión anterior.");
+            if (!IsValidSkin(skin)) throw new ArgumentOutOfRangeException(nameof(skin));
             alias = CleanAlias(name);
+            selectedSkin = skin;
             transport = new LanTransport();
             try { transport.Listen(port); }
             catch { transport.Dispose(); transport = null; throw; }
             IsHost = Connected = true;
             SelfId = "host";
-            State = new LanSnapshot { members = new[] { new LanMember { id = SelfId, alias = alias, ready = true } } };
+            State = new LanSnapshot { members = new[] { new LanMember { id = SelfId, alias = alias, ready = true, skin = selectedSkin } } };
             Status = "Aula creada. Comparte la IPv4 mostrada; hasta 8 jugadores.";
             Changed?.Invoke();
         }
 
-        public void Join(string name, string address, int port = LanTransport.DefaultPort)
+        public void Join(string name, string address, int port = LanTransport.DefaultPort, int skin = 0)
         {
             if (transport != null) throw new InvalidOperationException("Cierra la sesión anterior.");
+            if (!IsValidSkin(skin)) throw new ArgumentOutOfRangeException(nameof(skin));
             if (!LanTransport.IsValidAddress(address)) throw new ArgumentException("Escribe una IPv4 completa, por ejemplo 192.168.1.10.");
             alias = CleanAlias(name);
+            selectedSkin = skin;
             transport = new LanTransport();
             Status = "Conectando con el anfitrión…";
             transport.Connect(address, port);
@@ -104,7 +111,7 @@ namespace LabQuimicaVR
             {
                 if (item.Kind == "open")
                 {
-                    if (!IsHost) Send("server", new LanPacket { type = "join", alias = alias });
+                    if (!IsHost) Send("server", new LanPacket { type = "join", alias = alias, skin = selectedSkin });
                 }
                 else if (item.Kind == "line") Process(item.Peer, item.Payload);
                 else if (item.Kind == "error") { Status = item.Payload; Changed?.Invoke(); }
@@ -147,19 +154,31 @@ namespace LabQuimicaVR
             LanPacket packet;
             try { packet = JsonUtility.FromJson<LanPacket>(json); }
             catch (ArgumentException) { transport.ClosePeer(peer); return; }
-            if (packet == null || packet.version != ProtocolVersion || string.IsNullOrEmpty(packet.type))
+            if (packet == null || string.IsNullOrEmpty(packet.type))
             { transport.ClosePeer(peer); return; }
+            if (packet.version != ProtocolVersion)
+            {
+                const string reason = "Versión LAN incompatible. Instala la misma versión de Quimikaze en todos los dispositivos.";
+                if (IsHost) transport.SendAndClose(peer, JsonUtility.ToJson(new LanPacket { type = "error", message = reason }));
+                else { terminalReason = Status = reason; Changed?.Invoke(); transport.ClosePeer(peer); }
+                return;
+            }
             if (IsHost)
             {
                 if (packet.type == "join" && !joined.Contains(peer))
                 {
+                    if (!IsValidSkin(packet.skin))
+                    {
+                        transport.SendAndClose(peer, JsonUtility.ToJson(new LanPacket { type = "error", message = "Personaje no válido. Elige uno de los cuatro personajes." }));
+                        return;
+                    }
                     if (State.phase != "lobby" || State.members.Length >= MaxPlayers)
                     {
                         transport.SendAndClose(peer, JsonUtility.ToJson(new LanPacket { type = "error", message = "Aula llena o ronda iniciada. Espera al próximo lobby." }));
                         return;
                     }
                     joined.Add(peer);
-                    State.members = State.members.Concat(new[] { new LanMember { id = peer, alias = CleanAlias(packet.alias) } }).ToArray();
+                    State.members = State.members.Concat(new[] { new LanMember { id = peer, alias = CleanAlias(packet.alias), skin = packet.skin } }).ToArray();
                     Send(peer, new LanPacket { type = "welcome", self = peer });
                     Broadcast();
                     return;
@@ -186,14 +205,21 @@ namespace LabQuimicaVR
 
         static bool ValidState(LanSnapshot s)
         {
-            return s != null && s.members != null && s.members.Length <= MaxPlayers && s.members.All(m => m != null && m.id != null && m.alias != null)
+            return s != null && s.members != null && s.members.Length <= MaxPlayers && s.members.All(m => m != null && m.id != null && m.alias != null && IsValidSkin(m.skin))
                 && s.element >= 1 && s.element <= 118 && s.step >= 0 && s.step <= 2 && (s.phase == "lobby" || s.phase == "quiz" || s.phase == "summary")
                 && s.options != null && s.options.Length <= 3
-                && (s.worldScene == "TablaPeriodica" || s.worldScene == "ElementoDetalle") && s.worldElement >= 1 && s.worldElement <= 118
+                && (s.explorationStarted ? s.worldScene == "TablaPeriodica" || s.worldScene == "ElementoDetalle" : s.worldScene == "MenuPrincipal") && s.worldElement >= 1 && s.worldElement <= 118
                 && s.members.All(m => !m.hasPose || (Finite(m.x) && Finite(m.y) && Finite(m.z) && Finite(m.yaw) && Math.Abs(m.x) <= 14 && m.y >= -1 && m.y <= 8 && m.z >= -8 && m.z <= 14));
         }
 
         public void SetReady(bool ready) => Request(new LanPacket { type = "ready", ready = ready });
+        public void StartExploration() => Request(new LanPacket { type = "explore" });
+        public void SetSkin(int skin)
+        {
+            if (!IsValidSkin(skin)) return;
+            selectedSkin = skin;
+            Request(new LanPacket { type = "skin", skin = skin });
+        }
         public void StartRound(int z) => Request(new LanPacket { type = "start", z = z });
         public void Answer(int choice) => Request(new LanPacket { type = "answer", choice = choice, round = State.round, step = State.step });
         public void RevealQuestion() => Request(new LanPacket { type = "reveal" });
@@ -217,7 +243,19 @@ namespace LabQuimicaVR
             switch (packet.type)
             {
                 case "ping": return;
+                case "skin":
+                    if (!IsValidSkin(packet.skin) || member.skin == packet.skin) return;
+                    member.skin = packet.skin;
+                    break;
+                case "explore":
+                    if (peer != "host" || State.explorationStarted || State.phase != "lobby" || State.members.Length < 2 || State.members.Any(m => !m.ready)) return;
+                    State.explorationStarted = true;
+                    State.worldScene = "TablaPeriodica";
+                    foreach (var m in State.members) m.hasPose = false;
+                    lastPoseAt.Clear();
+                    break;
                 case "follow":
+                    if (!State.explorationStarted) return;
                     if (peer != "host" || (packet.scene != "TablaPeriodica" && packet.scene != "ElementoDetalle") || packet.z < 1 || packet.z > 118) return;
                     if (State.phase == "quiz" && (packet.scene != "ElementoDetalle" || packet.z != State.element)) return;
                     if (State.worldScene == packet.scene && State.worldElement == packet.z) return;
@@ -227,6 +265,7 @@ namespace LabQuimicaVR
                     lastPoseAt.Clear();
                     break;
                 case "pose":
+                    if (!State.explorationStarted) return;
                     if (packet.scene != State.worldScene || (packet.scene == "ElementoDetalle" && packet.z != State.worldElement)) return;
                     if (!Finite(packet.px) || !Finite(packet.py) || !Finite(packet.pz) || !Finite(packet.yaw)
                         || Math.Abs(packet.px) > 14f || packet.py < -1 || packet.py > 8 || packet.pz < -8 || packet.pz > 14 || Math.Abs(packet.yaw) > 3600) return;
@@ -242,7 +281,7 @@ namespace LabQuimicaVR
                     member.ready = packet.ready;
                     break;
                 case "start":
-                    if (peer != "host" || State.phase != "lobby" || State.members.Length < 2 || State.members.Any(m => !m.ready) || packet.z < 1 || packet.z > 118) return;
+                    if (peer != "host" || !State.explorationStarted || State.phase != "lobby" || State.members.Length < 2 || State.members.Any(m => !m.ready) || packet.z < 1 || packet.z > 118) return;
                     State.element = packet.z;
                     State.worldScene = "ElementoDetalle";
                     State.worldElement = packet.z;

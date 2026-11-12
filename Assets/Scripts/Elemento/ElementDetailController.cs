@@ -47,7 +47,7 @@ namespace LabQuimicaVR
         {
             if (!Application.isPlaying || element == null || ElementIntro.Active) return;
             if (LanClassroom.HandlesBackNavigation || ScientificLibrary.HandlesBackNavigation) return;
-            if (LabInput.BackDown) LabState.BackToTable();
+            if (LabInput.BackDown) LabState.BackToMenu();
             if (LabInput.ModeDown && atom != null) SetMode(atom.NextMode());
         }
 
@@ -291,7 +291,7 @@ namespace LabQuimicaVR
             next.interactable = z < 118;
             next.OnClick += () => LabState.OpenElement(z + 1);
 
-            LabFactory.Text(s, "<b>A / Visor:</b> elegir modo   ·   <b>X:</b> cambiar modelo   ·   <b>B:</b> volver a la tabla\n<size=85%><color=#9FB4CC>Joystick der.: apuntar sin girar el cuello (XAUR)</color></size>", new Vector3(0, -0.96f, -0.01f), 0.088f, Palette.Text,
+            LabFactory.Text(s, "<b>A / Visor:</b> elegir modo   ·   <b>X:</b> cambiar modelo   ·   <b>B:</b> abrir el menú\n<size=85%><color=#9FB4CC>Joystick der.: apuntar sin girar el cuello (XAUR)</color></size>", new Vector3(0, -0.96f, -0.01f), 0.088f, Palette.Text,
                 TextAlignmentOptions.Center, size.x - 0.15f, 0.36f);
         }
 
@@ -303,7 +303,7 @@ namespace LabQuimicaVR
             int stars = LabState.GetStars(element.Z);
             string challengeLine = stars > 0
                 ? $"<color=#5FD6A8>Reto completado ({stars}/3 medallas)</color>"
-                : "<color=#FFC34D>¡No olvides resolver el Reto de la Sesión (3 preguntas)!</color>";
+                : "<color=#FFC34D>¡No olvides resolver el Reto de Aprendizaje (3 preguntas)!</color>";
             LabFactory.Text(s, $"Estás en el laboratorio {element.Del} <b>{element.Name.ToLower()}</b>  ·  {challengeLine}", new Vector3(0, 0.2f, -0.01f), 0.082f, Palette.Text, TextAlignmentOptions.Center, 4f, 0.18f);
             var back = LabFactory.Button(s, "Volver a la tabla periódica", new Vector3(0, -0.17f, -0.03f), new Vector2(3.0f, 0.36f), 0.12f, new Color(0.0f, 0.45f, 0.6f));
             back.OnClick += LabState.BackToTable;

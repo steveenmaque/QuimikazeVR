@@ -40,8 +40,8 @@ namespace LabQuimicaVR.EditorTools
             Shot("elemento_ventana", new Vector3(0, 1.7f, -1.0f), new Vector3(-10, 180, 0), 85);
             FaceCards(new Vector3(1.5f, 1.6f, 1.2f));
             Shot("elemento_vitrina", new Vector3(1.5f, 1.6f, 1.2f), new Vector3(8, 34, 0), 60);
-            var retoCamPos = new Vector3(-1.95f, 1.85f, -2.15f);
-            var retoCamEuler = new Vector3(2, -148, 0);
+            var retoCamPos = new Vector3(-2.45f, 2.20f, -2.10f);
+            var retoCamEuler = new Vector3(-7f, -166f, 0f);
             Shot("elemento_reto", retoCamPos, retoCamEuler, 65);
             var ch = Object.FindAnyObjectByType<ElementChallengeStation>();
             if (ch != null)

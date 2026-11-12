@@ -1,12 +1,12 @@
 # Quimikaze · Laboratorio virtual de química en VR
 
-**Versión 1.2, candidata para pilotaje de aula:** misiones educativas, progreso persistente, retos con explicaciones, fuentes consultables y multijugador LAN de 2–8 personas con anfitrión Android. APK IL2CPP compilado y verificado; las pruebas físicas y la aprobación del contenido para venta escolar siguen en la [checklist](VALIDACION_FINAL.md). Consulta el [modelo educativo](AULA_EDUCATIVA.md), las [fuentes científicas](FUENTES_CIENTIFICAS.md) y el [uso de LAN](Tests/LAN.md).
-
-**Instalación desde v1.1:** su clave de firma se perdió y el propietario autorizó una nueva base. Esta vez es necesario reinstalar; la desinstalación puede borrar datos locales. Desde v1.2, conservar la misma clave para que las siguientes versiones puedan instalarse como actualización.
-
 Laboratorio virtual de química para chicos de 10 a 14 años que no tienen acceso a un laboratorio real. Funciona con un **celular Android dentro de un visor tipo VR Box o Cardboard**, el botón del visor y un **mando Bluetooth genérico**.
 
-Entras a una sala blanca con la **tabla periódica completa de los 118 elementos**. Al elegir un elemento pasas a su propio nivel, con:
+Al abrir el juego aparece un **menú principal que puedes usar con el visor**: **Jugar**, **Tutorial**, **Aula LAN**, **Mi personaje**, **Opciones** y **Salir**.
+
+Dentro del laboratorio, las **rutas y misiones están en la pared**. La información de investigación queda en una placa discreta **Para docentes**; solo se despliega al seleccionarla.
+
+Al entrar a la sala encuentras la **tabla periódica completa de los 118 elementos**. Al elegir un elemento pasas a su propio nivel, con:
 - su **modelo 3D** (Bohr, nube electrónica y núcleo);
 - su **historia**: línea de tiempo, descubridor y datos curiosos;
 - sus **propiedades**: grupo, periodo, valencias y configuración electrónica;
@@ -15,7 +15,7 @@ Entras a una sala blanca con la **tabla periódica completa de los 118 elementos
 - los **descubridores con su retrato** y **dónde se encuentra en la naturaleza**, con datos del Perú;
 - una **transición con un paisaje 360°** relacionado con el elemento: el espacio, una mina, el mar, el bosque…
 
-> Cambios y verificaciones: [NOVEDADES_v1.2.md](NOVEDADES_v1.2.md).
+> Novedades de la versión 1.3: [NOVEDADES_v1.3.md](NOVEDADES_v1.3.md).
 
 ---
 
@@ -36,18 +36,29 @@ En la página de [Releases](https://github.com/steveenmaque/QuimikazeVR/releases
 2. Abre el archivo descargado desde **Descargas** o el administrador de archivos.
 3. Android pedirá **permitir instalar apps desconocidas** para el navegador o el administrador de archivos. Actívalo y vuelve atrás.
 4. Pulsa **Instalar**. Si aparece *Google Play Protect*, elige **Más detalles → Instalar de todos modos**. Es normal: la app no viene de Play Store.
-5. Abre **Quimikaze**. Si tienes v1.1, aplica la reinstalación indicada arriba; su firma no es compatible con la nueva base v1.2.
+5. Abre **Quimikaze** y empieza por el tutorial del menú. Si tienes **v1.2**, elige **Actualizar** cuando Android lo ofrezca; conserva la app instalada.
+
+Si todavía tienes **v1.1**, su clave anterior se perdió: esa versión requiere reinstalar una vez y la desinstalación puede borrar datos locales.
 
 ### Conservar las próximas actualizaciones
 
-La firma de la línea v1.2 queda fijada en `Tests/Test-ApkRelease.ps1`. Conservar un respaldo privado de `.android/debug.keystore` fuera del repositorio y en un almacenamiento externo antes de reinstalar el equipo. El archivo de claves no debe subirse a GitHub. Para verificar cada APK, ejecutar el comprobador con la versión y el código que correspondan; mantener el certificado esperado.
+La firma compartida por v1.2 y v1.3 queda fijada en `Tests/Test-ApkRelease.ps1`. Conservar un respaldo privado de `.android/debug.keystore` fuera del repositorio y en un almacenamiento externo antes de reinstalar el equipo. El archivo de claves no debe subirse a GitHub. Para verificar cada APK, ejecutar el comprobador con la versión y el código que correspondan; mantener el certificado esperado.
 
 ### Primera vez con el visor
 1. Coloca el celular en el visor, en horizontal y **del lado que quieras**: con los botones de volumen hacia arriba o hacia abajo. La pantalla gira sola, también si el celular tiene el bloqueo de rotación activado.
 2. Mira al frente unos segundos: la vista se centra sola.
 3. Si se ve doble, ajusta la separación de las lentes con **L1 / R1** del mando.
 4. Si la vista queda torcida, **mantén pulsado** el botón del visor para recentrarla.
-5. Para **transmitir la pantalla** (Meet, Zoom…), comparte la pantalla del celular: la imagen sale derecha, sin importar de qué lado esté el celular.
+5. Desde el menú, abre **Tutorial**, elige **Mi personaje** y revisa **Opciones** antes de entrar al laboratorio. Todo se selecciona con la mirada y el botón del visor o **A**.
+6. Para **transmitir la pantalla** (Meet, Zoom…), comparte la pantalla del celular: la imagen sale derecha, sin importar de qué lado esté el celular.
+
+### Jugar con tus compañeros
+1. Conecta los celulares al **mismo Wi-Fi o punto de acceso**.
+2. En el menú principal, abre **Mi personaje** para elegir tu apariencia y luego **Aula LAN**.
+3. Una persona crea el aula; las demás introducen la IPv4 del anfitrión y se unen.
+4. Marca **Listo**. Con dos o más participantes listos, el anfitrión pulsa **Entrar al laboratorio**.
+
+El menú y el tutorial se usan con la mirada y el botón del visor o A. En el tutorial puedes elegir **Uso solo el visor** si no tienes un mando para practicar el desplazamiento.
 
 ---
 
@@ -60,14 +71,14 @@ La firma de la línea v1.2 queda fijada en `Tests/Test-ApkRelease.ps1`. Conserva
 | Caminar | Joystick izquierdo o cruceta | WASD o flechas |
 | Girar | Joystick derecho | Q / E |
 | Mirar arriba / abajo | Eje vertical del joystick derecho | T / G o RePág / AvPág |
-| Invertir el eje vertical y guardar | Pulsar **R3** o botón **Eje Y** en controles | I |
+| Invertir el eje vertical y guardar | Pulsar **R3** o botón **Eje Y** en **Opciones** | I |
 | Mirar alrededor | Mover la cabeza | Mantener clic derecho y mover el mouse |
-| Volver a la tabla | **B** o botón atrás del celular | Escape |
-| Salir de la app (en la tabla) | Botón atrás del celular **dos veces** | — |
+| Volver o abrir el menú | **B** o botón atrás del celular | Escape |
+| Salir de la app | Opción **Salir** del menú principal | — |
 | Cambiar el modelo del átomo | **X** | M |
 | Ajustar las lentes si se ve doble | **L1 / R1** (1 mm por pulsación; se guarda) | [ / ] |
 | Pantalla dividida para el visor | Automática en el celular | V |
-| Orientación de la pantalla | Automática (gira con el celular), o fija con el botón **Pantalla** en *¿Cómo se usa?* | O |
+| Orientación de la pantalla | Automática (gira con el celular), o fija desde **Opciones** | O |
 | Saltar la transición del paisaje | Toque del botón del visor o **A** | Clic izquierdo |
 
 ---
@@ -121,40 +132,23 @@ git clone https://github.com/steveenmaque/QuimikazeVR.git
 3. Abre la escena `Assets/Scenes/TablaPeriodica` y pulsa **▶ Play** para probar.
 
 ### 5. Trabajar en una tarea (cada vez)
-Trabajamos con **ramas**: cada persona hace sus cambios en una rama propia y después se unen a `main`.
+La entrega actual se mantiene en **main**, sin ramas de Pull Request.
 
 1. **Actualiza tu copia** antes de empezar:
    ```bash
    git checkout main
+   git pull --ff-only
    ```
+2. Haz tus cambios en Unity o en los scripts y **pruébalos con ▶ Play**.
+3. Revisa `git status` y añade únicamente los archivos de tu tarea. No incluyas claves de firma ni cambios ajenos.
+4. **Guarda y sube los cambios revisados**:
    ```bash
-   git pull
+   git commit -m "Describe el cambio realizado"
+   git push origin main
    ```
-2. **Crea una rama** con un nombre que diga qué vas a hacer:
-   ```bash
-   git checkout -b historia-elementos-57-118
-   ```
-3. Haz tus cambios en Unity o en los scripts y **pruébalos con ▶ Play**.
-4. **Guarda tus cambios** en Git:
-   ```bash
-   git add -A
-   ```
-   ```bash
-   git commit -m "Corrige la historia de los lantánidos"
-   ```
-5. **Sube tu rama** a GitHub:
-   ```bash
-   git push -u origin historia-elementos-57-118
-   ```
-6. En GitHub aparecerá el botón **Compare & pull request**. Ábrelo, explica qué cambiaste y crea el **Pull Request**.
-7. Otro miembro del equipo lo revisa y pulsa **Merge pull request**. Así tus cambios entran a `main`.
-8. Vuelve al paso 1 para la siguiente tarea.
+5. Coordina con el equipo antes de editar los mismos archivos y vuelve al paso 1 para la siguiente tarea.
 
-**Con GitHub Desktop** es lo mismo:
-- *Fetch/Pull origin* para actualizar.
-- *Current branch → New branch* para crear la rama.
-- Escribes el resumen y pulsas *Commit to …*.
-- *Push origin* para subir y *Create Pull Request* para el Pull Request.
+**Con GitHub Desktop:** selecciona *main*, usa *Fetch/Pull origin*, revisa los archivos, confirma en *main* y pulsa *Push origin*.
 
 ### 6. Reglas para no pisarse el trabajo
 - **No editen la misma escena (`.unity`) al mismo tiempo.** Git no puede mezclar bien dos cambios en una escena. Avisen en el grupo quién está con cuál.
@@ -164,33 +158,31 @@ Trabajamos con **ramas**: cada persona hace sus cambios en una rama propia y des
 - Hagan commits pequeños y con mensajes claros.
 
 ### 7. Si hay un conflicto
-Un conflicto aparece en `git pull` o en el Pull Request cuando dos personas cambiaron las mismas líneas.
+Un conflicto puede aparecer cuando dos personas cambiaron las mismas líneas. Revisa los cambios locales y remotos antes de resolverlo.
 - **Script o texto (`.cs`, `.txt`):** abre el archivo y busca las marcas `<<<<<<<`, `=======` y `>>>>>>>`. Deja la versión correcta, borra las marcas y ejecuta `git add` y luego `git commit`.
-- **Escena:** quédate con una de las dos versiones y vuelve a generar las escenas con **Construir escenas**:
-  ```bash
-  git checkout --theirs Assets/Scenes/TablaPeriodica.unity
-  ```
+- **Escena:** resuelve primero los cambios del código que la genera y regénérala con **Construir escenas**. No elijas una versión a ciegas ni sobrescribas cambios locales sin revisarlos.
 
 ---
 
 ## 📦 Publicar una nueva versión del APK
 
 ### Compilar
-1. En Unity: menú **Quimikaze → Compilar APK (Android)**. Tarda unos 3 minutos y la primera vez más.
+1. En Unity: menú **Quimikaze → Compilar APK (Android)**. Puede tardar varios minutos, especialmente la primera vez.
 2. El APK queda en `Builds/QuimikazeVR.apk`, ya con el nombre correcto para subirlo, y el resultado en `AutoSync/build_result.txt`.
-3. Antes de publicar, pruébalo en un celular.
+3. Revisa el resultado y ejecuta `Tests/Test-ApkRelease.ps1` sobre el APK. La v1.3 debe conservar el paquete y el certificado de v1.2, con código de versión 4.
+4. Prueba la instalación sobre v1.2 en un celular antes de dar por comprobada la actualización física; registra las pruebas pendientes en [VALIDACION_FINAL.md](VALIDACION_FINAL.md).
 
 ### Subir a GitHub Releases (desde la web)
 1. En el repositorio, entra a **Releases → Draft a new release**.
-2. En **Choose a tag** escribe la nueva versión, por ejemplo `v1.1`, y pulsa *Create new tag*.
-3. Título: `QuimikazeVR v1.1`. En la descripción explica qué cambió.
+2. En **Choose a tag** escribe la nueva versión, por ejemplo `v1.3`, y pulsa *Create new tag*.
+3. Título: `Quimikaze v1.3`. En la descripción explica qué cambió.
 4. Arrastra `Builds/QuimikazeVR.apk` a la zona *Attach binaries*. **El archivo debe llamarse `QuimikazeVR.apk`**, para que el enlace de descarga de este README siempre apunte a la última versión.
 5. Pulsa **Publish release**.
 
 ### Subir a GitHub Releases (desde la terminal, con GitHub CLI)
 Instala GitHub CLI desde https://cli.github.com e inicia sesión una vez con `gh auth login`. Después:
 ```bash
-gh release create v1.1 Builds/QuimikazeVR.apk --title "Quimikaze v1.1" --notes-file NOVEDADES_v1.1.md
+gh release create v1.3 Builds/QuimikazeVR.apk --title "Quimikaze v1.3" --notes-file NOVEDADES_v1.3.md
 ```
 
 ---
@@ -214,16 +206,17 @@ Unity 6 (6000.6.0f1) · Built-in Render Pipeline · Android en horizontal · IL2
 | `Assets/Laboratorio/Fuentes`, `Assets/Resources/Fuentes` | Fuentes Fredoka y Atkinson Hyperlegible Next (.ttf y su versión para TextMeshPro); ver [TIPOGRAFIA.md](TIPOGRAFIA.md) |
 | `Assets/Laboratorio/Shaders` | Shader de los íconos y etiquetas redondeadas (`PanelMesh`) |
 | `Assets/Resources/LabMaterials`, `LabMeshes` | Materiales y modelos 3D generados |
-| `Assets/Scenes` | `TablaPeriodica` y `ElementoDetalle` |
+| `Assets/Scenes` | `MenuPrincipal`, `TablaPeriodica` y `ElementoDetalle` |
 
 ### Escenas
 | Escena | Qué contiene |
 |---|---|
-| `TablaPeriodica` | Pantalla de inicio: una sala blanca cerrada con la zona de inicio y la tabla periódica completa al frente. A los costados están los bloques s/p/d/f, los periodos, los tipos de elementos (al elegir uno se resalta su familia en la tabla), los grupos y sus nombres, los controles y datos curiosos. Atrás: el título, "la tabla en números" y "¿qué es un átomo?". |
+| `MenuPrincipal` | Entrada del juego en VR: tutorial, personaje, opciones, juego individual y preparación del aula LAN. |
+| `TablaPeriodica` | Laboratorio: una sala blanca cerrada con la zona de inicio y la tabla periódica completa al frente. A los costados están los bloques s/p/d/f, los periodos, los tipos de elementos (al elegir uno se resalta su familia en la tabla), los grupos y sus nombres, los controles y datos curiosos. Atrás: el título, "la tabla en números" y "¿qué es un átomo?". |
 | `ElementoDetalle` | El nivel de cada elemento. **Al frente:** el modelo 3D. **Izquierda:** historia, línea de tiempo, descubridor, origen del nombre, aportes y dato curioso. **Derecha:** propiedades (grupo, periodo, bloque, valencias, equivalente químico, configuración electrónica y electrones por nivel). **Adelante:** la estación de reacciones y los botones del modelo y de anterior/siguiente. **A la derecha:** la vitrina con la muestra real y su foto. **Atrás:** la ventana con el paisaje del elemento, la salida, los descubridores con su retrato y dónde se encuentra en la naturaleza. |
 
 ### Menú "Quimikaze" en Unity
-- **Construir escenas**: regenera desde el código los materiales, las mallas y las dos escenas.
+- **Construir escenas**: regenera desde el código los materiales, las mallas y las tres escenas.
 - **Mostrar laboratorio**: abre la escena principal y encuadra la vista.
 - **Crear fuentes**: regenera las fuentes de TextMeshPro con todos los caracteres que usan los textos (después, vuelve a construir las escenas).
 - **Vista previa: siguiente elemento**: con `ElementoDetalle` abierta, muestra el siguiente elemento.

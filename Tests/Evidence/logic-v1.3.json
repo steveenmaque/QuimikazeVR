@@ -1,0 +1,64 @@
+{
+  "harness": "QuimikazeVR LogicHarness",
+  "utc": "2026-11-12T18:48:41.6887599Z",
+  "runtime": ".NET 10.0.14",
+  "platform": "Microsoft Windows 10.0.26200",
+  "passed": true,
+  "checks": 51635,
+  "failures": 0,
+  "suites": [
+    {
+      "suite": "EducationValidation",
+      "passed": true,
+      "checks": 16228,
+      "elapsedMs": 235
+    },
+    {
+      "suite": "ContentInputValidation",
+      "passed": true,
+      "checks": 35278,
+      "elapsedMs": 214
+    },
+    {
+      "suite": "LanValidation",
+      "passed": true,
+      "checks": 129,
+      "elapsedMs": 18803
+    }
+  ],
+  "scope": [
+    "Fuentes C# de producci\u00F3n enlazadas sin copiar algoritmos",
+    "Datos TXT reales del repositorio",
+    "Sockets TCP reales IPv4 loopback",
+    "Funciones puras de normalizaci\u00F3n e integraci\u00F3n del eje vertical",
+    "Persistencia l\u00F3gica JSON con adaptador System.Text.Json"
+  ],
+  "limitations": [
+    "NO ejecuta Unity ni IL2CPP",
+    "NO verifica gr\u00E1ficos, escenas, sensores ni mando f\u00EDsico",
+    "NO prueba Wi-Fi/hotspot ni Android",
+    "Resources de imagen verifica archivo y firma PNG/JPEG: NO decodificaci\u00F3n/importaci\u00F3n de textura Unity",
+    "PlayerPrefs en memoria: NO verifica almacenamiento Android ni preferencias de Unity",
+    "System.Text.Json sustituye JsonUtility: la serializaci\u00F3n nativa Unity necesita validaci\u00F3n adicional",
+    "Las invariantes de contenido NO validan cient\u00EDficamente cada afirmaci\u00F3n de los 118 elementos"
+  ],
+  "resourceReads": {
+    "textFiles": 14,
+    "imageFileChecks": 268
+  },
+  "sourceSha256": {
+    "Assets/Scripts/Aprendizaje/LearningProgress.cs": "605A610C831D0DEE8CD9722A528132328AAFB29CDEE67CAFB813B9FF3B7C8F1A",
+    "Assets/Scripts/Aprendizaje/LearningRoutes.cs": "AE5649437EAC6E8CD5B45C06185E846FEB37CF58DA56283D1524A07ED8038B27",
+    "Assets/Scripts/Aprendizaje/ChallengeCatalog.cs": "93B166376CD0578A9EBB4944BA9A9E70E86DD92A33CA3020112F06CB3E867F63",
+    "Assets/Scripts/Datos/ElementData.cs": "AB1EA02113EC4CF37C65875BDFD4AFBAB48BFAB53A73DEB43654BEE85D79E208",
+    "Assets/Scripts/Datos/ElementExtras.cs": "AB067D8ECC44E8153CA64BECDFA5ABBE06DB7722995D403EFAECAB44AE627F95",
+    "Assets/Scripts/Datos/ElectronConfiguration.cs": "D70CB494DF4C34730B5021934F2745F11D0FD40216A0E16D73CA232F8678B105",
+    "Assets/Scripts/Datos/ReactionDatabase.cs": "F46C4991BCDFE22B510B452879F41A649CB8E415E553A40895E4A7DA82A5ED58",
+    "Assets/Scripts/VR/LabInput.cs": "46DEE05E549A387B3DCF2867D536852F279C71C4C7B3DD08E6693D1BD0F7EF38",
+    "Assets/Scripts/Red/LanTransport.cs": "CE742500F6BEAD4F18214A81202C4D0BF9B21DD0527FEEA3DB7B0A8D0603C799",
+    "Assets/Scripts/Red/LanSession.cs": "F940683F2E1BB0DA92B2BCAF9AC486CD4CA37D0578510505A10B89B4BC29C5D4",
+    "Assets/Editor/EducationValidation.cs": "BDB46276400917EEDE0D724E942E28F9797B3FE24C7AF61F0742819D33EA0BEC",
+    "Assets/Editor/ContentInputValidation.cs": "B596603228966CB46E2BE8F091D6EE8F5BC36377194D8CBA265BB19DB8301726",
+    "Assets/Editor/LanValidation.cs": "8B4726CC7E2EE338A3A7B7D7BF91A74880BEA1C0CD98F4E1EEEFD4F18F62528E"
+  }
+}

@@ -1,15 +1,21 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace LabQuimicaVR
 {
     /// <summary>Navegación y fachada de compatibilidad al progreso local persistente.</summary>
     public static class LabState
     {
+        public const string MenuScene = "MenuPrincipal";
         public const string TableScene = "TablaPeriodica";
         public const string ElementScene = "ElementoDetalle";
 
         public static int SelectedZ = 6;
         public static bool Visited;
+        static string soloReturnScene = TableScene;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetEntry() { soloReturnScene = TableScene; }
 
         // Los resultados se guardan localmente en LearningProgress; nunca se envían a terceros.
 
@@ -62,6 +68,22 @@ namespace LabQuimicaVR
             if (ScreenFader.Busy) return;
             LabAudio.Play(LabSound.Whoosh);
             ScreenFader.FadeToScene(TableScene);
+        }
+
+        public static void BackToMenu()
+        {
+            if (ScreenFader.Busy) return;
+            string currentScene = SceneManager.GetActiveScene().name;
+            if (!LanClassroom.HasActiveSession && (currentScene == TableScene || currentScene == ElementScene))
+                soloReturnScene = currentScene;
+            LabAudio.Play(LabSound.Whoosh);
+            ScreenFader.FadeToScene(MenuScene);
+        }
+
+        public static void ResumeSoloLab()
+        {
+            if (soloReturnScene == ElementScene) OpenElement(SelectedZ);
+            else BackToTable();
         }
     }
 }

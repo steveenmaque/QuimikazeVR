@@ -56,6 +56,12 @@ namespace LabQuimicaVR.EditorTools
                     ScientificLibrary.Entries.Any(e => string.IsNullOrEmpty(e.Citation) || !e.Url.StartsWith("https://")))
                     throw new Exception("Biblioteca de fuentes incompleta.");
                 LabSceneBuilder.BuildAll();
+                if (EditorBuildSettings.scenes.Length != 3 || EditorBuildSettings.scenes[0].path != LabSceneBuilder.MenuScenePath)
+                    throw new Exception("El menú principal debe ser la primera escena del APK.");
+                CheckRig();
+                if (Object.FindAnyObjectByType<MainMenuController>() == null || Object.FindAnyObjectByType<ScientificLibrary>() != null)
+                    throw new Exception("La escena de inicio necesita menú VR y debe mantener la bibliografía fuera del inicio infantil.");
+                EditorSceneManager.OpenScene(LabSceneBuilder.TableScenePath);
                 var table = Object.FindAnyObjectByType<PeriodicTableView>();
                 if (table == null || table.tiles.Count != 118) throw new Exception("La escena no contiene las 118 casillas.");
                 CheckRig();

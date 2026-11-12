@@ -25,6 +25,7 @@ namespace LabQuimicaVR.EditorTools
             Addresses();
             Frames();
             Backpressure();
+            ProtocolAndSkins();
             LobbyAndQuiz();
             Capacity();
             FailedJoinAndTimeout();
@@ -56,6 +57,8 @@ namespace LabQuimicaVR.EditorTools
                 Assert(!LanTransport.IsValidAddress(address), "dirección inválida rechazada: " + address);
             Assert(LanSession.CleanAlias("<b>Alumno</b>\n;").IndexOf('<') < 0, "alias sin marcado");
             Assert(LanSession.CleanAlias(new string('a', 100)).Length == 18, "alias limitado");
+            for (int skin = 0; skin < 4; skin++) Assert(LanSession.IsValidSkin(skin), "personaje válido " + skin);
+            foreach (int skin in new[] { -1, 4, int.MaxValue }) Assert(!LanSession.IsValidSkin(skin), "personaje inválido " + skin);
             Passed.Add("IPv4, alias y límites");
         }
 
@@ -113,13 +116,30 @@ namespace LabQuimicaVR.EditorTools
             {
                 float clock = 0;
                 Action pump = () => { clock += 0.01f; host.Pump(clock); a.Pump(clock); b.Pump(clock); };
-                host.Host("Docente", 0);
+                host.Host("Docente", 0, 2);
+                host.StartExploration();
+                Assert(!host.State.explorationStarted && host.State.worldScene == "MenuPrincipal", "un solo jugador permanece en lobby previo");
                 host.StartRound(6);
                 Assert(host.State.phase == "lobby", "no se inicia solo");
-                a.Join("Alumno A", "127.0.0.1", host.Port);
-                b.Join("Alumno B", "127.0.0.1", host.Port);
+                a.Join("Alumno A", "127.0.0.1", host.Port, 1);
+                b.Join("Alumno B", "127.0.0.1", host.Port, 3);
                 Wait(() => host.State.members.Length == 3 && a.Connected && b.Connected && b.State.members.Length == 3, pump, "unir 3 jugadores");
                 Assert(a.SelfId != b.SelfId && a.SelfId != "host", "identidad asignada por servidor");
+                Assert(host.Self.skin == 2 && a.Self.skin == 1 && b.Self.skin == 3, "personajes elegidos viajan en handshake");
+                host.SetSkin(0); a.SetSkin(2); b.SetSkin(1);
+                Wait(() => host.Self.skin == 0 && a.Self.skin == 2 && b.Self.skin == 1 && b.State.members.First(m => m.id == "host").skin == 0, pump, "cambio de personaje sincronizado");
+                host.SetSkin(4); a.SetSkin(-1);
+                Assert(host.Self.skin == 0 && a.Self.skin == 2, "selecciones locales inválidas no cambian personaje");
+                a.StartExploration(); host.StartExploration();
+                for (int i = 0; i < 8; i++) { pump(); Thread.Sleep(3); }
+                Assert(!host.State.explorationStarted, "ni invitado ni anfitrión sin listos inician exploración");
+                host.FollowElement("ElementoDetalle", 8);
+                Assert(host.State.worldScene == "MenuPrincipal", "navegación no evita configuración previa");
+                a.SetReady(true); b.SetReady(true);
+                Wait(() => host.State.members.All(m => m.ready), pump, "todos listos antes de entrar al laboratorio");
+                host.StartExploration();
+                Wait(() => a.State.explorationStarted && b.State.explorationStarted && b.State.worldScene == "TablaPeriodica", pump, "inicio compartido desde menú hacia tabla");
+                Assert(host.State.phase == "lobby", "entrar laboratorio no dispara quiz");
                 host.FollowElement("ElementoDetalle", 8);
                 Wait(() => a.State.worldScene == "ElementoDetalle" && b.State.worldElement == 8, pump, "seguir elemento del anfitrión");
                 a.FollowElement("TablaPeriodica", 6);
@@ -138,6 +158,8 @@ namespace LabQuimicaVR.EditorTools
                 host.FollowElement("TablaPeriodica", 6);
                 Wait(() => a.State.worldScene == "TablaPeriodica", pump, "volver juntos a la tabla");
                 Assert(host.State.members.All(m => !m.hasPose), "poses antiguas se limpian al cambiar escena");
+                a.SetReady(false); b.SetReady(false);
+                Wait(() => host.State.members.Where(m => m.id != "host").All(m => !m.ready), pump, "consentimiento renovado para probar reto");
                 a.StartRound(8);
                 a.RevealQuestion();
                 host.StartRound(6);
@@ -198,6 +220,70 @@ namespace LabQuimicaVR.EditorTools
                 Wait(() => !a.Connected, pump, "cierre host notificado");
             }
             Passed.Add("lobby, autoridad, escena/poses compartidas, quiz, cierre de espera y desconexión");
+        }
+
+        [Serializable]
+        public sealed class ProtocolReply
+        {
+            public int version;
+            public string type, message;
+        }
+
+        static void ProtocolAndSkins()
+        {
+            using (var host = new LanSession())
+            {
+                host.Host("Host", 0, 1);
+                float clock = 0;
+                Action pump = () => host.Pump(clock += 0.01f);
+                foreach (int version in new[] { 1, 999 })
+                    CheckRejected(host, "{\"version\":" + version + ",\"type\":\"join\",\"alias\":\"Antiguo\",\"skin\":0}", "incompatible", pump);
+                foreach (int skin in new[] { -1, 4, int.MaxValue })
+                    CheckRejected(host, "{\"version\":" + LanSession.ProtocolVersion + ",\"type\":\"join\",\"alias\":\"Inválido\",\"skin\":" + skin + "}", "no válido", pump);
+                using (var raw = new LanTransport())
+                {
+                    raw.Connect("127.0.0.1", host.Port);
+                    bool open = false;
+                    Action step = () => { pump(); while (raw.TryDequeue(out var item)) if (item.Kind == "open") open = true; };
+                    Wait(() => open, step, "conexión protocolo actual");
+                    raw.Send("server", "{\"version\":" + LanSession.ProtocolVersion + ",\"type\":\"join\",\"alias\":\"Robot\",\"skin\":3}");
+                    Wait(() => host.State.members.Length == 2, step, "aceptar personaje robot válido");
+                    var guest = host.State.members.Single(m => m.id != "host");
+                    raw.Send("server", "{\"version\":" + LanSession.ProtocolVersion + ",\"type\":\"skin\",\"skin\":99,\"self\":\"host\"}");
+                    raw.Send("server", "{\"version\":" + LanSession.ProtocolVersion + ",\"type\":\"ready\",\"ready\":true}");
+                    Wait(() => guest.ready, step, "procesar detrás de personaje inválido");
+                    Assert(guest.skin == 3 && host.Self.skin == 1, "skin inválida por red rechazada sin alterar identidad");
+                    raw.Send("server", "{\"version\":" + LanSession.ProtocolVersion + ",\"type\":\"skin\",\"skin\":0,\"self\":\"host\"}");
+                    Wait(() => guest.skin == 0, step, "personaje válido se actualiza");
+                    Assert(host.Self.skin == 1, "cliente no suplanta personaje del anfitrión");
+                }
+            }
+            Passed.Add("protocolo2, rechazo de versiones antiguas y personajes inválidos, identidad del servidor");
+        }
+
+        static void CheckRejected(LanSession host, string json, string expected, Action pump)
+        {
+            using (var raw = new LanTransport())
+            {
+                raw.Connect("127.0.0.1", host.Port);
+                bool open = false, closed = false;
+                ProtocolReply reply = null;
+                Action step = () =>
+                {
+                    pump();
+                    while (raw.TryDequeue(out var item))
+                    {
+                        if (item.Kind == "open") open = true;
+                        else if (item.Kind == "close") closed = true;
+                        else if (item.Kind == "line") reply = JsonUtility.FromJson<ProtocolReply>(item.Payload);
+                    }
+                };
+                Wait(() => open, step, "abrir conexión a rechazar");
+                raw.Send("server", json);
+                Wait(() => reply != null && closed, step, "rechazo explícito y cierre");
+                Assert(reply.version == LanSession.ProtocolVersion && reply.type == "error" && reply.message.Contains(expected), "motivo de rechazo válido");
+                Assert(host.State.members.Length == 1, "rechazado no se incorpora al lobby");
+            }
         }
 
         static void Capacity()

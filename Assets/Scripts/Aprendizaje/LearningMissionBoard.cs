@@ -5,14 +5,19 @@ using UnityEngine.SceneManagement;
 
 namespace LabQuimicaVR
 {
-    /// <summary>Objetivos explícitos, decisiones de aprendizaje y evidencia local para el docente.</summary>
+    /// <summary>Mural de misiones fijo en la pared izquierda de la sala de la tabla.</summary>
     public class LearningMissionBoard : MonoBehaviour
     {
+        // Pared x=-13. Grupos acaba en z=-2.2; esta placa con marco ocupa z=[-6.13,-2.57].
+        // El banco lateral empieza en z=-1, de modo que se puede acercar sin atravesarlo.
+        public static readonly Vector3 WallPosition = new Vector3(-12.84f, 2.55f, -4.35f);
+        public static readonly Vector2 BoardSize = new Vector2(3.4f, 3.5f);
+        public const float WallYaw = -90f;
         TextMeshPro missionText, progressText, statusText;
         GazeButton startButton;
         int page;
         string displayedSaveError;
-        const string DefaultStatus = "Sin límite de tiempo. Puedes explorar los 118 elementos libremente.\nPropuesta didáctica: el docente debe validar los logros.";
+        const string DefaultStatus = "Explora a tu ritmo, sin límite de tiempo.\nVuelve a este mural para elegir tu siguiente misión.";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Install()
@@ -25,9 +30,7 @@ namespace LabQuimicaVR
         {
             if (scene.name != LabState.TableScene || FindAnyObjectByType<LearningMissionBoard>() != null) return;
             var go = new GameObject("RutaDeAprendizaje");
-            go.transform.position = new Vector3(-5.5f, 2.1f, 4.0f);
-            var facing = go.transform.position - new Vector3(0, 2.1f, 1.5f);
-            go.transform.rotation = Quaternion.LookRotation(facing, Vector3.up);
+            go.transform.SetPositionAndRotation(WallPosition, Quaternion.Euler(0, WallYaw, 0));
             go.AddComponent<LearningMissionBoard>();
         }
 
@@ -35,7 +38,7 @@ namespace LabQuimicaVR
         {
             page = LearningRoutes.CurrentIndex(LearningProgress.Store);
             var screen = LabFactory.Screen("ObjetivosDelAula", transform, Vector3.zero, Quaternion.identity,
-                new Vector2(3.4f, 3.5f), "TU RUTA DE QUÍMICA", Palette.Accent2);
+                BoardSize, "TU RUTA DE QUÍMICA", Palette.Accent2);
             progressText = LabFactory.Text(screen, "", new Vector3(0, 1.07f, -0.02f), 0.105f, Palette.Good,
                 TextAlignmentOptions.Center, 3.1f, 0.28f, true);
             missionText = LabFactory.Text(screen, "", new Vector3(0, 0.29f, -0.02f), 0.10f, Color.white,

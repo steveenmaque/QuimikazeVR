@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "unity": "6000.6.0f1",
+  "baseCommit": "dc2766931463e4da9e85d2e42cb9f4111cd217c5",
+  "version": "1.3",
+  "versionCode": 4,
+  "apkBytes": 52316226,
+  "apkSha256": "7D5AA7A53E5DEC2C0567429237E67CDB93856FB17B30A3218808E4CCEED8B538",
+  "buildResult": "[2026-11-12 13:57:45] OK: APK creado en C:\\Users\\Steveen\\Documents\\Repositorios\\QuimikazeVR\\Builds\\QuimikazeVR.apk (49.9 MB) en 2.0 min",
+  "signatureCompatibleWithV12": true,
+  "canUpdateV12": true,
+  "signingBaseline": "v1.2",
+  "physicalAndroidTested": false
+}

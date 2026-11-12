@@ -4,9 +4,17 @@ using UnityEngine.SceneManagement;
 
 namespace LabQuimicaVR
 {
-    /// <summary>Biblioteca consultable sin Internet; los DOI permiten verificar cada fundamento.</summary>
+    /// <summary>Referencia docente optativa: acceso discreto y lectura fija en la pared, sin seguir a la cámara.</summary>
     public class ScientificLibrary : MonoBehaviour
     {
+        public const string LauncherLabel = "Para docentes";
+        // Tabla: hueco posterior de pared derecha; Datos ocupa z=[-2.2,3.0].
+        // Detalle: hueco de pared izquierda z=[7.6,10.0], después de Historia.
+        public static readonly Vector3 TableWallPosition = new Vector3(12.84f, 2.55f, -4.35f);
+        public static readonly Vector3 ElementWallPosition = new Vector3(-4.84f, 2.65f, 8.8f);
+        public static readonly Vector2 TablePanelSize = new Vector2(3.5f, 2.8f);
+        public static readonly Vector2 ElementPanelSize = new Vector2(2.0f, 3.2f);
+
         public sealed class Entry
         {
             public readonly string Id, Citation, Url, Application;
@@ -28,6 +36,12 @@ namespace LabQuimicaVR
             new Entry("P04", "Makransky, Terkildsen y Mayer (2019). Learning and Instruction, 60, 225–236.",
                 "https://doi.org/10.1016/j.learninstruc.2017.12.007",
                 "Más inmersión no garantiza más aprendizaje. Presentamos una pregunta por vez y dejamos explorar al propio ritmo. Hace falta evaluar esta propuesta con estudiantes."),
+            new Entry("P05", "Parong y Mayer (2018). Journal of Educational Psychology, 110, 785–797.",
+                "https://doi.org/10.1037/edu0000241",
+                "Segmentar y resumir apoyó una lección VR universitaria (Exp. 2). Respalda avanzar por pasos; no valida nuestro tutorial ni edades de 10–14 años."),
+            new Entry("P06", "Yee y Bailenson (2007). Human Communication Research, 33, 271–290.",
+                "https://doi.org/10.1111/j.1468-2958.2007.00299.x",
+                "La apariencia del avatar influyó en la conducta interpersonal en VR. Justifica tratar el avatar con rigor; no prueba que las skins mejoren el aprendizaje."),
             new Entry("Q01", "Prohaska y colaboradores (2022). Pure and Applied Chemistry, 94, 573–600. Informe IUPAC.",
                 "https://doi.org/10.1515/pac-2019-0603",
                 "Referencia de pesos atómicos. Un promedio de masas no determina un isótopo: los neutrones del modelo son ilustrativos. Valores entre corchetes no son pesos atómicos estándar."),
@@ -69,7 +83,13 @@ namespace LabQuimicaVR
         {
             if (scene.name != LabState.TableScene && scene.name != LabState.ElementScene) return;
             if (FindAnyObjectByType<ScientificLibrary>() == null)
-                new GameObject("FuentesCientificas").AddComponent<ScientificLibrary>();
+            {
+                var go = new GameObject("FuentesCientificas");
+                bool table = scene.name == LabState.TableScene;
+                go.transform.SetPositionAndRotation(table ? TableWallPosition : ElementWallPosition,
+                    Quaternion.Euler(0, table ? 90f : -90f, 0));
+                go.AddComponent<ScientificLibrary>();
+            }
         }
 
         void Awake() { instance = this; }
@@ -87,25 +107,27 @@ namespace LabQuimicaVR
             Destroy(panel.gameObject);
             panel = null;
             closedFrame = Time.frameCount;
+            if (launcher != null) launcher.gameObject.SetActive(LanClassroom.ActivePanel == null);
         }
 
         void Start()
         {
+            if (gameObject.scene.name != LabState.TableScene && gameObject.scene.name != LabState.ElementScene) return;
             bool table = gameObject.scene.name == LabState.TableScene;
-            launcher = LabFactory.Button(transform, "Fuentes científicas", table
-                ? new Vector3(0, 0.85f, 4.8f) : new Vector3(1.8f, 1.2f, 1.9f),
-                new Vector2(2.2f, 0.4f), 0.12f, Palette.Accent);
+            // Por defecto solo se muestra esta pequeña placa: ninguna cita ocupa el espacio de juego.
+            launcher = LabFactory.Button(transform, LauncherLabel, new Vector3(0, table ? -0.9f : -0.95f, -0.025f),
+                new Vector2(1.7f, 0.34f), 0.10f, new Color(0.20f, 0.29f, 0.38f));
+            launcher.gameObject.name = "AccesoParaDocentes";
             launcher.OnClick += Open;
         }
 
         public void Open()
         {
-            if (panel != null) return;
-            var head = VRRig.Instance != null ? VRRig.Instance.head : GazePointer.Head;
-            if (head == null) return;
-            var direction = Quaternion.Euler(0, head.eulerAngles.y, 0);
-            panel = LabFactory.Node("BibliotecaCientifica", transform,
-                head.position + direction * Vector3.forward * 2.5f, direction).transform;
+            if (panel != null || LanClassroom.ActivePanel != null) return;
+            if (gameObject.scene.name != LabState.TableScene && gameObject.scene.name != LabState.ElementScene) return;
+            // Misma pared que el acceso; abrir no depende de la posición, orientación ni existencia del visor.
+            panel = LabFactory.Node("BibliotecaCientifica", transform, Vector3.zero, Quaternion.identity).transform;
+            if (launcher != null) launcher.gameObject.SetActive(false);
             Draw();
         }
 
@@ -113,21 +135,27 @@ namespace LabQuimicaVR
         {
             LabFactory.ClearChildren(panel);
             bool overview = page == Entries.Length;
+            bool table = gameObject.scene.name == LabState.TableScene;
+            Vector2 size = table ? TablePanelSize : ElementPanelSize;
             var s = LabFactory.Screen("Fuente", panel, Vector3.zero, Quaternion.identity,
-                new Vector2(3.5f, 2.8f), overview ? "LÍMITES DEL MODELO" : "FUENTE " + Entries[page].Id);
+                size, overview ? "LÍMITES DEL MODELO" : "PARA DOCENTES · " + Entries[page].Id);
             string body = overview
                 ? "Representaciones sin escala física. La nube es ilustrativa y las reacciones no son instrucciones experimentales.\n\nLas reseñas históricas heredadas requieren revisión bibliográfica individual.\n\nQuimikaze es una propuesta didáctica: todavía no demuestra eficacia escolar."
                 : "<b>" + Entries[page].Citation + "</b>\n\n" + Entries[page].Application + "\n\n<size=75%>" + Entries[page].Url + "</size>";
-            var text = LabFactory.Text(s, body, new Vector3(0, 0.06f, -0.025f), 0.11f,
-                Palette.Text, TextAlignmentOptions.TopLeft, 3.1f, 1.8f);
+            var text = LabFactory.Text(s, body, new Vector3(0, table ? 0.06f : 0.14f, -0.025f), table ? 0.11f : 0.095f,
+                Palette.Text, TextAlignmentOptions.TopLeft, size.x - 0.4f, table ? 1.8f : 2.0f);
             text.enableAutoSizing = true;
-            text.fontSizeMin = 0.85f;
-            text.fontSizeMax = 1.1f;
-            LabFactory.Button(s, "Anterior", new Vector3(-1.1f, -1.1f, -0.03f), new Vector2(0.85f, 0.34f), 0.1f)
+            text.fontSizeMin = table ? 0.85f : 0.64f;
+            text.fontSizeMax = table ? 1.1f : 0.95f;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+            float navX = table ? 1.1f : 0.64f;
+            float navY = table ? -1.1f : -1.3f;
+            var navSize = new Vector2(table ? 0.85f : 0.56f, 0.34f);
+            LabFactory.Button(s, "Anterior", new Vector3(-navX, navY, -0.03f), navSize, table ? 0.1f : 0.075f)
                 .OnClick += () => { page = (page + Entries.Length) % (Entries.Length + 1); Draw(); };
-            LabFactory.Button(s, "Cerrar", new Vector3(0, -1.1f, -0.03f), new Vector2(0.85f, 0.34f), 0.1f)
+            LabFactory.Button(s, "Cerrar", new Vector3(0, navY, -0.03f), navSize, table ? 0.1f : 0.075f)
                 .OnClick += Close;
-            LabFactory.Button(s, "Siguiente", new Vector3(1.1f, -1.1f, -0.03f), new Vector2(0.85f, 0.34f), 0.1f)
+            LabFactory.Button(s, "Siguiente", new Vector3(navX, navY, -0.03f), navSize, table ? 0.1f : 0.075f)
                 .OnClick += () => { page = (page + 1) % (Entries.Length + 1); Draw(); };
         }
     }

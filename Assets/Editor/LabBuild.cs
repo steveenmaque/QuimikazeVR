@@ -62,7 +62,7 @@ namespace LabQuimicaVR.EditorTools
             var scenes = EditorBuildSettings.scenes.Where(s => s.enabled && File.Exists(s.path)).Select(s => s.path).ToArray();
             if (scenes.Length == 0)
             {
-                scenes = new[] { LabSceneBuilder.TableScenePath, LabSceneBuilder.ElementScenePath };
+                scenes = new[] { LabSceneBuilder.MenuScenePath, LabSceneBuilder.TableScenePath, LabSceneBuilder.ElementScenePath };
             }
 
             var options = new BuildPlayerOptions
@@ -92,8 +92,8 @@ namespace LabQuimicaVR.EditorTools
         }
 
         public const string ProductName = "Quimikaze";
-        public const string Version = "1.2";
-        public const int VersionCode = 3;
+        public const string Version = "1.3";
+        public const int VersionCode = 4;
 
         /// <summary>
         /// Nombre, version y orientacion. La pantalla gira sola entre las dos posiciones horizontales

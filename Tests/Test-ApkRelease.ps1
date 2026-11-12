@@ -1,8 +1,8 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)][string]$ApkPath,
-    [string]$ExpectedVersion = '1.2',
-    [int]$ExpectedVersionCode = 3,
+    [string]$ExpectedVersion = '1.3',
+    [int]$ExpectedVersionCode = 4,
     [int]$ExpectedTargetSdk = 36,
     [int]$ExpectedMinSdk = 26,
     [string]$ExpectedPackage = 'com.labquimicaperu.laboratoriovr',
@@ -67,8 +67,10 @@ try {
     if ($signer.Success) { $validation.signerCertificateSha256=$signer.Groups[1].Value }
     Add-ReleaseCheck 'Certificado esperado para la línea v1.2 y posteriores' ($signer.Success -and $signer.Groups[1].Value -eq $ExpectedSignerCertificateSha256)
     $validation.canUpdateV11 = $signer.Success -and $signer.Groups[1].Value -eq '20a038c2a78379520931f84cbcabbaffd1d7277cd660de5e7b00135499f10e49'
-    $validation.signingPolicy = 'Nueva base v1.2 autorizada por pérdida de la clave anterior. v1.1 requiere reinstalación; conservar esta firma en las próximas actualizaciones.'
+    $validation.signatureCompatibleWithV12 = $signer.Success -and $signer.Groups[1].Value -eq '4f4b9c89eaf26e83d6a4131abea4e49e0743b972d6ab32fdf249373952ad2b54'
+    $validation.signingPolicy = 'v1.3 conserva la firma de v1.2. El comprobador verifica las condiciones del APK para actualizar; no ejecuta una instalación física. La firma antigua de v1.1 es distinta.'
     $validation.passed = @($releaseChecks | Where-Object { -not $_.passed }).Count -eq 0
+    $validation.canUpdateV12 = $validation.passed -and $validation.signatureCompatibleWithV12 -and [long]$validation.versionCode -gt 3
     if (-not $validation.passed) { $validation.error='APK rechazado: no cumple las condiciones de la versión solicitada.' }
 } catch { $validation.error=$_.Exception.Message }
 finally {

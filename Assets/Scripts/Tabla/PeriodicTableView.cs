@@ -36,22 +36,12 @@ namespace LabQuimicaVR
             return new Vector3((col - 9.5f) * Pitch, TopY - rowOffset * Pitch, 0f);
         }
 
-        float backPressedAt = -10f;
-
         void Awake() { Instance = this; }
 
         void Update()
         {
             if (LanClassroom.HandlesBackNavigation || ScientificLibrary.HandlesBackNavigation) return;
-            // Boton "atras" del celular en la pantalla principal: pulsarlo dos veces para salir.
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
-            if (Time.unscaledTime - backPressedAt < 2f)
-            {
-                Application.Quit();
-                return;
-            }
-            backPressedAt = Time.unscaledTime;
-            if (VRRig.Instance != null) VRRig.Instance.ShowToast("Pulsa atrás otra vez para salir", 2f);
+            if (LabInput.BackDown) LabState.BackToMenu();
         }
         void OnDestroy() { if (Instance == this) Instance = null; }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 namespace LabQuimicaVR
 {
     /// <summary>Pantalla con datos curiosos que cambian cada pocos segundos.</summary>
+    // Referencias de las ocho tarjetas: D01, D01, D01, Q01, Q02, Q03, Q04, D02. Consulta Para docentes.
     public class FunFactsScreen : MonoBehaviour
     {
         public TextMeshPro text;
@@ -12,14 +13,14 @@ namespace LabQuimicaVR
 
         public static readonly string[] Facts =
         {
-            "El número atómico Z identifica un elemento: indica cuántos protones tiene su núcleo. Localiza Z=8 en la tabla. [D01]",
-            "Las columnas se llaman grupos y se numeran del 1 al 18. Busca dos elementos de la misma columna. [D01]",
-            "Los periodos son las siete filas principales. El sodio (Na) pertenece al periodo 3. ¿En qué fila está el magnesio? [D01]",
-            "El peso atómico suele representar un promedio de isótopos. No indica exactamente cuántos neutrones tiene cada átomo. [Q01]",
-            "El bismuto no tiene isótopos estables. Su radiactividad natural es muy lenta, pero se ha medido. [Q02]",
-            "Una fórmula compatible con valencias es una propuesta formal: no demuestra que una reacción ocurra al mezclar dos sustancias. [Q03]",
-            "La síntesis del elemento Z=117 se publicó en 2010. El nombre teneso se aprobó después. [Q04]",
-            "El esquema de llenado electrónico tiene excepciones. Compara Cr y Cu: el modelo debe respetar sus configuraciones. [D02]",
+            "El número atómico Z identifica un elemento: indica cuántos protones tiene su núcleo. Localiza Z=8 en la tabla.",
+            "Las columnas se llaman grupos y se numeran del 1 al 18. Busca dos elementos de la misma columna.",
+            "Los periodos son las siete filas principales. El sodio (Na) pertenece al periodo 3. ¿En qué fila está el magnesio?",
+            "El peso atómico suele representar un promedio de isótopos. No indica exactamente cuántos neutrones tiene cada átomo.",
+            "El bismuto no tiene isótopos estables. Su radiactividad natural es muy lenta, pero se ha medido.",
+            "Una fórmula compatible con valencias es una propuesta formal: no demuestra que una reacción ocurra al mezclar dos sustancias.",
+            "La síntesis del elemento Z=117 se publicó en 2010. El nombre teneso se aprobó después.",
+            "El esquema de llenado electrónico tiene excepciones. Compara Cr y Cu: el modelo debe respetar sus configuraciones.",
         };
 
         int index;

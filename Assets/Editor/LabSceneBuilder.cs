@@ -18,6 +18,7 @@ namespace LabQuimicaVR.EditorTools
     public static class LabSceneBuilder
     {
         public const string TableScenePath = "Assets/Scenes/TablaPeriodica.unity";
+        public const string MenuScenePath = "Assets/Scenes/MenuPrincipal.unity";
         public const string ElementScenePath = "Assets/Scenes/ElementoDetalle.unity";
 
         static readonly Color Navy = new Color(0.09f, 0.14f, 0.24f);
@@ -37,15 +38,17 @@ namespace LabQuimicaVR.EditorTools
                 ElementDatabase.Reload();
                 ElementExtras.Reload();
                 ConfigureProject();
+                BuildMenuScene();
                 BuildTableScene();
                 BuildElementScene();
                 EditorBuildSettings.scenes = new[]
                 {
+                    new EditorBuildSettingsScene(MenuScenePath, true),
                     new EditorBuildSettingsScene(TableScenePath, true),
                     new EditorBuildSettingsScene(ElementScenePath, true)
                 };
                 AssetDatabase.SaveAssets();
-                ShowLab();
+                ShowMainMenu();
                 Debug.Log("Quimikaze: escenas construidas.");
             }
             finally
@@ -163,6 +166,16 @@ namespace LabQuimicaVR.EditorTools
             sv.Repaint();
             var table = GameObject.Find("TablaPeriodica");
             if (table != null) Selection.activeGameObject = table;
+        }
+
+        [MenuItem("Quimikaze/Mostrar inicio", priority = 3)]
+        public static void ShowMainMenu()
+        {
+            if (EditorApplication.isPlaying) return;
+            EditorSceneManager.OpenScene(MenuScenePath);
+            if (Application.isBatchMode) return;
+            var view = SceneView.lastActiveSceneView;
+            if (view != null) view.LookAtDirect(new Vector3(0, 1.8f, 4f), Quaternion.identity, 4.8f);
         }
 
         // =====================================================================
@@ -285,7 +298,7 @@ namespace LabQuimicaVR.EditorTools
         }
 
         /// <summary>Zona de inicio (spawn) y el jugador VR con sus dos camaras.</summary>
-        static VRRig SpawnAndRig(Vector3 position, float radius)
+        static VRRig SpawnAndRig(Vector3 position, float radius, bool includeLibrary = true, bool tableLibrary = true)
         {
             var spawn = LabFactory.Node("ZonaDeInicio", null, position).transform;
             LabFactory.Shape("Plataforma", PrimitiveType.Cylinder, spawn, new Vector3(0, 0.02f, 0), new Vector3(radius * 2, 0.02f, radius * 2), LabFactory.Mat("Pedestal"));
@@ -331,7 +344,13 @@ namespace LabQuimicaVR.EditorTools
             rig.head = head;
             rig.leftEye = left;
             rig.rightEye = right;
-            new GameObject("FuentesCientificas").AddComponent<ScientificLibrary>();
+            if (includeLibrary)
+            {
+                var library = new GameObject("FuentesCientificas");
+                library.transform.SetPositionAndRotation(tableLibrary ? ScientificLibrary.TableWallPosition : ScientificLibrary.ElementWallPosition,
+                    Quaternion.Euler(0, tableLibrary ? 90f : -90f, 0));
+                library.AddComponent<ScientificLibrary>();
+            }
             return rig;
         }
 
@@ -392,6 +411,20 @@ namespace LabQuimicaVR.EditorTools
         // =====================================================================
         // Escena 1: Tabla periodica
         // =====================================================================
+        static void BuildMenuScene()
+        {
+            var scene = NewScene();
+            Room(5f, -3f, 5f, 4.6f);
+            Lights();
+            SpawnAndRig(new Vector3(0, 0, 1.5f), 0.8f, false);
+            var menu = new GameObject("MenuPrincipal");
+            menu.transform.position = new Vector3(0, 1.9f, 4.84f);
+            menu.AddComponent<MainMenuController>();
+            var welcome = LabFactory.Node("RotuloInicio", null, new Vector3(0, 4.1f, 4.85f)).transform;
+            WallText(welcome, "TU AVENTURA EN LA QUÍMICA", Vector3.zero, 0.18f, Navy, 7f);
+            EditorSceneManager.SaveScene(scene, MenuScenePath);
+        }
+
         static void BuildTableScene()
         {
             var scene = NewScene();
@@ -508,13 +541,13 @@ namespace LabQuimicaVR.EditorTools
             var ojo = LabFactory.Panel("Icono", hint, new Vector3(-size.x / 2 + 0.62f, 0.22f, -0.02f), new Vector2(0.74f, 0.74f), 0.37f, 0.02f,
                 new Color(1f, 0.88f, 0.4f), new Color(1f, 0.6f, 0.2f));
             LabFactory.Text(ojo.transform, "?", new Vector3(0, 0.02f, -0.02f), 0.48f, Palette.Ink, TextAlignmentOptions.Center, 0.65f, 0.65f, true);
-            LabFactory.Text(hint, "<b>Mira un elemento</b> (o apunta con el <color=#00E5FF>joystick derecho</color>) y pulsa <color=#FFC34D>A / botón del visor</color>",
+            LabFactory.Text(hint, "<b>Mira un elemento</b> y pulsa <color=#FFC34D>A o el botón del visor</color>",
                 new Vector3(0.45f, 0.38f, -0.02f), 0.165f, Color.white, TextAlignmentOptions.Center, size.x - 1.5f, 0.52f);
-            LabFactory.Text(hint, "Controles: <color=#5FD6A8><b>A</b></color> entrar  ·  <color=#7DC4F5><b>X</b></color> cambiar modelo atómico  ·  <color=#FF7878><b>B</b></color> volver a la tabla  ·  <color=#FFC34D><b>Y</b></color> centrar vista",
+            LabFactory.Text(hint, "<color=#5FD6A8><b>A</b></color>: entrar  ·  <color=#7DC4F5><b>X</b></color>: modelo  ·  <color=#FF7878><b>B</b></color>: menú  ·  <color=#FFC34D><b>Y</b></color>: centrar",
                 new Vector3(0.45f, -0.02f, -0.02f), 0.11f, Palette.Text, TextAlignmentOptions.Center, size.x - 1.5f, 0.25f);
-            LabFactory.Text(hint, "<color=#FFC34D><b>● Misión de la sesión:</b></color> Explora elementos y supera el <b>Reto de 3 preguntas</b> en cada sala para ganar medallas (<color=#FFC34D>● ● ●</color>)",
+            LabFactory.Text(hint, "<color=#FFC34D><b>● Tu misión:</b></color> explora y supera el <b>reto de 3 preguntas</b>.",
                 new Vector3(0.0f, -0.30f, -0.02f), 0.102f, Palette.Accent2, TextAlignmentOptions.Center, size.x - 0.3f, 0.24f);
-            LabFactory.Text(hint, "Código de categoría en cada casilla: <b>ALC</b> Alcalino · <b>AET</b> Alcalinotérreo · <b>TRA</b> Transición · <b>NOM</b> No metal · <b>HAL</b> Halógeno · <b>GAS</b> Gas noble",
+            LabFactory.Text(hint, "Los códigos de las casillas se explican en la leyenda de la pared izquierda.",
                 new Vector3(0.0f, -0.56f, -0.02f), 0.088f, Palette.TextDim, TextAlignmentOptions.Center, size.x - 0.3f, 0.24f);
 
             var content = LabFactory.Node("Ficha", preview).transform;
@@ -522,11 +555,26 @@ namespace LabQuimicaVR.EditorTools
             var ptile = LabFactory.Box("Casilla", content, new Vector3(tileX, 0, -0.03f), new Vector3(1.3f, 1.3f, 0.05f), LabFactory.Mat("Cat_NM"));
             view.previewTile = ptile.GetComponent<Renderer>();
             view.previewNumber = LabFactory.Text(content, "6", new Vector3(tileX, 0.48f, -0.06f), 0.13f, dark, TextAlignmentOptions.TopLeft, 1.15f, 0.22f, true);
-            view.previewSymbol = LabFactory.Text(content, "C", new Vector3(tileX, 0.04f, -0.06f), 0.55f, dark, TextAlignmentOptions.Center, 1.3f, 0.7f, true, TextRole.Symbol);
-            view.previewName = LabFactory.Text(content, "Carbono", new Vector3(tileX, -0.46f, -0.06f), 0.11f, dark, TextAlignmentOptions.Center, 1.25f, 0.18f);
+            view.previewSymbol = LabFactory.Text(content, "C", new Vector3(tileX, 0.04f, -0.06f), 0.46f, dark, TextAlignmentOptions.Center, 1.22f, 0.74f, true, TextRole.Symbol);
+            view.previewSymbol.enableAutoSizing = true;
+            view.previewSymbol.fontSizeMax = 4.6f;
+            view.previewSymbol.fontSizeMin = 2.6f;
+            view.previewSymbol.textWrappingMode = TextWrappingModes.NoWrap;
+            view.previewName = LabFactory.Text(content, "Carbono", new Vector3(tileX, -0.47f, -0.06f), 0.11f, dark, TextAlignmentOptions.Center, 1.22f, 0.24f);
+            view.previewName.enableAutoSizing = true;
+            view.previewName.fontSizeMax = 1.1f;
+            view.previewName.fontSizeMin = 0.65f;
+            view.previewName.textWrappingMode = TextWrappingModes.NoWrap;
             float textX = tileX + 0.8f + (size.x - 1.7f) / 2f;
-            view.previewTitle = LabFactory.Text(content, "Carbono", new Vector3(textX, 0.5f, -0.02f), 0.22f, Color.white, TextAlignmentOptions.Left, size.x - 1.8f, 0.35f);
-            view.previewInfo = LabFactory.Text(content, "", new Vector3(textX, -0.22f, -0.02f), 0.1f, Palette.Text, TextAlignmentOptions.TopLeft, size.x - 1.8f, 0.95f);
+            view.previewTitle = LabFactory.Text(content, "Carbono", new Vector3(textX, 0.5f, -0.02f), 0.22f, Color.white, TextAlignmentOptions.Left, size.x - 1.8f, 0.38f);
+            view.previewTitle.enableAutoSizing = true;
+            view.previewTitle.fontSizeMax = 2.2f;
+            view.previewTitle.fontSizeMin = 1.1f;
+            view.previewTitle.textWrappingMode = TextWrappingModes.NoWrap;
+            view.previewInfo = LabFactory.Text(content, "", new Vector3(textX, -0.20f, -0.02f), 0.1f, Palette.Text, TextAlignmentOptions.TopLeft, size.x - 1.8f, 1.02f);
+            view.previewInfo.enableAutoSizing = true;
+            view.previewInfo.fontSizeMax = 1.0f;
+            view.previewInfo.fontSizeMin = 0.70f;
             view.previewInfo.lineSpacing = 4f;
             view.previewHint = hint.gameObject;
             view.previewContent = content.gameObject;
@@ -554,7 +602,7 @@ namespace LabQuimicaVR.EditorTools
                 "<color=#FFD94D><b>p</b></color>  grupos 13 al 18\n" +
                 "<color=#59B3FF><b>d</b></color>  grupos 3 al 12\n" +
                 "<color=#73E68C><b>f</b></color>  lantánidos y actínidos\n" +
-                "<size=80%><color=#9FB4CC>Los bloques se relacionan con los subniveles electrónicos. Hay excepciones de llenado. [D01/D02]</color></size>";
+                "<size=80%><color=#9FB4CC>Los bloques se relacionan con los subniveles electrónicos. Hay excepciones de llenado.</color></size>";
             LabFactory.Text(s, text, new Vector3(0, -1.4f, -0.02f), 0.16f, Palette.Text, TextAlignmentOptions.Left, 4.0f, 1.4f);
         }
 
@@ -569,7 +617,7 @@ namespace LabQuimicaVR.EditorTools
                 var c = Color.Lerp(new Color(0.3f, 0.85f, 1f), new Color(0.75f, 0.45f, 1f), (n - 1) / 6f);
                 LabFactory.Circle("Nivel" + n, diagram, r, 0.014f, c);
             }
-            LabFactory.Text(s, "Hay <b>7 periodos</b>: son las filas principales de la tabla.\n<size=80%><color=#9FB4CC>Ejemplo: el sodio (Na) está en el periodo 3. Su distribución por niveles es 2–8–1. No confundas periodo con grupo (columna). [D01/D02]</color></size>",
+            LabFactory.Text(s, "Hay <b>7 periodos</b>: son las filas principales de la tabla.\n<size=80%><color=#9FB4CC>Ejemplo: el sodio (Na) está en el periodo 3. Su distribución por niveles es 2–8–1. No confundas periodo con grupo (columna).</color></size>",
                 new Vector3(0, -1.42f, -0.02f), 0.15f, Palette.Text, TextAlignmentOptions.Center, 4.1f, 1.4f);
         }
 
@@ -613,7 +661,7 @@ namespace LabQuimicaVR.EditorTools
                 t.fontSizeMax = 1.25f;
                 t.fontSizeMin = 0.8f;
             }
-            LabFactory.Text(s, "Un grupo reúne elementos con semejanzas químicas. La regla de electrones externos se aplica con excepciones, especialmente en metales de transición. [D01/D02]",
+            LabFactory.Text(s, "Un grupo reúne elementos con semejanzas químicas. La regla de electrones externos se aplica con excepciones, especialmente en metales de transición.",
                 new Vector3(0, -1.6f, -0.02f), 0.1f, Palette.TextDim, TextAlignmentOptions.Center, 4.9f, 0.4f);
         }
 
@@ -649,7 +697,7 @@ namespace LabQuimicaVR.EditorTools
                 ("VISOR · A", new Color(0.35f, 0.85f, 0.45f), "toca el botón para entrar o pulsar"),
                 ("MANTÉN · Y", new Color(1f, 0.8f, 0.25f), "mantén pulsado para recentrar la vista"),
                 ("JOYSTICK", Palette.Accent, "izquierdo: caminar  ·  derecho: girar"),
-                ("B", new Color(1f, 0.42f, 0.42f), "volver a la tabla"),
+                ("B", new Color(1f, 0.42f, 0.42f), "abrir el menú"),
                 ("X", new Color(0.4f, 0.65f, 1f), "cambiar el modelo del átomo"),
                 ("L1 / R1", Palette.Violet, "ajustar las lentes si ves doble"),
                 ("R3 · I", Palette.Accent2, "pulsa el stick derecho: invierte arriba / abajo"),
@@ -696,7 +744,7 @@ namespace LabQuimicaVR.EditorTools
                 "<color=#FFC34D><b>11</b></color> gases y <color=#FFC34D><b>2</b></color> líquidos a 25 °C\n" +
                 "<color=#FFC34D><b>7</b></color> periodos y <color=#FFC34D><b>18</b></color> grupos\n" +
                 "Más ligero: <b>hidrógeno</b> · Más denso: <b>osmio</b>\n" +
-                "Z=117: síntesis publicada en <b>2010</b> [Q04]\n<size=65%>Referencias: IUPAC [D01] · Biblioteca científica</size>",
+                "Z=117: síntesis publicada en <b>2010</b>\n<size=65%>¿Puedes localizarlo en la tabla?</size>",
                 new Vector3(0, -0.25f, -0.02f), 0.19f, Palette.Text, TextAlignmentOptions.Left, 4.3f, 2.6f);
 
             var atomInfo = LabFactory.Screen("PantallaAtomo", wall, new Vector3(5.2f, 3.2f, 0), Quaternion.identity, new Vector2(4.6f, 3.4f), "¿QUÉ ES UN ÁTOMO?");
@@ -723,10 +771,10 @@ namespace LabQuimicaVR.EditorTools
         {
             var scene = NewScene();
             const float halfW = 5f, zMin = -6.5f, zMax = 10f, height = 5.6f;
-            var window = new Rect(-3.6f, 1.95f, 7.2f, 2.95f);
+            var window = new Rect(-2.25f, 1.95f, 4.5f, 2.95f);
             Room(halfW, zMin, zMax, height, window);
             Lights();
-            SpawnAndRig(Vector3.zero, 0.9f);
+            SpawnAndRig(Vector3.zero, 0.9f, true, false);
 
             var content = new GameObject("Contenido").transform;
             var controller = content.gameObject.AddComponent<ElementDetailController>();
@@ -748,7 +796,7 @@ namespace LabQuimicaVR.EditorTools
             controller.propsAnchor = LabFactory.Node("Propiedades", content, new Vector3(halfW - 0.12f, 2.55f, 4.0f), Quaternion.Euler(0, 90f, 0)).transform;
             controller.reactionAnchor = LabFactory.Node("Reacciones", content, new Vector3(-3.35f, 2.2f, 8.3f), Quaternion.Euler(0, -24f, 0)).transform;
             controller.controlsAnchor = LabFactory.Node("Controles", content, new Vector3(3.45f, 1.95f, 8.3f), Quaternion.Euler(0, 24f, 0)).transform;
-            controller.challengeAnchor = LabFactory.Node("RetoSesion", content, new Vector3(-3.35f, 1.90f, -4.4f), Quaternion.Euler(0, -148f, 0)).transform;
+            controller.challengeAnchor = LabFactory.Node("RetoSesion", content, new Vector3(-3.52f, 2.80f, zMin + 0.16f), Quaternion.Euler(0, 180f, 0)).transform;
             controller.backAnchor = LabFactory.Node("Salida", content, new Vector3(0, 1.05f, zMin + 0.12f), Quaternion.Euler(0, 180f, 0)).transform;
             controller.discoverersAnchor = LabFactory.Node("Descubridores", content, new Vector3(-halfW + 0.12f, 2.55f, -3.2f), Quaternion.Euler(0, -90f, 0)).transform;
             controller.natureAnchor = LabFactory.Node("Naturaleza", content, new Vector3(halfW - 0.12f, 2.55f, -3.2f), Quaternion.Euler(0, 90f, 0)).transform;
@@ -774,7 +822,7 @@ namespace LabQuimicaVR.EditorTools
             floorHint.transform.localRotation = Quaternion.Euler(90f, 0, 0);
 
             var benches = LabFactory.Node("Mesas", null).transform;
-            Bench(benches, new Vector3(-3.3f, 0, zMin + 0.6f), 180f, 2.6f, 5);
+            // Se conserva solo la mesa del lado derecho para dejar despejado el acceso al RetoSesion.
             Bench(benches, new Vector3(3.3f, 0, zMin + 0.6f), 180f, 2.6f, 6);
             MarkStatic(benches);
             MarkStatic(ped);

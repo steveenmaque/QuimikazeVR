@@ -13,27 +13,34 @@ namespace LabQuimicaVR
         static LanClassroom instance;
         LanSession session;
         Transform modal;
-        GazeButton launcher;
+        Transform quizWall, individualAnchor;
+        GameObject hiddenIndividualPanel;
+        int quizWallRevision = -1;
         string address = "192.168.", alias, notice = "";
         bool dirty;
         int panelClosedFrame = -1;
-        TouchScreenKeyboard keyboard;
+        int aliasStyle;
         float nextPose;
         string placedContext;
+        bool menuPaused;
+        int appliedSkin = -1;
         readonly Dictionary<string, Transform> avatars = new Dictionary<string, Transform>();
-        bool FollowsSession => session != null && session.Connected && (!session.IsHost || session.State.phase == "quiz");
-        public static bool HandlesBackNavigation => instance != null && (instance.modal != null || instance.panelClosedFrame == Time.frameCount || instance.FollowsSession);
+        readonly Dictionary<string, int> renderedSkins = new Dictionary<string, int>();
+        public static bool HandlesBackNavigation => instance != null && (instance.modal != null || instance.panelClosedFrame == Time.frameCount);
         public static Transform ActivePanel => instance != null ? instance.modal : null;
-        public static bool HasActiveSession => instance != null && instance.session != null && instance.session.Connected;
+        public static Transform ActiveQuizWall => instance != null ? instance.quizWall : null;
+        public static bool HasActiveSession => instance != null && instance.session != null;
+        public static bool CanResumeSession => HasActiveSession && instance.session.Connected && instance.session.State.explorationStarted;
         public static bool CanNavigate(string scene, int element)
         {
             if (instance == null || instance.session == null || !instance.session.Connected) return true;
+            if (scene == "MenuPrincipal") return true;
             var session = instance.session;
             bool allowed = session.IsHost
                 ? session.State.phase != "quiz" || (scene == LabState.ElementScene && element == session.State.element)
                 : scene == session.State.worldScene && (scene != LabState.ElementScene || element == session.State.worldElement);
             if (!allowed && VRRig.Instance != null)
-                VRRig.Instance.ShowToast(session.IsHost ? "Completa la ronda o cierra el aula para cambiar de elemento." : "El anfitrión elige el laboratorio. Usa Aula LAN para salir.", 3f);
+                VRRig.Instance.ShowToast(session.IsHost ? "Completa la ronda o cierra el aula desde el menú para cambiar de elemento." : "El anfitrión elige el laboratorio. Abre el menú para salir del aula.", 3f);
             return allowed;
         }
 
@@ -54,73 +61,59 @@ namespace LabQuimicaVR
             DontDestroyOnLoad(gameObject);
             alias = "Estudiante-" + UnityEngine.Random.Range(1000, 9999);
             SceneManager.sceneLoaded += OnSceneLoaded;
-            BuildLauncher();
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             modal = null;
-            keyboard = null;
+            quizWall = individualAnchor = null;
+            hiddenIndividualPanel = null;
+            quizWallRevision = -1;
             placedContext = null;
+            menuPaused = scene.name == "MenuPrincipal" && session != null && session.State.explorationStarted;
             ClearAvatars();
-            BuildLauncher();
-        }
-
-        void BuildLauncher()
-        {
-            string scene = SceneManager.GetActiveScene().name;
-            if (scene != LabState.TableScene && scene != LabState.ElementScene) return;
-            var pos = scene == LabState.TableScene ? new Vector3(2.8f, 1.65f, 4.8f) : new Vector3(2.8f, 1.65f, -0.6f);
-            var root = new GameObject("AccesoAulaLAN").transform;
-            root.position = pos;
-            var spawn = scene == LabState.TableScene ? new Vector3(0, 1.65f, 1.5f) : new Vector3(0, 1.65f, 0);
-            root.rotation = Quaternion.LookRotation(pos - spawn);
-            launcher = LabFactory.Button(root, "Aula LAN · 2–8 jugadores", Vector3.zero, new Vector2(1.65f, 0.42f), 0.095f, Palette.Violet);
-            launcher.OnClick += Open;
-            LabFactory.Text(root, "Mismo Wi-Fi / punto de acceso\nSin cuentas ni Internet", new Vector3(0, -0.43f, 0), 0.085f, Palette.Ink,
-                TextAlignmentOptions.Center, 1.8f, 0.5f);
         }
 
         void Update()
         {
             session?.Pump(Time.unscaledTime);
+            if (appliedSkin != AvatarSkins.SelectedIndex) ApplySelectedSkin();
             SynchronizeWorld();
-            if (launcher != null) launcher.transform.parent.gameObject.SetActive(modal == null && ScientificLibrary.ActivePanel == null);
+            UpdateQuizWall();
             UpdateAvatars();
             if (modal != null && LabInput.BackDown)
             {
                 ClosePanel();
                 return;
             }
-            if (modal == null && FollowsSession && LabInput.BackDown)
-            {
-                Open();
-                return;
-            }
-            if (keyboard != null && keyboard.status == TouchScreenKeyboard.Status.Done)
-            {
-                alias = LanSession.CleanAlias(keyboard.text);
-                keyboard = null;
-                dirty = true;
-            }
             if (dirty && modal != null) { dirty = false; Draw(); }
         }
 
-        void Open()
+        public static void OpenFromMenu(Transform anchor)
         {
-            if (modal != null) { ClosePanel(); return; }
-            var rig = VRRig.Instance;
-            if (rig == null || rig.head == null) return;
-            Vector3 forward = rig.head.forward;
-            forward.y = 0;
-            if (forward.sqrMagnitude < 0.01f) forward = Vector3.forward;
-            forward.Normalize();
-            modal = new GameObject("PanelAulaLAN").transform;
-            modal.position = rig.head.position + forward * 2.8f;
-            modal.rotation = Quaternion.LookRotation(forward);
-            // Con cabeza a 1.6 m, conservar todos los controles por encima del suelo.
-            modal.localScale = Vector3.one * 0.78f;
-            Draw();
+            if (anchor == null) throw new ArgumentNullException(nameof(anchor));
+            if (instance == null) Bootstrap();
+            instance.ClosePanel();
+            instance.modal = LabFactory.Node("PanelAulaLAN", anchor).transform;
+            instance.Draw();
+        }
+
+        public static void ApplySelectedSkin()
+        {
+            if (instance == null) return;
+            instance.appliedSkin = AvatarSkins.SelectedIndex;
+            instance.session?.SetSkin(instance.appliedSkin);
+            instance.dirty = true;
+        }
+
+        public static void EnterSharedLab()
+        {
+            if (!CanResumeSession || ScreenFader.Busy) return;
+            instance.menuPaused = false;
+            instance.ClosePanel();
+            var state = instance.session.State;
+            if (state.worldScene == LabState.ElementScene) LabState.OpenElement(state.worldElement);
+            else LabState.BackToTable();
         }
 
         void Draw()
@@ -135,7 +128,7 @@ namespace LabQuimicaVR
 
         void DrawConnection(Transform screen)
         {
-            Text(screen, "Mismo Wi-Fi o punto de acceso. El anfitrión comparte su IPv4.\nExplorarán juntos: el anfitrión elige el elemento y todos lo siguen.", 0.84f, 0.082f, 0.47f);
+            Text(screen, "Mismo Wi-Fi o punto de acceso. El anfitrión comparte su IPv4.\nPersonaje: " + AvatarSkins.SelectedName + ". Se cambia en el menú Personaje.", 0.84f, 0.082f, 0.47f);
             Text(screen, "Alias: " + alias, 1.18f, 0.095f, 0.24f, -0.51f, 2.45f);
             Button(screen, "Cambiar alias", -1.05f, 0.44f, 1.35f, ChangeAlias);
             Button(screen, "Crear aula", 0.44f, 0.44f, 1.35f, Host);
@@ -161,7 +154,7 @@ namespace LabQuimicaVR
                 Button(screen, "Volver a conectar", 0, -0.7f, 2.2f, Disconnect);
                 return;
             }
-            string roster = string.Join("\n", state.members.Select(m => (m.id == session.SelfId ? "Tú: " : "") + m.alias + " · " +
+            string roster = string.Join("\n", state.members.Select(m => (m.id == session.SelfId ? "Tú: " : "") + m.alias + " · " + (m.skin + 1) + " · " +
                 (state.phase == "lobby" ? (m.ready ? "Listo" : "Esperando") : m.points + " pts" + (m.answered ? " · respondió" : ""))));
             Text(screen, roster, 0.20f, 0.085f, 1.1f, -0.95f, 1.65f);
             if (state.phase == "lobby")
@@ -170,9 +163,18 @@ namespace LabQuimicaVR
                 if (session.IsHost)
                 {
                     bool canStart = state.members.Length >= 2 && state.members.All(m => m.ready);
-                    var start = Button(screen, "Iniciar: " + ElementDatabase.Get(LabState.SelectedZ).Name, 0, -0.65f, 2.9f, () => session.StartRound(LabState.SelectedZ));
+                    var start = Button(screen, state.explorationStarted ? "Iniciar reto: " + ElementDatabase.Get(LabState.SelectedZ).Name : "Entrar al laboratorio juntos", 0, -0.65f, 2.9f,
+                        () =>
+                        {
+                            if (state.explorationStarted)
+                            {
+                                session.StartRound(LabState.SelectedZ);
+                                if (session.State.phase == "quiz") EnterSharedLab();
+                            }
+                            else session.StartExploration();
+                        });
                     start.interactable = canStart;
-                    Text(screen, canStart ? "El anfitrión elige el elemento explorado actualmente." : "Se necesitan al menos 2 jugadores y todos Listos.", -1f, 0.078f, 0.4f);
+                    Text(screen, canStart ? "El anfitrión inicia la exploración y elige el elemento del reto." : "Se necesitan al menos 2 jugadores y todos Listos.", -1f, 0.078f, 0.4f);
                 }
                 else
                 {
@@ -180,19 +182,12 @@ namespace LabQuimicaVR
                     Button(screen, ready ? "Listo ✓ · cancelar" : "Estoy listo", 0, -0.65f, 2.9f, () => session.SetReady(!ready));
                     Text(screen, "El anfitrión inicia cuando todos estén listos.", -1f, 0.078f, 0.4f);
                 }
+                if (state.explorationStarted) Button(screen, "Volver al laboratorio compartido", 0, -1.36f, 3.2f, EnterSharedLab, 0.085f);
             }
             else if (state.phase == "quiz")
             {
-                Text(screen, (state.step + 1) + "/3 · " + ElementDatabase.Get(state.element).Name + "\n" + state.question, 0.25f, 0.1f, 1.0f, 0.89f, 1.7f);
-                for (int i = 0; i < state.options.Length; i++)
-                {
-                    int option = i;
-                    var b = Button(screen, ((char)('A' + i)) + ") " + state.options[i], -0.97f + i * 0.97f, -0.57f, 0.91f, () => session.Answer(option), 0.085f);
-                    b.interactable = !state.revealed && session.Self != null && !session.Self.answered;
-                }
-                Text(screen, state.revealed ? state.explanation : "Investiga en las viñetas antes de responder. Al terminar, espera al grupo.", -0.98f, 0.078f, 0.45f);
-                if (session.IsHost && state.revealed) Button(screen, state.step == 2 ? "Ver resultado" : "Siguiente pregunta", 0, -1.36f, 2.4f, session.Next);
-                else if (session.IsHost) Button(screen, "Revelar y cerrar pregunta", 0, -1.36f, 2.8f, session.RevealQuestion, 0.08f);
+                Text(screen, "Reto de " + ElementDatabase.Get(state.element).Name + "\nResponde en el mural del laboratorio.\nPuedes consultar las demás viñetas antes de elegir.", 0.15f, 0.095f, 1.1f, 0.94f, 1.7f);
+                Button(screen, "Continuar reto en laboratorio", 0, -0.75f, 3.1f, EnterSharedLab, 0.085f);
             }
             else
             {
@@ -208,7 +203,8 @@ namespace LabQuimicaVR
             try
             {
                 session = CreateSession();
-                session.Host(alias);
+                session.Host(alias, LanTransport.DefaultPort, AvatarSkins.SelectedIndex);
+                menuPaused = false;
                 notice = "";
             }
             catch (Exception) { session?.Dispose(); session = null; notice = "No se pudo crear el aula: puerto 47771 ocupado o red no disponible."; }
@@ -217,7 +213,7 @@ namespace LabQuimicaVR
 
         void Join()
         {
-            try { session = CreateSession(); session.Join(alias, address); notice = ""; }
+            try { session = CreateSession(); session.Join(alias, address, LanTransport.DefaultPort, AvatarSkins.SelectedIndex); menuPaused = false; notice = ""; }
             catch (Exception ex) { session?.Dispose(); session = null; notice = ex.Message; }
             dirty = true;
         }
@@ -232,9 +228,9 @@ namespace LabQuimicaVR
 
         void ChangeAlias()
         {
-            if (TouchScreenKeyboard.isSupported)
-                keyboard = TouchScreenKeyboard.Open(alias, TouchScreenKeyboardType.Default, false, false, false, false, "Alias del aula", 18);
-            else alias = "Estudiante-" + UnityEngine.Random.Range(1000, 9999);
+            string[] roles = { "Explorador", "Investigador", "Químico", "Inventor" };
+            aliasStyle = (aliasStyle + 1) % roles.Length;
+            alias = roles[aliasStyle] + "-" + UnityEngine.Random.Range(1000, 9999);
             dirty = true;
         }
 
@@ -243,24 +239,116 @@ namespace LabQuimicaVR
             session?.Dispose();
             session = null;
             placedContext = null;
+            menuPaused = false;
             ClearAvatars();
+            RemoveQuizWall();
             notice = "Sesión cerrada. Puedes crear o unirte a otra aula.";
             dirty = true;
         }
 
         void ClosePanel()
         {
-            if (modal != null) Destroy(modal.gameObject);
+            if (modal != null) { modal.gameObject.SetActive(false); Destroy(modal.gameObject); }
             modal = null;
             panelClosedFrame = Time.frameCount;
+        }
+
+        void UpdateQuizWall()
+        {
+            bool show = session != null && session.Connected && !ScreenFader.Busy &&
+                SceneManager.GetActiveScene().name == LabState.ElementScene && LabState.SelectedZ == session.State.element &&
+                (session.State.phase == "quiz" || session.State.phase == "summary");
+            if (!show) { RemoveQuizWall(); return; }
+
+            if (individualAnchor == null)
+            {
+                var controller = FindAnyObjectByType<ElementDetailController>();
+                if (controller != null) individualAnchor = controller.challengeAnchor;
+            }
+            var individual = individualAnchor != null ? individualAnchor.Find("PantallaReto") : null;
+            if (individual != null)
+            {
+                hiddenIndividualPanel = individual.gameObject;
+                hiddenIndividualPanel.SetActive(false);
+            }
+            if (quizWall == null)
+            {
+                // Raíz de escena independiente: el componente de reto individual permanece activo.
+                quizWall = LabFactory.Node("AulaQuizMural", null, new Vector3(-3.52f, 2.80f, -6.34f), Quaternion.Euler(0, 180, 0)).transform;
+                quizWallRevision = -1;
+            }
+            if (quizWallRevision != session.State.revision)
+            {
+                DrawQuizWall();
+                quizWallRevision = session.State.revision;
+            }
+        }
+
+        void DrawQuizWall()
+        {
+            if (quizWall == null || session == null) return;
+            LabFactory.ClearChildren(quizWall);
+            var state = session.State;
+            var screen = LabFactory.Screen("PantallaRetoLAN", quizWall, Vector3.zero, Quaternion.identity, new Vector2(2.22f, 3.6f), "RETO DEL AULA LAN", Palette.Violet);
+            string title = state.phase == "summary" ? "RONDA COMPLETADA" : (state.step + 1) + "/3 · " + ElementDatabase.Get(state.element).Name;
+            Text(screen, title, 1.16f, 0.09f, 0.2f, 0, 1.96f);
+            if (state.phase == "summary")
+            {
+                Text(screen, "Tus aciertos: " + (session.Self?.correct ?? 0) + "/3\nEquipo: " + state.members.Sum(m => m.correct) + "/" + state.members.Length * 3 + " aciertos", 0.73f, 0.105f, 0.55f, 0, 1.96f);
+                Text(screen, string.Join("\n", state.members.Select(m => m.alias + " · " + m.correct + "/3 · " + m.points + " pts")), -0.1f, 0.078f, 0.95f, 0, 1.96f);
+                Text(screen, "Repasa las explicaciones. El anfitrión prepara otra ronda desde el menú del aula.", -1.0f, 0.08f, 0.4f, 0, 1.90f);
+                WallButton(screen, "Menú del aula", -1.54f, LabState.BackToMenu);
+                return;
+            }
+            Text(screen, state.question, 0.8f, 0.095f, 0.5f, 0, 1.96f);
+            for (int i = 0; i < state.options.Length; i++)
+            {
+                int option = i;
+                var button = WallButton(screen, ((char)('A' + i)) + ") " + state.options[i], 0.32f - i * 0.36f, () => session.Answer(option));
+                button.interactable = !state.revealed && session.Self != null && !session.Self.answered;
+            }
+            LabFactory.Card(screen, new Vector3(0, -0.97f, 0), new Vector2(2.02f, 0.68f), new Color(0.1f, 0.18f, 0.28f));
+            string feedback = state.revealed ? state.explanation : session.Self != null && session.Self.answered
+                ? "Tu respuesta quedó registrada. Espera al grupo; la explicación aparecerá al terminar."
+                : "Investiga en las viñetas y elige una respuesta. Sin límite de tiempo.";
+            Text(screen, feedback, -0.97f, 0.08f, 0.62f, 0, 1.90f);
+            if (session.IsHost)
+                WallButton(screen, state.revealed ? state.step == 2 ? "Ver resultado" : "Siguiente pregunta" : "Revelar y cerrar pregunta", -1.54f,
+                    () => { if (session.State.revealed) session.Next(); else session.RevealQuestion(); });
+            else Text(screen, "Respondieron " + state.members.Count(m => m.answered) + "/" + state.members.Length + ". El anfitrión avanza.", -1.54f, 0.075f, 0.3f, 0, 1.96f);
+        }
+
+        static GazeButton WallButton(Transform parent, string label, float y, Action action)
+        {
+            var button = LabFactory.Button(parent, label, new Vector3(0, y, -0.03f), new Vector2(1.96f, 0.3f), 0.085f, Palette.Violet);
+            button.OnClick += action;
+            button.Label.enableAutoSizing = true;
+            button.Label.fontSizeMax = 0.85f;
+            button.Label.fontSizeMin = 0.60f;
+            button.Label.overflowMode = TextOverflowModes.Ellipsis;
+            return button;
+        }
+
+        void RemoveQuizWall()
+        {
+            if (quizWall != null) { quizWall.gameObject.SetActive(false); Destroy(quizWall.gameObject); }
+            quizWall = null;
+            quizWallRevision = -1;
+            if (hiddenIndividualPanel != null) hiddenIndividualPanel.SetActive(true);
+            hiddenIndividualPanel = null;
         }
 
         void SynchronizeWorld()
         {
             if (session == null || !session.Connected || ScreenFader.Busy) return;
             string scene = SceneManager.GetActiveScene().name;
-            if (scene != LabState.TableScene && scene != LabState.ElementScene) return;
             var state = session.State;
+            if (scene == "MenuPrincipal")
+            {
+                if (state.explorationStarted && !menuPaused) EnterSharedLab();
+                return;
+            }
+            if (!state.explorationStarted || (scene != LabState.TableScene && scene != LabState.ElementScene)) return;
             if (state.phase == "quiz" && (scene != LabState.ElementScene || LabState.SelectedZ != state.element))
             {
                 LabState.OpenElement(state.element);
@@ -303,18 +391,25 @@ namespace LabQuimicaVR
             if (session == null || !session.Connected) { if (avatars.Count > 0) ClearAvatars(); return; }
             foreach (string id in avatars.Keys.ToArray())
             {
-                if (session.State.members.All(m => m.id != id)) { if (avatars[id] != null) Destroy(avatars[id].gameObject); avatars.Remove(id); }
+                if (session.State.members.All(m => m.id != id)) { if (avatars[id] != null) Destroy(avatars[id].gameObject); avatars.Remove(id); renderedSkins.Remove(id); }
             }
             bool sameScene = session.State.worldScene == SceneManager.GetActiveScene().name &&
                 (session.State.worldScene != LabState.ElementScene || session.State.worldElement == LabState.SelectedZ);
             foreach (var member in session.State.members)
             {
                 if (member.id == session.SelfId) continue;
+                if (avatars.TryGetValue(member.id, out var previous) && previous != null && renderedSkins.TryGetValue(member.id, out int previousSkin) && previousSkin != member.skin)
+                {
+                    previous.gameObject.SetActive(false);
+                    Destroy(previous.gameObject);
+                    avatars.Remove(member.id);
+                }
                 if (!avatars.TryGetValue(member.id, out var root) || root == null)
                 {
                     if (!member.hasPose || !sameScene) continue;
                     root = BuildAvatar(member);
                     avatars[member.id] = root;
+                    renderedSkins[member.id] = member.skin;
                     root.position = new Vector3(member.x, member.y, member.z);
                 }
                 bool visible = member.hasPose && sameScene;
@@ -331,16 +426,14 @@ namespace LabQuimicaVR
 
         Transform BuildAvatar(LanMember member)
         {
-            var root = LabFactory.Node("Compañero_" + member.id, transform).transform;
-            Color color = member.id == "host" ? Palette.Accent2 : Palette.Violet;
-            var mat = LabFactory.Tinted("Card", color);
-            LabFactory.Shape("Cuerpo", PrimitiveType.Capsule, root, new Vector3(0, 0.75f, 0), new Vector3(0.38f, 0.52f, 0.38f), mat);
-            LabFactory.Shape("Cabeza", PrimitiveType.Sphere, root, new Vector3(0, 1.43f, 0), Vector3.one * 0.31f, mat);
-            LabFactory.Shape("Mirada", PrimitiveType.Sphere, root, new Vector3(0, 1.45f, 0.15f), new Vector3(0.16f, 0.06f, 0.05f), LabFactory.Tinted("Card", Palette.Ink));
-            var label = LabFactory.Text(root, member.alias + (member.id == "host" ? " · anfitrión" : ""), new Vector3(0, 1.83f, 0), 0.085f,
-                Palette.Ink, TextAlignmentOptions.Center, 1.65f, 0.3f);
+            var root = AvatarSkins.BuildPreview(transform, member.skin);
+            root.name = "Compañero_" + member.id;
+            var nameplate = LabFactory.Node("Identificacion", root, new Vector3(0, 2.1f, 0)).transform;
+            LabFactory.Card(nameplate, Vector3.zero, new Vector2(1.75f, 0.32f), Palette.Dark);
+            var label = LabFactory.Text(nameplate, member.alias + (member.id == "host" ? " · anfitrión" : ""), new Vector3(0, 0, -0.02f), 0.085f,
+                Color.white, TextAlignmentOptions.Center, 1.65f, 0.27f);
             label.richText = false;
-            label.gameObject.AddComponent<FaceCamera>();
+            nameplate.gameObject.AddComponent<FaceCamera>();
             return root;
         }
 
@@ -348,6 +441,7 @@ namespace LabQuimicaVR
         {
             foreach (var root in avatars.Values) if (root != null) Destroy(root.gameObject);
             avatars.Clear();
+            renderedSkins.Clear();
         }
 
         void OnApplicationPause(bool paused)
@@ -362,6 +456,7 @@ namespace LabQuimicaVR
             if (instance != this) return;
             SceneManager.sceneLoaded -= OnSceneLoaded;
             session?.Dispose();
+            RemoveQuizWall();
             instance = null;
         }
 
