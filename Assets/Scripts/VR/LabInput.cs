@@ -18,6 +18,7 @@ namespace LabQuimicaVR
     {
         const float LongPress = 1.5f;
         const float MaxTap = 0.8f;
+        const string InvertYKey = "LabVR.InvertRightStickY";
 
         static readonly HashSet<string> missingAxes = new HashSet<string>();
         static int frame = -1;
@@ -27,6 +28,11 @@ namespace LabQuimicaVR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetOnSceneLoad()
         {
+            frame = -1;
+            pressStart = -1f;
+            longFired = tapReleased = longPressNow = false;
+            missingAxes.Clear();
+            invertRightStickY = PlayerPrefs.GetInt(InvertYKey, 0) == 1;
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -34,6 +40,7 @@ namespace LabQuimicaVR
         /// <summary>Un toque que empezo en la escena anterior no debe pulsar nada en la nueva.</summary>
         static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
         {
+            frame = -1;
             pressStart = -1f;
             longFired = true;
             tapReleased = false;
@@ -55,15 +62,38 @@ namespace LabQuimicaVR
         // (MotionEvent.AXIS_RZ) devuelve -1 al empujar arriba. Invertimos en Windows para que
         // ambos sistemas tengan la misma convencion (negativo = mirar arriba) y además se pueda
         // alternar en vivo con InvertRightStickY (tecla I).
-        public static bool InvertRightStickY;
+        static bool invertRightStickY;
+        public static bool InvertRightStickY
+        {
+            get => invertRightStickY;
+            set
+            {
+                if (invertRightStickY == value) return;
+                invertRightStickY = value;
+                PlayerPrefs.SetInt(InvertYKey, value ? 1 : 0);
+                PlayerPrefs.Save();
+            }
+        }
+
+        /// <summary>Convencion unica: negativo mira arriba, positivo abajo. No depende de Input ni del dispositivo real.</summary>
+        public static float NormalizeRightStickVertical(float raw, bool android, bool inverted)
+        {
+            if (float.IsNaN(raw) || float.IsInfinity(raw)) return 0f;
+            float value = android ? raw : -raw;
+            if (inverted) value = -value;
+            return Mathf.Abs(value) < 0.25f ? 0f : Mathf.Clamp(value, -1f, 1f);
+        }
+
+        /// <summary>Integra el pitch Unity: negativo inclina arriba; los limites evitan voltear la cabeza.</summary>
+        public static float IntegrateLookPitch(float pitch, float vertical, float speed, float deltaTime) =>
+            Mathf.Clamp(pitch + vertical * Mathf.Max(0f, speed) * Mathf.Clamp(deltaTime, 0f, 0.1f), -65f, 65f);
 
         static float RightStickX => Axis(Android ? "Joy3" : "Joy4");
         static float RightStickY
         {
             get
             {
-                float raw = Android ? Axis("Joy4") : -Axis("Joy5");
-                return InvertRightStickY ? -raw : raw;
+                return NormalizeRightStickVertical(Axis(Android ? "Joy4" : "Joy5"), Android, InvertRightStickY);
             }
         }
         static float DPadX => Axis(Android ? "Joy5" : "Joy6");
@@ -175,6 +205,9 @@ namespace LabQuimicaVR
         }
 
         public static bool ToggleStereoDown => Input.GetKeyDown(KeyCode.V);
+
+        /// <summary>R3: pulsar el joystick derecho (mapeo habitual Android/XInput), o I. GetKeyDown evita repetir al mantener.</summary>
+        public static bool ToggleRightStickYDown => Input.GetKeyDown(KeyCode.JoystickButton9) || Input.GetKeyDown(KeyCode.I);
 
         /// <summary>O: cambiar la orientacion de la pantalla (automatica / fija a un lado / al otro).</summary>
         public static bool OrientationDown => Input.GetKeyDown(KeyCode.O);

@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)../AutoSync/DotNet/$(MSBuildProjectName)/obj/</BaseIntermediateOutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)../AutoSync/DotNet/$(MSBuildProjectName)/bin/</OutputPath>
+  </PropertyGroup>
+</Project>

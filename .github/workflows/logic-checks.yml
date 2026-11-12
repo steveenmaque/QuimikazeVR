@@ -1,0 +1,30 @@
+name: Logica educativa y LAN
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'codex/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  logic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Ejecutar fuentes de produccion y sockets TCP
+        run: dotnet run --project Tests/LogicHarness/LogicHarness.csproj -- --output AutoSync/logic_results.json
+      - name: Conservar evidencia
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: logic-results
+          path: AutoSync/logic_results.json
+          if-no-files-found: error
+          retention-days: 14

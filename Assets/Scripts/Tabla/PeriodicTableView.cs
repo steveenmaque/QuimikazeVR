@@ -42,6 +42,7 @@ namespace LabQuimicaVR
 
         void Update()
         {
+            if (LanClassroom.HandlesBackNavigation || ScientificLibrary.HandlesBackNavigation) return;
             // Boton "atras" del celular en la pantalla principal: pulsarlo dos veces para salir.
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
             if (Time.unscaledTime - backPressedAt < 2f)
@@ -85,7 +86,7 @@ namespace LabQuimicaVR
                     : "<color=#FFC34D><b>Reto de 3 preguntas disponible</b></color>";
                 previewInfo.text =
                     $"Número atómico: <b>{e.Z}</b>     Masa atómica: <b>{e.MassText} u</b>     Estado: <b>{e.StateName}</b>\n" +
-                    $"Familia química: <color=#FFC34D><b>[{CategoryInfo.ShortTag(e.Category)}] {CategoryInfo.Name(e.Category)}</b></color>  ·  {PeriodicLayout.GroupFamilyName(e)}\n" +
+                    $"Categoría: <color=#FFC34D><b>[{CategoryInfo.ShortTag(e.Category)}] {CategoryInfo.Name(e.Category)}</b></color>  ·  {PeriodicLayout.GroupFamilyName(e)}\n" +
                     $"Grupo: <b>{PeriodicLayout.GroupLabel(e)}</b>  ·  Periodo (fila): <b>{e.Period}</b>  ·  {challengeStatus}\n" +
                     $"Sesión: <b>{LabState.MasteredElementsCount} retos</b> ({LabState.TotalStars} medallas)  ·  Rango: <color=#00E5FF><b>{LabState.StudentRank}</b></color>\n" +
                     $"<color=#00E5FF><b>A / Visor:</b> entrar al nivel</color>  ·  <color=#9FB4CC><b>Joystick der.:</b> apuntar sin girar cabeza</color>";

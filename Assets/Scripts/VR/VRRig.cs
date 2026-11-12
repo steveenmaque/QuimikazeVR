@@ -61,6 +61,16 @@ namespace LabQuimicaVR
         GameObject toastRoot;
         float toastUntil;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetSession()
+        {
+            Instance = null;
+            centered = false;
+            savedYaw = 0f;
+            resolutionSet = false;
+            OrientationMode = 0;
+        }
+
         void Awake()
         {
             Instance = this;
@@ -142,6 +152,14 @@ namespace LabQuimicaVR
             PlayerPrefs.SetInt(OrientKey, OrientationMode);
             PlayerPrefs.Save();
             if (Instance != null) Instance.ShowToast("Orientación de pantalla: " + OrientationNames[OrientationMode], 2.5f);
+        }
+
+        /// <summary>Tambien se invoca desde el boton visible de controles para mandos con otro mapeo R3.</summary>
+        public static void ToggleRightStickYAxis()
+        {
+            LabInput.InvertRightStickY = !LabInput.InvertRightStickY;
+            if (Instance != null)
+                Instance.ShowToast("Mirada vertical: " + (LabInput.InvertRightStickY ? "invertida" : "normal") + ". R3 o I para cambiar; ajuste guardado.", 3f);
         }
 
         static void ReduceResolutionOnDenseScreens()
@@ -280,7 +298,7 @@ namespace LabQuimicaVR
 
             // Orientacion de la cabeza (HU09 / XAUR: el eje vertical del joystick derecho tambien permite
             // inclinar la mirada arriba/abajo sin exigir inclinar el cuello, incluso cuando hay giroscopio).
-            stickPitch = Mathf.Clamp(stickPitch - LabInput.LookVertical * lookSpeed * dt, -65f, 65f);
+            stickPitch = LabInput.IntegrateLookPitch(stickPitch, LabInput.LookVertical, lookSpeed, dt);
             if (useGyro)
             {
                 var att = Input.gyro.attitude;
@@ -324,7 +342,7 @@ namespace LabQuimicaVR
             if (turn != 0f) transform.Rotate(0f, turn * turnSpeed * dt, 0f);
 
             // Caminar en la direccion a la que se mira
-            var move = LabInput.Move;
+            var move = LanClassroom.ActivePanel != null || ScientificLibrary.ActivePanel != null ? Vector2.zero : LabInput.Move;
             var fwd = head.forward; fwd.y = 0f;
             var right = head.right; right.y = 0f;
             if (fwd.sqrMagnitude < 0.001f) fwd = transform.forward;
@@ -333,11 +351,7 @@ namespace LabQuimicaVR
 
             if (LabInput.RecenterDown) Recenter();
             if (LabInput.ToggleStereoDown) SetStereo(!Stereo);
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                LabInput.InvertRightStickY = !LabInput.InvertRightStickY;
-                ShowToast("Eje Y del joystick derecho: " + (LabInput.InvertRightStickY ? "Invertido" : "Normal"), 2f);
-            }
+            if (LabInput.ToggleRightStickYDown) ToggleRightStickYAxis();
 
             // Ajuste de la separacion de las lentes (L1 / R1 del mando, o [ y ])
             int lens = LabInput.LensAdjust;

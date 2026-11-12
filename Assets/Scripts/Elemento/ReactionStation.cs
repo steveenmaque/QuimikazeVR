@@ -36,7 +36,7 @@ namespace LabQuimicaVR
             var size = new Vector2(3.1f, 3.0f);
             var screen = LabFactory.Screen("PantallaReacciones", transform, Vector3.zero, Quaternion.identity, size,
                 "REACCIONES", Palette.Accent2);
-            LabFactory.Text(screen, $"Elige un elemento para mezclarlo con {e.Article} <b>{e.Name.ToLower()}</b> ({e.Symbol})",
+            LabFactory.Text(screen, $"Simulación educativa: compara {e.Symbol} con otro elemento. No es una guía experimental.",
                 new Vector3(0, 1.05f, -0.01f), 0.075f, Palette.Text, TextAlignmentOptions.Center, size.x - 0.2f, 0.2f);
 
             // Botones de elementos para reaccionar (7 x 3)
@@ -161,15 +161,18 @@ namespace LabQuimicaVR
             }
 
             equationText.text = ReactionDatabase.FormatEquation(result.Equation);
-            productText.text = reacts ? $"▼ Resultado en la campana: {result.ProductName} ▼" : $"▼ {result.ProductName} (sin reacción química) ▼";
+            productText.text = result.Predicted ? $"▼ Modelo formal: {result.ProductName} ▼" :
+                reacts ? $"▼ Ejemplo de la base: {result.ProductName} ▼" : $"▼ {result.ProductName} ▼";
             descriptionText.text = result.Description;
             typeText.text = result.Predicted
-                ? "Predicción usando las valencias: puede requerir calor u otras condiciones."
-                : "Reacción real y conocida.";
+                ? "Modelo formal: no predice producto real, viabilidad ni condiciones experimentales."
+                : "Ejemplo de la base: animación ilustrativa; condiciones no simuladas.";
             if (chamberBanner != null)
-                chamberBanner.text = reacts
+                chamberBanner.text = result.Predicted
+                    ? "<b>MODELO FORMAL</b>\n<size=78%><color=#FFC34D>Sin simulación de reacción experimental</color></size>"
+                    : reacts
                     ? $"<b>RESULTADO EN CAMPANA:</b>\n<size=78%><color=#5FD6A8>{result.ProductName}</color></size>"
-                    : $"<b>SIN REACCIÓN QUÍMICA</b>\n<size=78%><color=#FFC34D>{element.Symbol} + {partner.Symbol} no reaccionan</color></size>";
+                    : "<b>SIN REACCIÓN SIMULADA</b>\n<size=78%><color=#FFC34D>Consulta la explicación y sus límites</color></size>";
             if (chamberRing != null)
                 chamberRing.sharedMaterial = LabFactory.Tinted("GlowBase", reacts ? Palette.Good : Palette.Accent2, 1.8f);
             LabAudio.Play(LabSound.Chime, 0.6f);

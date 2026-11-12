@@ -1,0 +1,17 @@
+apply plugin: 'com.android.library'
+
+android {
+    namespace 'com.quimikaze.reports'
+    compileSdk getProperty('unity.compileSdkVersion') as int
+    buildToolsVersion getProperty('unity.buildToolsVersion')
+    sourceSets { main { manifest.srcFile 'AndroidManifest.xml' } }
+    defaultConfig {
+        minSdk 26
+        targetSdk getProperty('unity.targetSdkVersion') as int
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}

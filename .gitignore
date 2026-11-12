@@ -23,6 +23,7 @@
 .vscode/
 .idea/
 *.csproj
+!Tests/**/*.csproj
 *.sln
 *.slnx
 *.suo

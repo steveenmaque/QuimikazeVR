@@ -46,6 +46,7 @@ namespace LabQuimicaVR
         void Update()
         {
             if (!Application.isPlaying || element == null || ElementIntro.Active) return;
+            if (LanClassroom.HandlesBackNavigation || ScientificLibrary.HandlesBackNavigation) return;
             if (LabInput.BackDown) LabState.BackToTable();
             if (LabInput.ModeDown && atom != null) SetMode(atom.NextMode());
         }
@@ -53,6 +54,7 @@ namespace LabQuimicaVR
         public void Populate(int z)
         {
             element = ElementDatabase.Get(z);
+            if (Application.isPlaying) LearningProgress.RecordExploration(element.Z);
             modeButtons.Clear();
             BuildTitle();
             BuildModel();
@@ -127,13 +129,13 @@ namespace LabQuimicaVR
             switch (mode)
             {
                 case AtomViewMode.Bohr:
-                    modeInfo.text = $"<color=#FFC34D><b>Modelo de Bohr:</b></color>  <color=#FF5A55>●</color> {e.Z} protones   <color=#B0BEC5>●</color> {e.Neutrons} neutrones   <color=#29B6F6>●</color> {e.Z} electrones en {e.Shells.Length} niveles";
+                    modeInfo.text = $"<color=#FFC34D><b>Bohr (modelo didáctico):</b></color> {e.Z} protones · {e.Z} electrones en {e.Shells.Length} niveles. Las órbitas dibujadas no son trayectorias reales.";
                     break;
                 case AtomViewMode.Cloud:
-                    modeInfo.text = "<color=#FFC34D><b>Nube electrónica:</b></color>  <color=#2BB5E8>●</color> s   <color=#2ECC52>●</color> p   <color=#F2A21F>●</color> d   <color=#F0509F>●</color> f  · donde es más probable hallar cada electrón";
+                    modeInfo.text = "<color=#FFC34D><b>Nube ilustrativa:</b></color> <color=#2BB5E8>●</color> s <color=#2ECC52>●</color> p <color=#F2A21F>●</color> d <color=#F0509F>●</color> f · representación cualitativa, sin cálculo físico de probabilidades.";
                     break;
                 case AtomViewMode.Nucleus:
-                    modeInfo.text = $"<color=#FFC34D><b>Núcleo:</b></color>  {e.Z} protones (+) y {e.Neutrons} neutrones. ¡El núcleo real es unas 100 000 veces más pequeño que el átomo!";
+                    modeInfo.text = $"<color=#FFC34D><b>Núcleo ilustrativo:</b></color> {e.Z} protones y {e.Neutrons} neutrones dibujados (A aproximado al redondear la masa). El número real de neutrones depende del isótopo. Escala ampliada.";
                     break;
             }
             foreach (var (m, b) in modeButtons) b.SetSelected(m == mode);
@@ -233,8 +235,8 @@ namespace LabQuimicaVR
             Prop(2, 3, 1, "Punto de ebullición", Temp(e.Boiling));
 
             Prop(3, 0, 1, "Densidad", e.Density);
-            Prop(3, 1, 2, "Protones · Neutrones · Electrones", $"{e.Z} p<sup>+</sup>   ·   {e.Neutrons} n<sup>0</sup>   ·   {e.Z} e<sup>-</sup>");
-            Prop(3, 3, 1, "Radiactivo", e.IsRadioactive ? "Sí" : "No", e.IsRadioactive ? new Color(0.45f, 0.22f, 0.12f) : (Color?)null);
+            Prop(3, 1, 2, "Átomo neutro · n solo ilustrativos", $"{e.Z} p<sup>+</sup> · {e.Z} e<sup>-</sup> · {e.Neutrons} n (A aproximado)");
+            Prop(3, 3, 1, "¿Tiene isótopos estables?", e.IsRadioactive ? "No" : "Sí", e.IsRadioactive ? new Color(0.45f, 0.22f, 0.12f) : (Color?)null);
 
             Prop(4, 0, 2, "Configuración electrónica (Moeller)", ElectronConfiguration.Full(e));
             Prop(4, 2, 1, "Configuración abreviada", ElectronConfiguration.Kernel(e));
@@ -411,7 +413,7 @@ namespace LabQuimicaVR
             {
                 origin,
                 $"Estado a 25 °C: {e.StateName.ToLower()}",
-                e.IsRadioactive ? "<color=#FFB04D>Radiactivo</color>" : "No radiactivo",
+                e.IsRadioactive ? "<color=#FFB04D>Sin isótopos estables</color>" : "Tiene isótopos estables",
                 $"Densidad: {e.Density}"
             };
             for (int i = 0; i < chips.Length; i++)

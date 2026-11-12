@@ -1,5 +1,7 @@
 # Quimikaze · Laboratorio virtual de química en VR
 
+**Candidato de aula 1.2, en validación:** misiones educativas, progreso persistente, retos con explicaciones, fuentes consultables y multijugador LAN de 2–8 personas con anfitrión Android. Consulta el [modelo educativo](AULA_EDUCATIVA.md), las [fuentes científicas](FUENTES_CIENTIFICAS.md), el [uso de LAN](Tests/LAN.md) y la [checklist de aceptación](VALIDACION_FINAL.md). Esta rama aún no tiene un APK nuevo validado ni aprobación de contenido para venta escolar.
+
 Laboratorio virtual de química para chicos de 10 a 14 años que no tienen acceso a un laboratorio real. Funciona con un **celular Android dentro de un visor tipo VR Box o Cardboard**, el botón del visor y un **mando Bluetooth genérico**.
 
 Entras a una sala blanca con la **tabla periódica completa de los 118 elementos**. Al elegir un elemento pasas a su propio nivel, con:
@@ -51,6 +53,8 @@ En la página de [Releases](https://github.com/steveenmaque/QuimikazeVR/releases
 | Recentrar la vista | **Mantener pulsado** el botón del visor (1.5 s) o **Y** | R |
 | Caminar | Joystick izquierdo o cruceta | WASD o flechas |
 | Girar | Joystick derecho | Q / E |
+| Mirar arriba / abajo | Eje vertical del joystick derecho | T / G o RePág / AvPág |
+| Invertir el eje vertical y guardar | Pulsar **R3** o botón **Eje Y** en controles | I |
 | Mirar alrededor | Mover la cabeza | Mantener clic derecho y mover el mouse |
 | Volver a la tabla | **B** o botón atrás del celular | Escape |
 | Salir de la app (en la tabla) | Botón atrás del celular **dos veces** | — |

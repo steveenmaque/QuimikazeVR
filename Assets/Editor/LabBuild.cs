@@ -54,6 +54,10 @@ namespace LabQuimicaVR.EditorTools
             }
 
             ConfigureAndroid();
+            // Las escenas son generadas: compilar siempre el diseño actual, no una escena antigua.
+            ContentInputValidation.Run();
+            EducationValidation.Run();
+            LabSceneBuilder.BuildAll();
 
             var scenes = EditorBuildSettings.scenes.Where(s => s.enabled && File.Exists(s.path)).Select(s => s.path).ToArray();
             if (scenes.Length == 0)
@@ -88,8 +92,8 @@ namespace LabQuimicaVR.EditorTools
         }
 
         public const string ProductName = "Quimikaze";
-        public const string Version = "1.1.0";
-        public const int VersionCode = 2;
+        public const string Version = "1.2.0";
+        public const int VersionCode = 3;
 
         /// <summary>
         /// Nombre, version y orientacion. La pantalla gira sola entre las dos posiciones horizontales
@@ -104,6 +108,7 @@ namespace LabQuimicaVR.EditorTools
             PlayerSettings.companyName = "LabQuimicaPeru";
             PlayerSettings.bundleVersion = Version;
             PlayerSettings.Android.bundleVersionCode = VersionCode;
+            PlayerSettings.Android.forceInternetPermission = true;
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
             PlayerSettings.allowedAutorotateToPortrait = false;
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;

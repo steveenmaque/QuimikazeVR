@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace LabQuimicaVR
 {
-    /// <summary>Estado compartido entre escenas, navegacion y progreso de aprendizaje por sesion.</summary>
+    /// <summary>Navegación y fachada de compatibilidad al progreso local persistente.</summary>
     public static class LabState
     {
         public const string TableScene = "TablaPeriodica";
@@ -12,56 +11,54 @@ namespace LabQuimicaVR
         public static int SelectedZ = 6;
         public static bool Visited;
 
-        // Progreso formativo de la sesion (gamificacion sin conexion / HU15)
-        static readonly Dictionary<int, int> elementStars = new Dictionary<int, int>();
-        static readonly HashSet<int> exploredElements = new HashSet<int>();
+        // Los resultados se guardan localmente en LearningProgress; nunca se envían a terceros.
 
         public static int TotalStars
         {
             get
             {
-                int sum = 0;
-                foreach (var kv in elementStars) sum += kv.Value;
-                return sum;
+                return LearningProgress.TotalStars;
             }
         }
 
-        public static int MasteredElementsCount => elementStars.Count;
-        public static int ExploredElementsCount => exploredElements.Count;
+        public static int MasteredElementsCount => LearningProgress.MasteredCount;
+        public static int ExploredElementsCount => LearningProgress.ExploredCount;
 
-        public static int GetStars(int z) => elementStars.TryGetValue(z, out int s) ? s : 0;
+        public static int GetStars(int z) => LearningProgress.GetStars(z);
 
         public static void RecordElementChallenge(int z, int stars)
         {
             stars = Mathf.Clamp(stars, 1, 3);
-            if (!elementStars.TryGetValue(z, out int prev) || stars > prev)
-                elementStars[z] = stars;
+            LearningProgress.RecordChallenge(z, stars, 3 - stars);
         }
 
         public static string StudentRank
         {
             get
             {
-                int s = TotalStars;
-                if (s >= 9) return "Maestro Químico";
-                if (s >= 6) return "Alquimista Experto";
-                if (s >= 3) return "Investigador Junior";
-                return "Explorador Novato";
+                int mastered = LearningProgress.MasteredCount;
+                if (LearningRoutes.CompletedCount(LearningProgress.Store) == LearningRoutes.Missions.Length) return "Ruta de aula completada";
+                if (mastered >= 18) return "Explorador avanzado";
+                if (mastered >= 9) return "Investigador en práctica";
+                if (mastered >= 3) return "Explorador con logros";
+                return "Explorador inicial";
             }
         }
 
         public static void OpenElement(int z)
         {
+            if (!LanClassroom.CanNavigate(ElementScene, Mathf.Clamp(z, 1, 118))) return;
             if (ScreenFader.Busy) return;
             SelectedZ = Mathf.Clamp(z, 1, 118);
             Visited = true;
-            exploredElements.Add(SelectedZ);
+            LearningProgress.RecordExploration(SelectedZ);
             LabAudio.Play(LabSound.Whoosh);
             ScreenFader.FadeToScene(ElementScene);
         }
 
         public static void BackToTable()
         {
+            if (!LanClassroom.CanNavigate(TableScene, SelectedZ)) return;
             if (ScreenFader.Busy) return;
             LabAudio.Play(LabSound.Whoosh);
             ScreenFader.FadeToScene(TableScene);

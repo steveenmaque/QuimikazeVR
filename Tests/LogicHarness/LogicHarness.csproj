@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>CS0067;CS0649</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="UnityAdapters.cs" />
+    <Compile Include="../../Assets/Scripts/Aprendizaje/LearningProgress.cs" Link="Production/LearningProgress.cs" />
+    <Compile Include="../../Assets/Scripts/Aprendizaje/LearningRoutes.cs" Link="Production/LearningRoutes.cs" />
+    <Compile Include="../../Assets/Scripts/Aprendizaje/ChallengeCatalog.cs" Link="Production/ChallengeCatalog.cs" />
+    <Compile Include="../../Assets/Scripts/Datos/ElementData.cs" Link="Production/ElementData.cs" />
+    <Compile Include="../../Assets/Scripts/Datos/ElementExtras.cs" Link="Production/ElementExtras.cs" />
+    <Compile Include="../../Assets/Scripts/Datos/ElectronConfiguration.cs" Link="Production/ElectronConfiguration.cs" />
+    <Compile Include="../../Assets/Scripts/Datos/ReactionDatabase.cs" Link="Production/ReactionDatabase.cs" />
+    <Compile Include="../../Assets/Scripts/VR/LabInput.cs" Link="Production/LabInput.cs" />
+    <Compile Include="../../Assets/Scripts/Red/LanTransport.cs" Link="Production/LanTransport.cs" />
+    <Compile Include="../../Assets/Scripts/Red/LanSession.cs" Link="Production/LanSession.cs" />
+    <Compile Include="../../Assets/Editor/EducationValidation.cs" Link="Production/EducationValidation.cs" />
+    <Compile Include="../../Assets/Editor/ContentInputValidation.cs" Link="Production/ContentInputValidation.cs" />
+    <Compile Include="../../Assets/Editor/LanValidation.cs" Link="Production/LanValidation.cs" />
+  </ItemGroup>
+</Project>

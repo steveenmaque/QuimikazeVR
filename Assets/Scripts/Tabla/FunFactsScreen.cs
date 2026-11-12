@@ -12,21 +12,14 @@ namespace LabQuimicaVR
 
         public static readonly string[] Facts =
         {
-            "Todo lo que ves, incluido tú, está hecho de solo 118 tipos de átomos combinados de distintas formas.",
-            "Si un átomo fuera del tamaño de un estadio de fútbol, su núcleo sería como una canica en el centro.",
-            "Solo 2 elementos son líquidos a temperatura ambiente: el mercurio (Hg) y el bromo (Br).",
-            "11 elementos son gases a temperatura ambiente; casi todos están en el lado derecho de la tabla.",
-            "Dmitri Mendeléyev ordenó los elementos en 1869 y dejó espacios vacíos para elementos que aún no se conocían.",
-            "El Perú es uno de los mayores productores de cobre, plata, zinc y oro del mundo.",
-            "El oxígeno es el elemento más abundante de la corteza terrestre y de tu cuerpo.",
-            "El hidrógeno y el helio se formaron en el Big Bang; casi todos los demás elementos se formaron en las estrellas.",
-            "El oro de tus joyas se formó cuando chocaron estrellas de neutrones hace miles de millones de años.",
-            "Los elementos de una misma columna (grupo) se comportan de forma parecida porque tienen los mismos electrones en su último nivel.",
-            "Las filas se llaman periodos: el número de periodo te dice cuántos niveles de electrones tiene el átomo.",
-            "El elemento 118, el oganesón, completa la tabla periódica tal como la conocemos hoy.",
-            "Tu cuerpo tiene unos 7 mil cuatrillones de átomos, ¡más que estrellas en el universo visible!",
-            "El silicio de los chips de tu celular sale de la arena común.",
-            "Los fuegos artificiales usan elementos para sus colores: estroncio rojo, bario verde, sodio amarillo y cobre azul.",
+            "El número atómico Z identifica un elemento: indica cuántos protones tiene su núcleo. Localiza Z=8 en la tabla. [D01]",
+            "Las columnas se llaman grupos y se numeran del 1 al 18. Busca dos elementos de la misma columna. [D01]",
+            "Los periodos son las siete filas principales. El sodio (Na) pertenece al periodo 3. ¿En qué fila está el magnesio? [D01]",
+            "El peso atómico suele representar un promedio de isótopos. No indica exactamente cuántos neutrones tiene cada átomo. [Q01]",
+            "El bismuto no tiene isótopos estables. Su radiactividad natural es muy lenta, pero se ha medido. [Q02]",
+            "Una fórmula compatible con valencias es una propuesta formal: no demuestra que una reacción ocurra al mezclar dos sustancias. [Q03]",
+            "La síntesis del elemento Z=117 se publicó en 2010. El nombre teneso se aprobó después. [Q04]",
+            "El esquema de llenado electrónico tiene excepciones. Compara Cr y Cu: el modelo debe respetar sus configuraciones. [D02]",
         };
 
         int index;

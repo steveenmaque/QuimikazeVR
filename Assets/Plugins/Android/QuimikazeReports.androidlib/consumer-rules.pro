@@ -1,0 +1,2 @@
+-keep class com.quimikaze.reports.ReportShareBridge { public static *; }
+-keep class com.quimikaze.reports.ReportsProvider { *; }

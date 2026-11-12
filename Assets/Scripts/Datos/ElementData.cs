@@ -40,9 +40,12 @@ namespace LabQuimicaVR
         public List<Orbital> Orbitals; // en orden de llenado (regla de Moeller)
         public int[] Shells;           // electrones por nivel K, L, M...
 
+        /// <summary>Conteo ilustrativo a partir de la masa redondeada; no identifica un isotopo ni una masa isotopica medida.</summary>
         public int Neutrons => Mathf.Max(0, Mathf.RoundToInt(Mass) - Z);
-        public bool IsRadioactive => Z == 43 || Z == 61 || Z >= 84;
-        public bool IsSynthetic => Z == 43 || Z == 61 || Z == 85 || Z >= 93;
+        /// <summary>Sin isotopos estables. Bi-209: de Marcillac et al., Nature (2003), doi:10.1038/nature01541.</summary>
+        public bool IsRadioactive => Z == 43 || Z == 61 || Z >= 83;
+        /// <summary>Produccion predominantemente artificial; no niega la posible presencia de trazas naturales.</summary>
+        public bool IsSynthetic => Z == 43 || Z == 61 || Z >= 93;
         public bool IsSuperheavy => Z >= 104;
         public bool IsMetal => Category == ElementCategory.AlkaliMetal || Category == ElementCategory.AlkalineEarth ||
                                Category == ElementCategory.Transition || Category == ElementCategory.PostTransition ||
@@ -100,13 +103,12 @@ namespace LabQuimicaVR
             var baseText = Resources.Load<TextAsset>("Datos/elementos_base");
             if (baseText == null)
             {
-                Debug.LogError("No se encontró Resources/Datos/elementos_base.txt");
-                elements = Array.Empty<ElementInfo>();
-                return;
+                throw new InvalidOperationException("No se encontró Resources/Datos/elementos_base.txt");
             }
             foreach (var cols in Rows(baseText.text))
             {
-                if (cols.Length < 14) continue;
+                if (cols.Length != 14)
+                    throw new FormatException("Cada elemento debe contener 14 columnas en elementos_base.txt.");
                 var e = new ElementInfo
                 {
                     Z = int.Parse(cols[0]),
@@ -127,6 +129,10 @@ namespace LabQuimicaVR
                 if (ColorUtility.TryParseHtmlString("#" + cols[13], out var c)) e.CpkColor = c;
                 list.Add(e);
             }
+            if (list.Count != 118 || list.Select(e => e.Z).Distinct().Count() != 118 ||
+                list.Any(e => e.Z < 1 || e.Z > 118 || e.Mass <= 0f) ||
+                list.Select(e => e.Symbol).Distinct().Count() != 118)
+                throw new FormatException("La base debe contener los 118 elementos, con Z y símbolos únicos y masas válidas.");
             elements = list.OrderBy(e => e.Z).ToArray();
 
             foreach (var file in new[] { "Datos/elementos_historia_1", "Datos/elementos_historia_2" })

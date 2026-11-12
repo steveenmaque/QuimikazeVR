@@ -1,0 +1,16 @@
+{
+  "utc": "2026-11-12T03:15:18.9496608Z",
+  "executed": true,
+  "passed": true,
+  "checks": 13,
+  "compilation": "Unity OpenJDK javac -source 8 -target 8 -classpath android-34/android.jar",
+  "suite": "ReportsPathPolicyTest",
+  "runtime": "Portable Java JVM",
+  "androidDeviceExecuted": false,
+  "unityBuildExecuted": false,
+  "limitations": [
+    "No manifest merge or APK build",
+    "No Android URI grant, sharing chooser or receiving app verification",
+    "No platform symlink test executed"
+  ]
+}

@@ -21,7 +21,9 @@ namespace LabQuimicaVR
 
     /// <summary>
     /// Reacciones comunes entre elementos. Las mas conocidas estan escritas a mano; para el resto
-    /// se predice el compuesto binario usando valencias y electronegatividad.
+    /// se construye un modelo formal binario usando valencias y electronegatividad.
+    /// No predice viabilidad, velocidad, temperatura ni peligrosidad experimental.
+    /// Grimmel y Reiher, CHIMIA (2021), doi:10.2533/chimia.2021.311.
     /// </summary>
     public static class ReactionDatabase
     {
@@ -98,6 +100,8 @@ namespace LabQuimicaVR
 
         public static ReactionResult React(ElementInfo a, ElementInfo b)
         {
+            if (a == null) throw new System.ArgumentNullException(nameof(a));
+            if (b == null) throw new System.ArgumentNullException(nameof(b));
             var c = Curated.FirstOrDefault(r => (r.A == a.Symbol && r.B == b.Symbol) || (r.A == b.Symbol && r.B == a.Symbol));
             if (c != null)
             {
@@ -120,7 +124,7 @@ namespace LabQuimicaVR
                 {
                     Equation = $"{a.Symbol} + {b.Symbol} -> ?",
                     ProductName = "Desconocido",
-                    Description = "Los elementos superpesados se crean átomo por átomo y duran muy poco tiempo, así que casi no se conoce su química.",
+                    Description = "El catálogo no incluye una reacción documentada para esta pareja de elementos. No se infieren propiedades macroscópicas a partir de su posición en la tabla.",
                     Effect = ReactionEffect.None, Predicted = true
                 };
             }
@@ -129,9 +133,9 @@ namespace LabQuimicaVR
             {
                 return new ReactionResult
                 {
-                    Equation = $"{a.Symbol} + {b.Symbol} -> no hay reacción",
-                    ProductName = "No reaccionan",
-                    Description = "Los gases nobles tienen su último nivel lleno de electrones: están \"satisfechos\" y casi nunca reaccionan.",
+                    Equation = $"{a.Symbol} + {b.Symbol} -> ?",
+                    ProductName = "Sin reacción documentada aquí",
+                    Description = "Este modelo escolar no incluye una reacción documentada para esta pareja. La ausencia de una entrada no demuestra que una reacción sea imposible.",
                     Effect = ReactionEffect.None, Predicted = true
                 };
             }
@@ -140,15 +144,18 @@ namespace LabQuimicaVR
             {
                 return new ReactionResult
                 {
-                    Equation = $"{a.Symbol} + {b.Symbol} -> aleación",
-                    ProductName = $"Aleación de {a.Name.ToLower()} y {b.Name.ToLower()}",
-                    Description = "Dos metales no forman un compuesto nuevo: al fundirse juntos se mezclan y forman una aleación, como el bronce o el acero.",
-                    Effect = ReactionEffect.Alloy, EffectColor = Color.Lerp(a.CpkColor, b.CpkColor, 0.5f), Predicted = true
+                    Equation = $"{a.Symbol} + {b.Symbol} -> ?",
+                    ProductName = "Mezcla metálica por investigar",
+                    Description = "El catálogo no documenta el producto de esta pareja. No se confirma una aleación ni un compuesto intermetálico sin datos experimentales.",
+                    Effect = ReactionEffect.None, EffectColor = Color.Lerp(a.CpkColor, b.CpkColor, 0.5f), Predicted = true
                 };
             }
 
             // El menos electronegativo actua como "cation" (valencia positiva), el otro como "anion".
-            var cation = ElectronegativityValue(a) <= ElectronegativityValue(b) ? a : b;
+            // Las electronegatividades tabuladas pueden empatar (p. ej. H y At).
+            // Desempate estable por Z: el orden de seleccion no debe cambiar el modelo formal.
+            float enA = ElectronegativityValue(a), enB = ElectronegativityValue(b);
+            var cation = enA < enB || (enA == enB && a.Z < b.Z) ? a : b;
             var anion = cation == a ? b : a;
             if (cation.Symbol == "H" && anion.IsMetal) { var t = cation; cation = anion; anion = t; }
 
@@ -160,8 +167,8 @@ namespace LabQuimicaVR
                 return new ReactionResult
                 {
                     Equation = $"{a.Symbol} + {b.Symbol} -> ?",
-                    ProductName = "Reacción poco común",
-                    Description = "Estos elementos no suelen reaccionar directamente entre sí en condiciones normales.",
+                    ProductName = "Modelo sin datos suficientes",
+                    Description = "Las valencias disponibles no permiten construir este modelo formal. Esto no permite concluir si los elementos reaccionan en condiciones reales.",
                     Effect = ReactionEffect.None, Predicted = true
                 };
             }
@@ -174,8 +181,6 @@ namespace LabQuimicaVR
             string name = $"{AnionName(anion)} de {cation.Name.ToLower()}";
             if (cation.Valences.Count(v => v > 0) > 1) name += $" ({ToRoman(vPos)})";
             bool ionic = cation.IsMetal;
-            float diff = Mathf.Abs(ElectronegativityValue(a) - ElectronegativityValue(b));
-            var fx = diff > 2.2f ? ReactionEffect.Explosion : diff > 1.4f ? ReactionEffect.Fire : diff > 0.6f ? ReactionEffect.Glow : ReactionEffect.Slow;
 
             return new ReactionResult
             {
@@ -183,9 +188,9 @@ namespace LabQuimicaVR
                 ProductName = Capitalize(name),
                 Formula = formula,
                 Description = ionic
-                    ? $"El {cation.Name.ToLower()} cede electrones y el {anion.Name.ToLower()} los recibe: se forma un compuesto iónico. Usamos la valencia +{vPos} y la valencia -{vNeg} para cruzarlas."
-                    : $"Ambos son no metales: comparten electrones y forman un compuesto covalente. Usamos la valencia +{vPos} y la valencia -{vNeg} para cruzarlas.",
-                Effect = fx,
+                    ? $"Modelo formal de balance de cargas: cruzamos +{vPos} y -{vNeg} para obtener {formula}. No confirma el producto real ni una reacción experimental."
+                    : $"Modelo formal de fórmula binaria con estados de oxidación +{vPos} y -{vNeg}: {formula}. No confirma estructura, producto real ni condiciones de reacción.",
+                Effect = ReactionEffect.None,
                 EffectColor = Color.Lerp(cation.CpkColor, anion.CpkColor, 0.5f),
                 Predicted = true
             };
@@ -195,20 +200,20 @@ namespace LabQuimicaVR
         {
             string desc;
             if (e.Symbol is "H" or "N" or "O" or "F" or "Cl" or "Br" or "I")
-                desc = $"Dos átomos de {e.Name.ToLower()} se unen para formar la molécula {e.Symbol}<sub>2</sub>. Así se encuentra en la naturaleza.";
+                desc = $"Representación de dos átomos de {e.Name.ToLower()} en la molécula elemental {e.Symbol}<sub>2</sub>. No simula las condiciones para formarla.";
             else if (e.Category == ElementCategory.NobleGas)
-                desc = "Los átomos de un gas noble no se unen ni siquiera entre ellos: viven sueltos.";
+                desc = "Has elegido dos veces el mismo elemento del grupo 18. Esta selección no incluye un proceso químico documentado en el catálogo.";
             else if (e.IsMetal)
                 desc = "Los átomos de un metal se unen con un \"mar de electrones\" compartidos: eso es el enlace metálico.";
             else
                 desc = "Los átomos de un mismo elemento pueden ordenarse de formas distintas (alótropos), como el diamante y el grafito.";
             return new ReactionResult
             {
-                Equation = $"{e.Symbol} + {e.Symbol} -> {(desc.Contains("<sub>2") ? e.Symbol + "2" : e.Symbol)}",
+                Equation = desc.Contains("<sub>2") ? $"{e.Symbol} + {e.Symbol} -> {e.Symbol}2" : $"{e.Symbol} (mismo elemento)",
                 ProductName = "Mismo elemento",
                 Formula = desc.Contains("<sub>2") ? e.Symbol + "2" : "",
                 Description = desc,
-                Effect = ReactionEffect.Glow,
+                Effect = ReactionEffect.None,
                 EffectColor = e.CpkColor,
                 Predicted = true
             };

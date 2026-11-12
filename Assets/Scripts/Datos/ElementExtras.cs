@@ -87,12 +87,12 @@ namespace LabQuimicaVR
                 }
             }
             if (samples.TryGetValue(e.Z, out var info)) return info;
-            // Superpesados: solo existieron unos pocos atomos.
+            // No se inventa apariencia ni duracion de isotopos para las entradas sin muestra del catalogo.
             return samples[e.Z] = new SampleInfo
             {
                 Z = e.Z, Form = "desconocido", Color = new Color(1f, 0.42f, 0.42f), Landscape = "tunel",
-                Looks = "Solo se han creado unos pocos átomos, que duran fracciones de segundo: nadie lo ha visto a simple vista.",
-                Nature = "No existe en la naturaleza: se crea en aceleradores de partículas, haciendo chocar átomos a enorme velocidad."
+                Looks = "Este catálogo no incluye una muestra macroscópica fotografiada. La visualización es ilustrativa; no representa una apariencia medida.",
+                Nature = "Se estudia mediante producción artificial en instalaciones de investigación. Las propiedades dependen del elemento y del isótopo."
             };
         }
 

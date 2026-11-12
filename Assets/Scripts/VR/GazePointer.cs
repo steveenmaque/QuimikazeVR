@@ -35,6 +35,8 @@ namespace LabQuimicaVR
                 target = hit.collider.GetComponentInParent<GazeTarget>();
                 if (target != null && !target.isActiveAndEnabled) target = null;
                 if (target != null && !target.Interactable) target = null;
+                var modal = LanClassroom.ActivePanel != null ? LanClassroom.ActivePanel : ScientificLibrary.ActivePanel;
+                if (target != null && modal != null && !target.transform.IsChildOf(modal)) target = null;
             }
 
             if (target != current)

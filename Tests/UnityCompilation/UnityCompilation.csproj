@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <DefineConstants>UNITY_EDITOR;UNITY_EDITOR_WIN;UNITY_STANDALONE_WIN;UNITY_6000_6_OR_NEWER</DefineConstants>
+    <UnityEditorPath Condition="'$(UnityEditorPath)' == ''">C:/Program Files/Unity/Hub/Editor/6000.6.0f1/Editor</UnityEditorPath>
+    <OutputPath>../../AutoSync/Compilation/bin/</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Assets/Scripts/**/*.cs" />
+    <Compile Include="../../Assets/Editor/**/*.cs" />
+    <Reference Include="$(UnityEditorPath)/Data/Managed/UnityEngine/*.dll" />
+    <Reference Include="$(UnityEditorPath)/Data/Managed/UnityEditor/*.dll" />
+    <Reference Include="../../Library/ScriptAssemblies/Unity.TextMeshPro.dll" />
+    <Reference Include="../../Library/ScriptAssemblies/UnityEngine.UI.dll" />
+  </ItemGroup>
+</Project>

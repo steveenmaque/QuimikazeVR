@@ -155,6 +155,7 @@ namespace LabQuimicaVR.EditorTools
         {
             if (EditorApplication.isPlaying) return;
             EditorSceneManager.OpenScene(TableScenePath);
+            if (Application.isBatchMode) return;
             var sv = SceneView.lastActiveSceneView;
             if (sv == null) sv = EditorWindow.GetWindow<SceneView>();
             sv.orthographic = false;
@@ -330,6 +331,7 @@ namespace LabQuimicaVR.EditorTools
             rig.head = head;
             rig.leftEye = left;
             rig.rightEye = right;
+            new GameObject("FuentesCientificas").AddComponent<ScientificLibrary>();
             return rig;
         }
 
@@ -512,7 +514,7 @@ namespace LabQuimicaVR.EditorTools
                 new Vector3(0.45f, -0.02f, -0.02f), 0.11f, Palette.Text, TextAlignmentOptions.Center, size.x - 1.5f, 0.25f);
             LabFactory.Text(hint, "<color=#FFC34D><b>● Misión de la sesión:</b></color> Explora elementos y supera el <b>Reto de 3 preguntas</b> en cada sala para ganar medallas (<color=#FFC34D>● ● ●</color>)",
                 new Vector3(0.0f, -0.30f, -0.02f), 0.102f, Palette.Accent2, TextAlignmentOptions.Center, size.x - 0.3f, 0.24f);
-            LabFactory.Text(hint, "Código de familia en cada casilla (WCAG 1.4.1): <b>ALC</b> Alcalino · <b>AET</b> Alcalinotérreo · <b>TRA</b> Transición · <b>NOM</b> No metal · <b>HAL</b> Halógeno · <b>GAS</b> Gas noble",
+            LabFactory.Text(hint, "Código de categoría en cada casilla: <b>ALC</b> Alcalino · <b>AET</b> Alcalinotérreo · <b>TRA</b> Transición · <b>NOM</b> No metal · <b>HAL</b> Halógeno · <b>GAS</b> Gas noble",
                 new Vector3(0.0f, -0.56f, -0.02f), 0.088f, Palette.TextDim, TextAlignmentOptions.Center, size.x - 0.3f, 0.24f);
 
             var content = LabFactory.Node("Ficha", preview).transform;
@@ -550,9 +552,9 @@ namespace LabQuimicaVR.EditorTools
             string text =
                 "<color=#FF7373><b>s</b></color>  grupos 1 y 2 (y el helio)\n" +
                 "<color=#FFD94D><b>p</b></color>  grupos 13 al 18\n" +
-                "<color=#59B3FF><b>d</b></color>  metales de transición (3 al 12)\n" +
+                "<color=#59B3FF><b>d</b></color>  grupos 3 al 12\n" +
                 "<color=#73E68C><b>f</b></color>  lantánidos y actínidos\n" +
-                "<size=80%><color=#9FB4CC>El bloque indica el último subnivel que se llena de electrones.</color></size>";
+                "<size=80%><color=#9FB4CC>Los bloques se relacionan con los subniveles electrónicos. Hay excepciones de llenado. [D01/D02]</color></size>";
             LabFactory.Text(s, text, new Vector3(0, -1.4f, -0.02f), 0.16f, Palette.Text, TextAlignmentOptions.Left, 4.0f, 1.4f);
         }
 
@@ -567,7 +569,7 @@ namespace LabQuimicaVR.EditorTools
                 var c = Color.Lerp(new Color(0.3f, 0.85f, 1f), new Color(0.75f, 0.45f, 1f), (n - 1) / 6f);
                 LabFactory.Circle("Nivel" + n, diagram, r, 0.014f, c);
             }
-            LabFactory.Text(s, "Hay <b>7 periodos</b>. El número del periodo indica cuántos <color=#FFC34D>niveles de energía</color> (capas K, L, M, N, O, P, Q) tiene el átomo.\n<size=80%><color=#9FB4CC>Ejemplo: el sodio (Na) está en el periodo 3, así que tiene 3 niveles con electrones.</color></size>",
+            LabFactory.Text(s, "Hay <b>7 periodos</b>: son las filas principales de la tabla.\n<size=80%><color=#9FB4CC>Ejemplo: el sodio (Na) está en el periodo 3. Su distribución por niveles es 2–8–1. No confundas periodo con grupo (columna). [D01/D02]</color></size>",
                 new Vector3(0, -1.42f, -0.02f), 0.15f, Palette.Text, TextAlignmentOptions.Center, 4.1f, 1.4f);
         }
 
@@ -611,7 +613,7 @@ namespace LabQuimicaVR.EditorTools
                 t.fontSizeMax = 1.25f;
                 t.fontSizeMin = 0.8f;
             }
-            LabFactory.Text(s, "Los elementos de un mismo grupo tienen los mismos electrones en su último nivel, por eso se comportan de forma parecida.",
+            LabFactory.Text(s, "Un grupo reúne elementos con semejanzas químicas. La regla de electrones externos se aplica con excepciones, especialmente en metales de transición. [D01/D02]",
                 new Vector3(0, -1.6f, -0.02f), 0.1f, Palette.TextDim, TextAlignmentOptions.Center, 4.9f, 0.4f);
         }
 
@@ -650,10 +652,11 @@ namespace LabQuimicaVR.EditorTools
                 ("B", new Color(1f, 0.42f, 0.42f), "volver a la tabla"),
                 ("X", new Color(0.4f, 0.65f, 1f), "cambiar el modelo del átomo"),
                 ("L1 / R1", Palette.Violet, "ajustar las lentes si ves doble"),
+                ("R3 · I", Palette.Accent2, "pulsa el stick derecho: invierte arriba / abajo"),
             };
             for (int i = 0; i < rows.Length; i++)
             {
-                float y = 0.42f - i * 0.27f;
+                float y = 0.42f - i * 0.23f;
                 var chip = LabFactory.Panel("Tecla", s, new Vector3(-1.75f, y, -0.02f), new Vector2(1.3f, 0.23f), 0.11f, 0.012f,
                     Color.Lerp(rows[i].c, Color.white, 0.3f), rows[i].c);
                 LabFactory.Text(chip.transform, rows[i].key, new Vector3(0, 0, -0.012f), 0.12f, Palette.Ink, TextAlignmentOptions.Center, 1.25f, 0.22f, true);
@@ -661,8 +664,10 @@ namespace LabQuimicaVR.EditorTools
             }
             LabFactory.Text(s, "Pon el celular en el visor <color=#FFC34D>del lado que quieras</color>: la pantalla gira sola.",
                 new Vector3(0, -1.47f, -0.02f), 0.105f, Palette.TextDim, TextAlignmentOptions.Center, 4.9f, 0.2f);
-            var orient = LabFactory.Button(s, "Pantalla: Automática", new Vector3(0, -1.75f, -0.03f), new Vector2(3.0f, 0.3f), 0.1f, new Color(0.25f, 0.3f, 0.4f));
+            var orient = LabFactory.Button(s, "Pantalla: Automática", new Vector3(-1.26f, -1.75f, -0.03f), new Vector2(2.4f, 0.3f), 0.1f, new Color(0.25f, 0.3f, 0.4f));
             orient.gameObject.AddComponent<OrientationButton>();
+            var look = LabFactory.Button(s, "Eje Y: normal", new Vector3(1.26f, -1.75f, -0.03f), new Vector2(2.4f, 0.3f), 0.1f);
+            look.gameObject.AddComponent<LookAxisButton>();
         }
 
         static void BuildFactsScreen(Transform parent, Vector3 pos)
@@ -687,17 +692,17 @@ namespace LabQuimicaVR.EditorTools
             var numbers = LabFactory.Screen("PantallaNumeros", wall, new Vector3(-5.2f, 3.2f, 0), Quaternion.identity, new Vector2(4.6f, 3.4f), "LA TABLA EN NÚMEROS");
             LabFactory.Text(numbers,
                 "<color=#FFC34D><b>118</b></color> elementos conocidos\n" +
-                "<color=#FFC34D><b>94</b></color> existen en la naturaleza\n" +
+                "<b>Z</b> identifica el número de protones\n" +
                 "<color=#FFC34D><b>11</b></color> gases y <color=#FFC34D><b>2</b></color> líquidos a 25 °C\n" +
                 "<color=#FFC34D><b>7</b></color> periodos y <color=#FFC34D><b>18</b></color> grupos\n" +
                 "Más ligero: <b>hidrógeno</b> · Más denso: <b>osmio</b>\n" +
-                "Último descubierto: <b>teneso</b> (2010)",
+                "Z=117: síntesis publicada en <b>2010</b> [Q04]\n<size=65%>Referencias: IUPAC [D01] · Biblioteca científica</size>",
                 new Vector3(0, -0.25f, -0.02f), 0.19f, Palette.Text, TextAlignmentOptions.Left, 4.3f, 2.6f);
 
             var atomInfo = LabFactory.Screen("PantallaAtomo", wall, new Vector3(5.2f, 3.2f, 0), Quaternion.identity, new Vector2(4.6f, 3.4f), "¿QUÉ ES UN ÁTOMO?");
             LabFactory.Text(atomInfo,
                 "Es la parte más pequeña de un elemento.\n\n" +
-                "En el centro tiene un <color=#FF6B6B><b>núcleo</b></color> con <color=#FF6B6B>protones (+)</color> y <color=#B0BEC5>neutrones</color>. Alrededor se mueven los <color=#4FC3F7>electrones (-)</color>.\n\n" +
+                "En el centro tiene un <color=#FF6B6B><b>núcleo</b></color> con <color=#FF6B6B>protones (+)</color> y, normalmente, <color=#B0BEC5>neutrones</color>. El hidrógeno-1 no tiene neutrones. Los <color=#4FC3F7>electrones (-)</color> se describen mediante estados cuánticos.\n\n" +
                 "El número de protones (<b>número atómico Z</b>) decide qué elemento es.",
                 new Vector3(0, -0.25f, -0.02f), 0.165f, Palette.Text, TextAlignmentOptions.Left, 4.3f, 2.6f);
 
