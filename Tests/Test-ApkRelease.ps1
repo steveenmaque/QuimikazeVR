@@ -3,6 +3,7 @@ param(
     [Parameter(Mandatory=$true)][string]$ApkPath,
     [string]$ExpectedVersion = '1.2',
     [int]$ExpectedVersionCode = 3,
+    [int]$ExpectedTargetSdk = 36,
     [string]$ExpectedPackage = 'com.labquimicaperu.laboratoriovr',
     [string]$ExpectedSignerCertificateSha256 = '20a038c2a78379520931f84cbcabbaffd1d7277cd660de5e7b00135499f10e49',
     [string]$AndroidSdkPath = 'C:/Program Files/Unity/Hub/Editor/6000.6.0f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK',
@@ -17,7 +18,7 @@ $reportFile = [IO.Path]::GetFullPath($ReportPath)
 $releaseChecks = [Collections.Generic.List[object]]::new()
 $validation = [ordered]@{
     utc=[DateTime]::UtcNow.ToString('o'); passed=$false; error=$null
-    apk=$null; sha256=$null; package=$null; version=$null; versionCode=$null
+    apk=$null; sha256=$null; package=$null; version=$null; versionCode=$null; targetSdk=$null
     checks=$null; scope='Inspección del APK, manifiesto, arquitecturas y firma; no ejecuta el juego en Android.'
 }
 function Add-ReleaseCheck([string]$Name,[bool]$Passed) {
@@ -39,9 +40,12 @@ try {
     $validation.package=$packageMatch.Groups[1].Value
     $validation.versionCode=$packageMatch.Groups[2].Value
     $validation.version=$packageMatch.Groups[3].Value
+    $targetMatch=[regex]::Match($badging,"targetSdkVersion:'([0-9]+)'")
+    if ($targetMatch.Success) { $validation.targetSdk=$targetMatch.Groups[1].Value }
     Add-ReleaseCheck 'Paquete esperado' ($validation.package -eq $ExpectedPackage)
     Add-ReleaseCheck 'Versión nueva esperada' ($validation.version -eq $ExpectedVersion)
     Add-ReleaseCheck 'Código de versión nuevo' ($validation.versionCode -eq $ExpectedVersionCode.ToString())
+    Add-ReleaseCheck 'SDK objetivo estable esperado' ($validation.targetSdk -eq $ExpectedTargetSdk.ToString())
     $manifest = (& $aapt dump xmltree $apkFullPath --file AndroidManifest.xml 2>&1) -join "`n"
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo inspeccionar el manifiesto del APK.' }
     Add-ReleaseCheck 'Permiso INTERNET para LAN' ($manifest.Contains('android.permission.INTERNET'))

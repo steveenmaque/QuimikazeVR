@@ -27,6 +27,8 @@ Implementación sin servicio externo: un celular Android actúa como servidor TC
 
 ## Pruebas automáticas
 
+La compilación v1.2 fija target SDK 36, con INTERNET, en vez de seleccionar automáticamente cualquier SDK instalado. Según la [documentación oficial de Android](https://developer.android.com/privacy-and-security/local-network-permission), al migrar a target 37 o superior se debe declarar y solicitar ACCESS_LOCAL_NETWORK; esa migración requiere pruebas específicas de concesión y denegación en Android 17. La v1.2 no debe recompilarse con target automático sin revisar este requisito.
+
 En Unity: **Quimikaze → Validar aula LAN (localhost)** o `LabQuimicaVR.EditorTools.LanValidation.Run()`. `Checks` y `Passed` contienen el conteo y las categorías superadas. Incluye direcciones inválidas, alias, TCP fragmentado dentro de UTF-8, trama sobredimensionada, puerto ocupado, backpressure, autoridad, seguimiento de escena, poses inválidas, respuestas duplicadas, cierre docente de espera, 8 participantes, rechazo del noveno, desconexión, conexión fallida, cancelación concurrente y timeout real de 15 segundos. Debe ejecutarse en el hilo principal del editor; tarda más de 15 segundos por el timeout real.
 
 ## Checklist de aceptación en dispositivos (pendiente hasta aportar evidencia)
