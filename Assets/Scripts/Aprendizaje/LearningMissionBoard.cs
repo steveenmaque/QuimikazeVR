@@ -11,6 +11,8 @@ namespace LabQuimicaVR
         TextMeshPro missionText, progressText, statusText;
         GazeButton startButton;
         int page;
+        string displayedSaveError;
+        const string DefaultStatus = "Sin límite de tiempo. Puedes explorar los 118 elementos libremente.\nPropuesta didáctica: el docente debe validar los logros.";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Install()
@@ -23,7 +25,9 @@ namespace LabQuimicaVR
         {
             if (scene.name != LabState.TableScene || FindAnyObjectByType<LearningMissionBoard>() != null) return;
             var go = new GameObject("RutaDeAprendizaje");
-            go.transform.position = new Vector3(-3.1f, 2.1f, 4.8f);
+            go.transform.position = new Vector3(-5.5f, 2.1f, 4.0f);
+            var facing = go.transform.position - new Vector3(0, 2.1f, 1.5f);
+            go.transform.rotation = Quaternion.LookRotation(facing, Vector3.up);
             go.AddComponent<LearningMissionBoard>();
         }
 
@@ -32,10 +36,10 @@ namespace LabQuimicaVR
             page = LearningRoutes.CurrentIndex(LearningProgress.Store);
             var screen = LabFactory.Screen("ObjetivosDelAula", transform, Vector3.zero, Quaternion.identity,
                 new Vector2(3.4f, 3.5f), "TU RUTA DE QUÍMICA", Palette.Accent2);
-            progressText = LabFactory.Text(screen, "", new Vector3(0, 1.21f, -0.02f), 0.105f, Palette.Good,
-                TextAlignmentOptions.Center, 3.1f, 0.38f, true);
-            missionText = LabFactory.Text(screen, "", new Vector3(0, 0.30f, -0.02f), 0.10f, Color.white,
-                TextAlignmentOptions.TopLeft, 3.05f, 1.35f);
+            progressText = LabFactory.Text(screen, "", new Vector3(0, 1.07f, -0.02f), 0.105f, Palette.Good,
+                TextAlignmentOptions.Center, 3.1f, 0.28f, true);
+            missionText = LabFactory.Text(screen, "", new Vector3(0, 0.29f, -0.02f), 0.10f, Color.white,
+                TextAlignmentOptions.TopLeft, 3.05f, 1.25f);
             missionText.enableAutoSizing = true;
             missionText.fontSizeMax = 1.0f;
             missionText.fontSizeMin = 0.72f;
@@ -47,8 +51,7 @@ namespace LabQuimicaVR
             prev.OnClick += () => { page = (page + LearningRoutes.Missions.Length - 1) % LearningRoutes.Missions.Length; Refresh(); };
             next.OnClick += () => { page = (page + 1) % LearningRoutes.Missions.Length; Refresh(); };
             export.OnClick += Export;
-            statusText = LabFactory.Text(screen,
-                "Sin límite de tiempo. Puedes explorar los 118 elementos libremente.\nPropuesta didáctica: el docente debe validar los logros.",
+            statusText = LabFactory.Text(screen, DefaultStatus,
                 new Vector3(0, -1.40f, -0.02f), 0.075f, Palette.Text, TextAlignmentOptions.Center, 3.05f, 0.45f);
             statusText.enableAutoSizing = true;
             statusText.fontSizeMax = 0.75f;
@@ -79,6 +82,8 @@ namespace LabQuimicaVR
             startButton.interactable = unlocked;
             startButton.Label.text = mission.Complete(store) ? "Repasar misión" : unlocked ? "Continuar misión" : "Misión por desbloquear";
             if (LearningProgress.LastSaveError != null) statusText.text = LearningProgress.LastSaveError;
+            else if (displayedSaveError != null) statusText.text = DefaultStatus;
+            displayedSaveError = LearningProgress.LastSaveError;
         }
 
         void ContinueMission()

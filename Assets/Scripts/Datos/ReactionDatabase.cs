@@ -35,10 +35,10 @@ namespace LabQuimicaVR
 
         static readonly Entry[] Curated =
         {
-            E("H","O","2H2 + O2 -> 2H2O","Agua","H2O","El hidrógeno arde con el oxígeno con una pequeña explosión y forma agua. ¡Así funcionan los motores de algunos cohetes!",ReactionEffect.Explosion,"9AD8FF"),
+            E("H","O","2H2 + O2 -> 2H2O","Agua","H2O","La combustión de hidrógeno con oxígeno forma agua y libera energía. Su comportamiento depende de las condiciones; la animación es ilustrativa.",ReactionEffect.Explosion,"9AD8FF"),
             E("H","Cl","H2 + Cl2 -> 2HCl","Cloruro de hidrógeno","HCl","Con luz reaccionan de golpe. Disuelto en agua forma el ácido clorhídrico, el mismo ácido que tienes en el estómago.",ReactionEffect.Explosion,"D9FF7A"),
             E("H","N","3H2 + N2 -> 2NH3","Amoníaco","NH3","Es la reacción de Haber: con presión, calor y un catalizador se fabrica amoníaco para los fertilizantes que alimentan al mundo.",ReactionEffect.Slow,"CFE8FF"),
-            E("H","C","C + 2H2 -> CH4","Metano","CH4","El carbono y el hidrógeno forman metano, el gas natural que se usa en las cocinas.",ReactionEffect.Slow,"BFEFFF"),
+            E("H","C","C + 2H2 -> CH4","Metano","CH4","Ecuación global de hidrogenación del carbono. Formar metano requiere condiciones específicas y puede requerir catalizador; no ocurre por juntar los elementos. El metano es un componente principal del gas natural.",ReactionEffect.Slow,"BFEFFF"),
             E("H","F","H2 + F2 -> 2HF","Fluoruro de hidrógeno","HF","Reaccionan de forma explosiva incluso en la oscuridad y a temperaturas muy bajas.",ReactionEffect.Explosion,"F2F2A0"),
             E("H","S","H2 + S -> H2S","Sulfuro de hidrógeno","H2S","Forma un gas con olor a huevo podrido. Lo emiten los volcanes y las aguas termales.",ReactionEffect.Smoke,"FFF59D"),
             E("H","Br","H2 + Br2 -> 2HBr","Bromuro de hidrógeno","HBr","Al calentarse reaccionan y forman un gas que en agua es un ácido fuerte.",ReactionEffect.Fire,"FFB199"),
@@ -83,7 +83,7 @@ namespace LabQuimicaVR
             E("N","O","N2 + O2 -> 2NO","Monóxido de nitrógeno","NO","Solo ocurre a temperaturas altísimas, como dentro de un rayo o un motor.",ReactionEffect.BrightLight,"B3E5FC"),
             E("P","O","4P + 5O2 -> P4O10","Óxido de fósforo (V)","P4O10","El fósforo blanco arde solo en el aire con una llama brillante y mucho humo blanco.",ReactionEffect.Fire,"FFF8E1"),
             E("Si","O","Si + O2 -> SiO2","Dióxido de silicio (sílice)","SiO2","Es el componente de la arena y el cuarzo, y la base del vidrio.",ReactionEffect.Slow,"E0F2F1"),
-            E("B","N","2B + N2 -> 2BN","Nitruro de boro","BN","Forma un material casi tan duro como el diamante y que resiste muchísimo calor.",ReactionEffect.Glow,"FFFFFF"),
+            E("B","N","2B + N2 -> 2BN","Nitruro de boro","BN","El nitruro de boro tiene distintas estructuras. La forma cúbica es muy dura; la forma hexagonal tiene propiedades diferentes. Esta animación no determina qué forma se obtiene.",ReactionEffect.Glow,"FFFFFF"),
             E("Ag","S","2Ag + S -> Ag2S","Sulfuro de plata","Ag2S","Por eso las joyas de plata se oscurecen con el tiempo.",ReactionEffect.Slow,"424242"),
             E("Ag","Cl","2Ag + Cl2 -> 2AgCl","Cloruro de plata","AgCl","El cloruro de plata se oscurece con la luz: así funcionaba la fotografía antigua.",ReactionEffect.Slow,"EEEEEE"),
             E("Au","Hg","Au + Hg -> Amalgama","Amalgama de oro","","El mercurio disuelve el oro. En la minería ilegal se usa así y luego se evapora el mercurio, contaminando ríos de Madre de Dios.",ReactionEffect.Alloy,"FFD54F"),

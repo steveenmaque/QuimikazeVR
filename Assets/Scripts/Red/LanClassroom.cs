@@ -85,6 +85,7 @@ namespace LabQuimicaVR
         {
             session?.Pump(Time.unscaledTime);
             SynchronizeWorld();
+            if (launcher != null) launcher.transform.parent.gameObject.SetActive(modal == null && ScientificLibrary.ActivePanel == null);
             UpdateAvatars();
             if (modal != null && LabInput.BackDown)
             {
@@ -117,6 +118,8 @@ namespace LabQuimicaVR
             modal = new GameObject("PanelAulaLAN").transform;
             modal.position = rig.head.position + forward * 2.8f;
             modal.rotation = Quaternion.LookRotation(forward);
+            // Con cabeza a 1.6 m, conservar todos los controles por encima del suelo.
+            modal.localScale = Vector3.one * 0.78f;
             Draw();
         }
 
@@ -197,7 +200,7 @@ namespace LabQuimicaVR
                 if (session.IsHost) Button(screen, "Preparar otra ronda", 0, -0.75f, 2.7f, session.ReturnToLobby);
                 else Text(screen, "Espera al anfitrión para la próxima ronda.", -0.82f, 0.085f, 0.45f);
             }
-            Button(screen, session.IsHost ? "Cerrar aula para todos" : "Salir del aula", 0, -1.64f, 2.8f, Disconnect, 0.08f);
+            Button(screen, session.IsHost ? "Cerrar aula para todos" : "Salir del aula", 0, -1.72f, 2.8f, Disconnect, 0.08f);
         }
 
         void Host()
@@ -317,6 +320,9 @@ namespace LabQuimicaVR
                 bool visible = member.hasPose && sameScene;
                 root.gameObject.SetActive(visible);
                 if (!visible) continue;
+                // Mantener la sesión y las poses, sin tapar las preguntas con compañeros cercanos.
+                bool showAvatar = modal == null && ScientificLibrary.ActivePanel == null;
+                foreach (var renderer in root.GetComponentsInChildren<Renderer>()) renderer.enabled = showAvatar;
                 float blend = 1 - Mathf.Exp(-10f * Time.unscaledDeltaTime);
                 root.position = Vector3.Lerp(root.position, new Vector3(member.x, member.y, member.z), blend);
                 root.rotation = Quaternion.Slerp(root.rotation, Quaternion.Euler(0, member.yaw, 0), blend);

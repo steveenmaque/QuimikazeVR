@@ -65,7 +65,7 @@ Kawah_Ijen|Volcán Kawah Ijen (Indonesia), donde se recoge azufre a mano||||Kawa
 Kazimierz_Fajans|Kasimir Fajans|1887|1975|Químico polaco|Kazimierz_Fajans|P|NN (University of Michigan)|Public domain
 Kenneth_Ross_MacKenzie|Kenneth Ross Mackenzie|1912|2002|Físico estadounidense|Kenneth_Ross_MacKenzie|P|Department of Energy. Lawrence Berkeley National Laboratory. Public Af|Public domain
 Kohl_cosmetics|Kohl: maquillaje antiguo para los ojos, hecho con antimonio||||Kohl_cosmetics|H|Camila Zanon.|CC BY 2.0
-Kosuke_Morita|Kosuke Morita|1957||Científico japonés|Kosuke_Morita|P|文部科学省|CC BY 4.0
+Kosuke_Morita|Kosuke Morita|1957||Científico japonés|Kosuke_Morita|P|MEXT (Japón)|CC BY 4.0
 Lars_Fredrik_Nilson|Lars Fredrik Nilson|1840|1899|Químico sueco|Lars_Fredrik_Nilson|P|Otto Petterson|Public domain
 Lascaux|Pinturas de la cueva de Lascaux (Francia), dibujadas con carbón hace unos 17 000 años||||Lascaux|H|EU|Public domain
 Lawrence_Berkeley_National_Laboratory|Laboratorio Nacional Lawrence Berkeley (California, EE. UU.)||||Lawrence_Berkeley_National_Laboratory|I|U.S. Department of Energy from United States|Public domain

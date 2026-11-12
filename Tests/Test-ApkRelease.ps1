@@ -4,6 +4,7 @@ param(
     [string]$ExpectedVersion = '1.2',
     [int]$ExpectedVersionCode = 3,
     [int]$ExpectedTargetSdk = 36,
+    [int]$ExpectedMinSdk = 26,
     [string]$ExpectedPackage = 'com.labquimicaperu.laboratoriovr',
     [string]$ExpectedSignerCertificateSha256 = '20a038c2a78379520931f84cbcabbaffd1d7277cd660de5e7b00135499f10e49',
     [string]$AndroidSdkPath = 'C:/Program Files/Unity/Hub/Editor/6000.6.0f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK',
@@ -18,7 +19,7 @@ $reportFile = [IO.Path]::GetFullPath($ReportPath)
 $releaseChecks = [Collections.Generic.List[object]]::new()
 $validation = [ordered]@{
     utc=[DateTime]::UtcNow.ToString('o'); passed=$false; error=$null
-    apk=$null; sha256=$null; package=$null; version=$null; versionCode=$null; targetSdk=$null
+    apk=$null; sha256=$null; package=$null; version=$null; versionCode=$null; targetSdk=$null; minSdk=$null
     checks=$null; scope='Inspección del APK, manifiesto, arquitecturas y firma; no ejecuta el juego en Android.'
 }
 function Add-ReleaseCheck([string]$Name,[bool]$Passed) {
@@ -42,6 +43,9 @@ try {
     $validation.version=$packageMatch.Groups[3].Value
     $targetMatch=[regex]::Match($badging,"targetSdkVersion:'([0-9]+)'")
     if ($targetMatch.Success) { $validation.targetSdk=$targetMatch.Groups[1].Value }
+    $minMatch=[regex]::Match($badging,"sdkVersion:'([0-9]+)'")
+    if ($minMatch.Success) { $validation.minSdk=$minMatch.Groups[1].Value }
+    Add-ReleaseCheck 'Android mínimo compatible con la versión anterior' ($validation.minSdk -eq $ExpectedMinSdk)
     Add-ReleaseCheck 'Paquete esperado' ($validation.package -eq $ExpectedPackage)
     Add-ReleaseCheck 'Versión nueva esperada' ($validation.version -eq $ExpectedVersion)
     Add-ReleaseCheck 'Código de versión nuevo' ($validation.versionCode -eq $ExpectedVersionCode.ToString())

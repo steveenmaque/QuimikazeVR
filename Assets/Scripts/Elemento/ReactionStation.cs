@@ -37,7 +37,7 @@ namespace LabQuimicaVR
             var screen = LabFactory.Screen("PantallaReacciones", transform, Vector3.zero, Quaternion.identity, size,
                 "REACCIONES", Palette.Accent2);
             LabFactory.Text(screen, $"Simulación educativa: compara {e.Symbol} con otro elemento. No es una guía experimental.",
-                new Vector3(0, 1.05f, -0.01f), 0.075f, Palette.Text, TextAlignmentOptions.Center, size.x - 0.2f, 0.2f);
+                new Vector3(0, 0.965f, -0.01f), 0.075f, Palette.Text, TextAlignmentOptions.Center, size.x - 0.2f, 0.20f);
 
             // Botones de elementos para reaccionar (7 x 3)
             const int cols = 7;

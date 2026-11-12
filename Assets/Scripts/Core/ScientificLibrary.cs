@@ -49,6 +49,7 @@ namespace LabQuimicaVR
         };
 
         Transform panel;
+        GazeButton launcher;
         int page;
         static ScientificLibrary instance;
         static int closedFrame = -1;
@@ -73,7 +74,11 @@ namespace LabQuimicaVR
 
         void Awake() { instance = this; }
         void OnDestroy() { if (instance == this) instance = null; }
-        void Update() { if (panel != null && LabInput.BackDown) Close(); }
+        void Update()
+        {
+            if (launcher != null) launcher.gameObject.SetActive(panel == null && LanClassroom.ActivePanel == null);
+            if (panel != null && LabInput.BackDown) Close();
+        }
 
         public void Close()
         {
@@ -87,10 +92,10 @@ namespace LabQuimicaVR
         void Start()
         {
             bool table = gameObject.scene.name == LabState.TableScene;
-            var button = LabFactory.Button(transform, "Fuentes científicas", table
+            launcher = LabFactory.Button(transform, "Fuentes científicas", table
                 ? new Vector3(0, 0.85f, 4.8f) : new Vector3(1.8f, 1.2f, 1.9f),
                 new Vector2(2.2f, 0.4f), 0.12f, Palette.Accent);
-            button.OnClick += Open;
+            launcher.OnClick += Open;
         }
 
         public void Open()

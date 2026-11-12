@@ -11,8 +11,8 @@ Tercera versión prevista, posterior a v1.0 y v1.1. Los cambios de código está
 
 ## Verificación de esta preparación
 
-La suite de lógica y TCP pasó 51 592 comprobaciones; las funciones de rutas de informes pasaron 13 comprobaciones en JVM. El módulo Android de informes también se ensambló con Gradle 9.1 / AGP 9.0.0 como AAR. Estas comprobaciones no equivalen a construir ni ejecutar el APK completo.
+La suite de lógica y TCP pasó 51 592 comprobaciones; las funciones de rutas de informes pasaron 13 comprobaciones en JVM. El módulo Android de informes también se ensambló con Gradle 9.1 / AGP 9.0.0 como AAR.
 
-El editor local está bloqueado por Smart App Control: `Bee.TundraBackend.dll` no puede cargarse y el compilador de shaders no puede cargar `spirv-cross-c-shared.dll`. No se cambiaron las políticas de Windows. Se guardaron capturas y registros de los errores reales en `AutoSync/Evidencias_v1.2`.
+Unity 6000.6.0f1 construyó las 118 vistas con cero textos desbordados. La prueba real en Play pasó 76 comprobaciones distintas: persistencia nativa, modelos, retos, tres sesiones TCP reales, tres preguntas compartidas y CSV. Se corrigieron encabezados, controles bajo el suelo y avatares que tapaban el panel. El bloqueo anterior de Windows fue resuelto por el usuario y ya no impide ejecutar el motor.
 
 Para publicar, verificar paquete, versión 1.2, código 3, firma, permiso INTERNET y presencia del proveedor de informes en el APK nuevo. La revisión editorial individual de las reseñas y las pruebas Android/visor/mando siguen indicadas en `VALIDACION_FINAL.md`.

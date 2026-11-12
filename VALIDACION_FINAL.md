@@ -1,6 +1,6 @@
 # Lista de aceptación de la entrega de aula
 
-Estado: **candidato en desarrollo; no aprobado todavía para distribución escolar**. Fecha local: 11/11/2026. Un casillero sin marcar significa pendiente, no aprobado por inferencia.
+Estado: **candidato en desarrollo; no aprobado todavía para distribución escolar**. Fecha local: 12/11/2026. Un casillero sin marcar significa pendiente, no aprobado por inferencia.
 
 ## Evidencia ejecutada
 
@@ -9,10 +9,11 @@ Estado: **candidato en desarrollo; no aprobado todavía para distribución escol
 - [x] Harness C# con fuentes de producción: **51 592 comprobaciones, 0 fallos** (16 228 educativas, 35 278 de contenido/controles, 86 de LAN con sockets TCP localhost). Informe reproducible: `AutoSync/logic_results.json`; copia de evidencia en `Tests/Evidence`; detalles del alcance en `Tests/LogicHarness/README.md`.
 - [x] Exportación Android: tres fuentes Java compiladas contra API 34, manifiesto XML validado y 13 comprobaciones de rutas ejecutadas en JVM. No equivale a resolver URI ni compartir en Android real.
 - [x] Revisión cruzada de LAN y corrección de escrituras bloqueantes, pregunta bloqueada por ausencia de respuesta, navegación de invitados y predicciones químicas asimétricas.
-- [ ] Validación con el motor Unity y su serializador nativo. El intento pasó la licencia tras iniciar sesión; Windows bloqueó `Bee.TundraBackend.dll` con `0x800711C7`. Evidencia: `AutoSync/compile-retry.log`. No se cambiaron políticas de seguridad.
-- [ ] Construcción de escenas, inspección visual y capturas: `Quimikaze → Validar entrega completa` o `LabValidation.RunBatch`.
-- [ ] Prueba en Play: `LabRuntimeValidation.RunBatch` (sin `-quit`); resultado y capturas bajo `AutoSync/validacion`.
-- [ ] APK IL2CPP ARMv7 + ARM64 generado, instalado y abierto correctamente; verificar permiso Android `INTERNET` en el manifiesto final.
+- [x] Unity 6000.6.0f1 ejecutó las pruebas con su serializador nativo. El bloqueo anterior de Windows fue resuelto por el usuario; la validación terminó con éxito. Informe: `Tests/Evidence/unity-v1.2.json`.
+- [x] Las 118 vistas se construyeron y se comprobaron con TMP: cero textos desbordados. Se revisaron capturas de las estaciones y se corrigieron encabezados, espaciado y ubicación del tablero. Capturas en el paquete de evidencias de v1.2.
+- [x] Flujo real en Play: transiciones, modelos, guardado/restauración nativa, repetición sin farming, CSV y anfitrión GUI con dos clientes TCP reales; tres preguntas compartidas y cierre limpio. Informe: `Tests/Evidence/runtime-v1.2.json`. No equivale a Wi-Fi entre celulares.
+- [ ] APK IL2CPP ARMv7 + ARM64 generado e inspeccionado: identidad, versiones, API mínima 26, objetivo 36, INTERNET, proveedor de informes y certificado compatible con v1.1.
+- [ ] Instalar sobre v1.1 en un celular con datos existentes, confirmar que Android ofrece actualizar, abrir el juego y comprobar que se conservan sus preferencias. El usuario eligió continuar con la inspección del APK sin conectar un dispositivo.
 
 ## Revisión de cada viñeta
 

@@ -203,8 +203,8 @@ namespace LabQuimicaVR
             float left = -size.x / 2 + 0.2f;
             float width = size.x - 0.4f;
             float cellW = width / 4f;
-            float rowH = 0.5f;
-            float top = 1.18f;
+            float rowH = 0.47f;
+            float top = 1.08f;
 
             void Prop(int row, int col, int span, string label, string value, Color? tint = null)
             {

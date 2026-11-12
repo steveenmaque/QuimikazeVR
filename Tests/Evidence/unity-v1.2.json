@@ -1,0 +1,20 @@
+{
+    "success": true,
+    "startedUtc": "2026-11-12T11:07:38.1861985Z",
+    "finishedUtc": "2026-11-12T11:08:15.4666701Z",
+    "error": "",
+    "scope": "Unity Editor: lógica, sockets TCP localhost, recursos y construcción de las 118 vistas",
+    "contentChecks": 35278,
+    "educationChecks": 16228,
+    "elementsBuilt": 118,
+    "textOverflowCount": 0,
+    "lanGroups": [
+        "IPv4, alias y límites",
+        "TCP real, fragmentación UTF8, puerto ocupado y trama maliciosa",
+        "backpressure: escritor de fondo y cola limitada sin espera de socket",
+        "lobby, autoridad, escena/poses compartidas, quiz, cierre de espera y desconexión",
+        "capacidad máxima 8 jugadores",
+        "conexión rechazada, cancelación durante Connect y timeout TCP real15s"
+    ],
+    "engineErrors": []
+}

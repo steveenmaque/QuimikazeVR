@@ -31,10 +31,10 @@ namespace LabQuimicaVR.EditorTools
 
         [Serializable] public class Result
         {
-            public bool executed, success, preferencesRestored;
-            public string startedUtc, finishedUtc, error, captureDirectory;
-            public int checks, lastStep;
-            public string scope = "Unity Editor Play: UI por callbacks, transiciones reales, persistencia nativa, modelos y reacción";
+            public bool executed, success, preferencesRestored, nativeCsvVerified, testSocketsClosed;
+            public string startedUtc, finishedUtc, error, captureDirectory, csvArtifact;
+            public int checks, assertionExecutions, lastStep, lanParticipants, lanQuestionsCompleted;
+            public string scope = "Unity Editor Play: UI por callbacks, transiciones, persistencia nativa, modelos, reacción y tres sesiones TCP loopback reales";
             public string[] assertions = new string[0], runtimeErrors = new string[0], screenshots = new string[0];
             public string[] limitations = { "No prueba el mando físico ni sensores", "No verifica Android/IL2CPP ni Wi-Fi entre celulares",
                 "Los botones se activan por sus callbacks: no prueba la precisión del raycast de mirada", "PNG monoculares requieren inspección visual; no validan la óptica estereoscópica" };
@@ -51,12 +51,16 @@ namespace LabQuimicaVR.EditorTools
 
         static Result result;
         static readonly List<string> assertions = new List<string>();
+        static readonly HashSet<string> assertionNames = new HashSet<string>();
         static readonly List<string> runtimeErrors = new List<string>();
         static readonly List<string> screenshots = new List<string>();
-        static int step, questionIndex, completedQuizzes, firstScore, closedOnFrame;
+        static int step, questionIndex, completedQuizzes, firstScore, closedOnFrame, assertionExecutions, lanQuestion, lanPanelFrame;
         static double stepStart;
         static bool ending;
         static List<ChallengeQuestion> quiz;
+        static LanSession guestA, guestB, hostSession;
+        static string nativeCsv;
+        static float nextGuestPose;
 
         static LabRuntimeValidation()
         {
@@ -67,7 +71,22 @@ namespace LabQuimicaVR.EditorTools
         [MenuItem("Quimikaze/Validar flujo real en Play (QA)", priority = 83)]
         public static void RunMenu() => Begin(false);
 
-        public static void RunBatch() => Begin(true);
+        public static void RunBatch()
+        {
+            try { Begin(true); }
+            catch (Exception ex)
+            {
+                // También cubre fallos anteriores a Attach: escena sucia, backup inválido o E/S.
+                if (SessionState.GetBool(Key + "active", false)) { Finish(ex.ToString()); return; }
+                result = new Result { error = ex.ToString(), startedUtc = DateTime.UtcNow.ToString("o"), finishedUtc = DateTime.UtcNow.ToString("o") };
+                string cleanup = CleanupScenario();
+                if (!string.IsNullOrEmpty(cleanup)) result.error += "\nLimpieza:" + cleanup;
+                try { RestorePreferences(); result.preferencesRestored = true; }
+                catch (Exception restore) { result.error += "\nRestauración:" + restore; }
+                try { Directory.CreateDirectory(Dir); PersistResult(); }
+                finally { EditorApplication.Exit(1); }
+            }
+        }
 
         static void Begin(bool batch)
         {
@@ -76,6 +95,7 @@ namespace LabQuimicaVR.EditorTools
             for (int i = 0; i < SceneManager.sceneCount; i++)
                 if (SceneManager.GetSceneAt(i).isDirty) throw new InvalidOperationException("Guarda tus escenas modificadas antes de ejecutar QA.");
             Directory.CreateDirectory(Dir);
+            ending = false;
             // Si una ejecución anterior se interrumpió abruptamente, se recupera antes de comenzar otra.
             if (File.Exists(RecoveryPath)) RestorePreferences();
             File.WriteAllText(RecoveryPath, JsonUtility.ToJson(new PrefBackup
@@ -90,7 +110,8 @@ namespace LabQuimicaVR.EditorTools
             SessionState.SetString(Key + "start", EditorApplication.timeSinceStartup.ToString("R", CultureInfo.InvariantCulture));
             SessionState.SetString(Key + "utc", DateTime.UtcNow.ToString("o"));
             SessionState.SetString(Key + "captures", Dir + "/runtime_" + DateTime.UtcNow.ToString("yyyyMMdd_HHmmss_fff"));
-            assertions.Clear(); runtimeErrors.Clear(); screenshots.Clear();
+            assertions.Clear(); assertionNames.Clear(); runtimeErrors.Clear(); screenshots.Clear();
+            assertionExecutions = 0;
             result = new Result { startedUtc = SessionState.GetString(Key + "utc", "") };
             PersistResult();
             foreach (var pref in JsonUtility.FromJson<PrefBackup>(File.ReadAllText(RecoveryPath)).values) PlayerPrefs.DeleteKey(pref.key);
@@ -154,8 +175,8 @@ namespace LabQuimicaVR.EditorTools
                 result = new Result { executed = true, startedUtc = SessionState.GetString(Key + "utc", ""),
                     captureDirectory = SessionState.GetString(Key + "captures", Dir + "/runtime") };
                 Directory.CreateDirectory(result.captureDirectory);
-                assertions.Clear(); screenshots.Clear();
-                step = questionIndex = completedQuizzes = firstScore = 0;
+                assertions.Clear(); assertionNames.Clear(); screenshots.Clear();
+                step = questionIndex = completedQuizzes = firstScore = assertionExecutions = lanQuestion = 0;
                 stepStart = EditorApplication.timeSinceStartup;
                 Attach();
             }
@@ -172,8 +193,9 @@ namespace LabQuimicaVR.EditorTools
 
         static void Assert(bool condition, string description)
         {
+            assertionExecutions++;
             if (!condition) throw new InvalidOperationException("Play QA: " + description);
-            assertions.Add(description);
+            if (assertionNames.Add(description)) assertions.Add(description);
         }
         static bool After(double seconds) => EditorApplication.timeSinceStartup - stepStart >= seconds;
         static void Next(int target = -1) { step = target < 0 ? step + 1 : target; stepStart = EditorApplication.timeSinceStartup; }
@@ -192,6 +214,16 @@ namespace LabQuimicaVR.EditorTools
             throw new TimeoutException("No terminó la transición a " + scene + " dentro de 15 s.");
         }
 
+        static bool WaitFor(bool ready, string detail, double seconds = 15)
+        {
+            if (ready) return true;
+            if (After(seconds)) throw new TimeoutException("Play QA: " + detail);
+            return false;
+        }
+
+        static bool HasButton(Transform root, Func<string, bool> match) => root != null &&
+            root.GetComponentsInChildren<GazeButton>(false).Any(b => b.gameObject.activeInHierarchy && b.Interactable && b.Label != null && match(b.Label.text));
+
         static void Tick()
         {
             if (!SessionState.GetBool(Key + "active", false) || ending) return;
@@ -200,11 +232,18 @@ namespace LabQuimicaVR.EditorTools
                 double start = double.Parse(SessionState.GetString(Key + "start", "0"), CultureInfo.InvariantCulture);
                 if (EditorApplication.timeSinceStartup - start > 120) throw new TimeoutException("Watchdog de QA: 120 s.");
                 if (!EditorApplication.isPlaying || result == null) return;
+                guestA?.Pump(Time.unscaledTime);
+                guestB?.Pump(Time.unscaledTime);
+                PublishGuestPoses();
                 if (runtimeErrors.Count > 0) throw new InvalidOperationException("Unity emitió un error durante la ejecución; revisar runtimeErrors.");
                 switch (step)
                 {
                     case 0:
-                        if (!After(1)) return;
+                        if (!WaitFor(After(0.25) && SceneManager.GetActiveScene().name == LabState.TableScene &&
+                            Find<PeriodicTableView>()?.tiles.Count == 118 && VRRig.Instance != null && VRRig.Instance.head != null &&
+                            Find<LearningMissionBoard>() != null && Find<LanClassroom>() != null &&
+                            Find<ScientificLibrary>() != null && HasButton(Find<ScientificLibrary>().transform, s => s == "Fuentes científicas") &&
+                            HasButton(Find<LearningMissionBoard>().transform, s => s == "Continuar misión"), "Los paneles iniciales no quedaron listos en 15 s")) return;
                         Assert(SceneManager.GetActiveScene().name == LabState.TableScene, "Escena inicial de tabla");
                         Assert(Find<PeriodicTableView>()?.tiles.Count == 118, "118 casillas activas");
                         Assert(Find<LearningMissionBoard>() != null, "Panel de misiones creado en runtime");
@@ -297,6 +336,110 @@ namespace LabQuimicaVR.EditorTools
                         if (SceneManager.GetActiveScene().name != LabState.TableScene || ScreenFader.Busy || !After(0.7)) { RequireScene(LabState.TableScene); return; }
                         Assert(Find<LearningMissionBoard>() != null && LearningProgress.TotalPoints == firstScore, "Tabla final conserva progreso tras segunda transición");
                         Shot("09_tabla_final", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
+                        Click(GameObject.Find("AccesoAulaLAN").transform, s => s.StartsWith("Aula LAN"));
+                        Click(LanClassroom.ActivePanel, s => s == "Crear aula");
+                        hostSession = Field<LanSession>(Find<LanClassroom>(), "session");
+                        Assert(hostSession != null && hostSession.IsHost && hostSession.Connected, "La GUI crea un anfitrión TCP real");
+                        Assert(LanClassroom.ActivePanel.TransformPoint(new Vector3(0, -1.9f, 0)).y > 0.05f,
+                            "El panel LAN y sus controles quedan por encima del suelo");
+                        guestA = new LanSession(); guestB = new LanSession();
+                        guestA.Join("QA Visitante 1", "127.0.0.1", hostSession.Port);
+                        guestB.Join("QA Visitante 2", "127.0.0.1", hostSession.Port);
+                        Next(); break;
+                    case 13:
+                        if (!WaitFor(guestA.Connected && guestB.Connected && hostSession.State.members.Length == 3 &&
+                            guestA.State.members.Length == 3 && guestB.State.members.Length == 3, "No se unieron ambos clientes TCP al anfitrión de la GUI")) return;
+                        Assert(guestA.SelfId != guestB.SelfId && guestA.SelfId != hostSession.SelfId, "Tres identidades asignadas por el servidor real");
+                        guestA.SetReady(true); guestB.SetReady(true);
+                        result.lanParticipants = 3;
+                        Next(); break;
+                    case 14:
+                        if (!WaitFor(hostSession.State.members.All(m => m.ready) &&
+                            HasButton(LanClassroom.ActivePanel, s => s.StartsWith("Iniciar:")) && AvatarsReady(), "El lobby no reflejó Listo y poses de los dos clientes")) return;
+                        Assert(hostSession.State.members.Count(m => m.hasPose) == 3, "Las tres poses viajan por el protocolo de sesión");
+                        Assert(Field<Dictionary<string, Transform>>(Find<LanClassroom>(), "avatars").Values.All(a =>
+                            a.GetComponentsInChildren<Renderer>().All(r => !r.enabled)), "Avatares ocultos mientras el panel LAN está abierto");
+                        Assert(LanClassroom.ActivePanel.GetComponentsInChildren<TMP_Text>(false).Any(t => t.text.Contains("QA Visitante 1") && t.text.Contains("QA Visitante 2")), "La GUI muestra ambos participantes reales del lobby");
+                        ShotPanel("10_lan_lobby_listo", LanClassroom.ActivePanel, 4.0f);
+                        Click(LanClassroom.ActivePanel, s => s == "Cerrar panel");
+                        closedOnFrame = Time.frameCount;
+                        Next(); break;
+                    case 15:
+                        if (!WaitFor(Time.frameCount > closedOnFrame && AvatarsReady(), "No se pudieron observar los avatares tras cerrar el lobby")) return;
+                        Assert(!LanClassroom.HandlesBackNavigation, "Cerrar lobby no abandona la sesión anfitriona");
+                        Assert(Field<Dictionary<string, Transform>>(Find<LanClassroom>(), "avatars").Values.All(a =>
+                            a.GetComponentsInChildren<Renderer>().All(r => r.enabled)), "Cerrar el panel vuelve a mostrar los avatares");
+                        Shot("11_lan_avatares_tabla", VRRig.Instance.head.position, VRRig.Instance.head.rotation);
+                        Click(GameObject.Find("AccesoAulaLAN").transform, s => s.StartsWith("Aula LAN"));
+                        Click(LanClassroom.ActivePanel, s => s.StartsWith("Iniciar:"));
+                        Assert(hostSession.State.phase == "quiz", "El botón de la GUI inicia una ronda autoritativa");
+                        lanQuestion = 0;
+                        Next(); break;
+                    case 16:
+                        if (!WaitFor(SceneManager.GetActiveScene().name == LabState.ElementScene && !ScreenFader.Busy && !ElementIntro.Active &&
+                            hostSession.State.phase == "quiz" && guestA.State.phase == "quiz" && guestB.State.phase == "quiz" &&
+                            guestA.State.worldScene == LabState.ElementScene && guestB.State.worldScene == LabState.ElementScene && After(0.5),
+                            "El inicio LAN no sincronizó el laboratorio real de Fe")) return;
+                        Assert(LabState.SelectedZ == 26 && hostSession.State.element == 26 && guestA.State.element == 26 && guestB.State.element == 26,
+                            "La ronda sincroniza Fe en anfitrión y ambos clientes TCP");
+                        if (LanClassroom.ActivePanel == null) Click(GameObject.Find("AccesoAulaLAN").transform, s => s.StartsWith("Aula LAN"));
+                        lanPanelFrame = Time.frameCount;
+                        Next(); break;
+                    case 17:
+                        if (!WaitFor(Time.frameCount > lanPanelFrame && After(0.15) && hostSession.State.step == lanQuestion && guestA.State.step == lanQuestion && guestB.State.step == lanQuestion &&
+                            !hostSession.State.revealed && AvatarsReady() && LanClassroom.ActivePanel != null &&
+                            LanClassroom.ActivePanel.GetComponentsInChildren<TMP_Text>(false).Any(t => t.text.Contains(hostSession.State.question)),
+                            "La GUI no mostró la pregunta LAN sincronizada")) return;
+                        int correct = LanCorrectChoice();
+                        Assert(correct >= 0 && hostSession.State.options.Distinct().Count() == 3, "Opciones reales de LAN contienen respuesta correcta y son únicas");
+                        Assert(Field<Dictionary<string, Transform>>(Find<LanClassroom>(), "avatars").Values.All(a =>
+                            a.GetComponentsInChildren<Renderer>().All(r => !r.enabled)) &&
+                            !Find<ScientificLibrary>().GetComponentsInChildren<GazeButton>(true).Single(b => b.Label.text == "Fuentes científicas").gameObject.activeInHierarchy,
+                            "Pregunta LAN legible sin avatares ni acceso de fuentes delante del panel");
+                        if (lanQuestion == 0) ShotPanel("12_lan_pregunta", LanClassroom.ActivePanel, 4.0f);
+                        Click(LanClassroom.ActivePanel, s => s == ((char)('A' + correct)) + ") " + hostSession.State.options[correct]);
+                        guestA.Answer(correct); guestB.Answer((correct + 1) % 3);
+                        Next(); break;
+                    case 18:
+                        if (!WaitFor(hostSession.State.revealed && guestA.State.revealed && guestB.State.revealed &&
+                            HasButton(LanClassroom.ActivePanel, s => s == (lanQuestion == 2 ? "Ver resultado" : "Siguiente pregunta")) &&
+                            LanClassroom.ActivePanel.GetComponentsInChildren<TMP_Text>(false).Any(t => t.text == hostSession.State.explanation),
+                            "El feedback LAN no llegó a la GUI y a ambos clientes")) return;
+                        Assert(hostSession.Self.points == (lanQuestion + 1) * 100 && guestA.Self.points == (lanQuestion + 1) * 100 && guestB.Self.points == 0,
+                            "Puntos LAN reflejan respuestas reales correctas e incorrectas");
+                        if (lanQuestion == 0) ShotPanel("13_lan_feedback", LanClassroom.ActivePanel, 4.0f);
+                        Click(LanClassroom.ActivePanel, s => s == (lanQuestion == 2 ? "Ver resultado" : "Siguiente pregunta"));
+                        Next(); break;
+                    case 19:
+                        if (lanQuestion < 2)
+                        {
+                            if (!WaitFor(hostSession.State.step == lanQuestion + 1 && guestA.State.step == lanQuestion + 1 && guestB.State.step == lanQuestion + 1,
+                                "El anfitrión no avanzó la pregunta para ambos clientes")) return;
+                            lanQuestion++;
+                            Next(17); return;
+                        }
+                        if (!WaitFor(hostSession.State.phase == "summary" && guestA.State.phase == "summary" && guestB.State.phase == "summary" &&
+                            HasButton(LanClassroom.ActivePanel, s => s == "Preparar otra ronda"), "No llegó el resumen de la ronda LAN")) return;
+                        Assert(hostSession.Self.correct == 3 && guestA.Self.correct == 3 && guestB.Self.correct == 0, "El resumen registra tres respuestas por participante");
+                        Assert(LearningProgress.GetAttempts(26) == 3 && LearningProgress.TotalPoints == firstScore, "Ronda LAN registra un intento sin duplicar mejor marca ni puntos");
+                        result.lanQuestionsCompleted = 3;
+                        ShotPanel("14_lan_resultado", LanClassroom.ActivePanel, 4.0f);
+                        Click(LanClassroom.ActivePanel, s => s == "Cerrar aula para todos");
+                        Next(); break;
+                    case 20:
+                        if (!WaitFor(!LanClassroom.HasActiveSession && !hostSession.Connected && !guestA.Connected && !guestB.Connected,
+                            "Cerrar aula no desconectó a los dos clientes reales")) return;
+                        Assert(!LanClassroom.HasActiveSession, "El anfitrión de la GUI cierra el aula y sus conexiones");
+                        if (LanClassroom.ActivePanel != null) Click(LanClassroom.ActivePanel, s => s == "Cerrar panel");
+                        Assert(string.IsNullOrEmpty(CleanupScenario()), "Las conexiones TCP de QA se liberan sin errores");
+                        LabState.BackToTable();
+                        Next(); break;
+                    case 21:
+                        if (SceneManager.GetActiveScene().name != LabState.TableScene || ScreenFader.Busy || !After(0.7)) { RequireScene(LabState.TableScene); return; }
+                        Assert(LearningProgress.TotalPoints == firstScore && LearningProgress.GetAttempts(26) == 3 && !LanClassroom.HasActiveSession,
+                            "Salir del multijugador conserva la práctica local y permite volver a la tabla");
+                        ExportNativeCsv();
+                        ShotPanel("15_informe_progreso", Find<LearningMissionBoard>().transform, 4.2f);
                         Finish(null); break;
                 }
             }
@@ -334,12 +477,99 @@ namespace LabQuimicaVR.EditorTools
             else Next();
         }
 
+        static bool AvatarsReady()
+        {
+            var classroom = Find<LanClassroom>();
+            if (classroom == null || guestA == null || guestB == null || !guestA.Connected || !guestB.Connected) return false;
+            var avatars = Field<Dictionary<string, Transform>>(classroom, "avatars");
+            return avatars.TryGetValue(guestA.SelfId, out var a) && a != null && a.gameObject.activeInHierarchy &&
+                avatars.TryGetValue(guestB.SelfId, out var b) && b != null && b.gameObject.activeInHierarchy;
+        }
+
+        static void PublishGuestPoses()
+        {
+            if (hostSession == null || !hostSession.Connected || Time.unscaledTime < nextGuestPose || ScreenFader.Busy) return;
+            string scene = SceneManager.GetActiveScene().name;
+            if (scene != LabState.TableScene && scene != LabState.ElementScene) return;
+            nextGuestPose = Time.unscaledTime + 0.25f;
+            var guests = new[] { guestA, guestB };
+            for (int i = 0; i < guests.Length; i++)
+            {
+                var guest = guests[i];
+                if (guest == null || !guest.Connected || guest.State.worldScene != scene ||
+                    (scene == LabState.ElementScene && guest.State.worldElement != LabState.SelectedZ)) continue;
+                // Entradas de clientes de prueba por la API pública, enviadas mediante TCP real.
+                // No se asignan poses, miembros, ready, opciones ni puntos directamente al estado.
+                guest.PublishPose(i == 0 ? -1.2f : 1.2f, 0f, scene == LabState.TableScene ? 4.1f : 2.7f, 180f, scene, LabState.SelectedZ);
+            }
+        }
+
+        static int LanCorrectChoice()
+        {
+            var e = ElementDatabase.Get(hostSession.State.element);
+            string answer = hostSession.State.step == 0 ? e.Z.ToString() :
+                hostSession.State.step == 1 ? CategoryInfo.Name(e.Category) : e.Period.ToString();
+            return Array.IndexOf(hostSession.State.options, answer);
+        }
+
+        static void ExportNativeCsv()
+        {
+            nativeCsv = LearningProgress.ExportCsv();
+            Assert(File.Exists(nativeCsv), "Exportación nativa crea un archivo CSV real sin abrir selector externo");
+            var rows = File.ReadAllLines(nativeCsv).Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+            Assert(rows.Length == 119 && rows.All(row => row.Split(';').Length == 11), "CSV exportado contiene cabecera y 118 filas de once columnas");
+            var fe = rows.Skip(1).Select(row => row.Split(';')).Single(row => row[0] == "26");
+            Assert(fe[1] == "Fe" && fe[3] == "3" && fe[4] == "3" && fe[8] == "3", "CSV nativo refleja intentos y mejor marca de Fe después del modo LAN");
+            result.csvArtifact = Path.Combine(result.captureDirectory, "informe_QA.csv");
+            File.Copy(nativeCsv, result.csvArtifact, true);
+            result.nativeCsvVerified = true;
+        }
+
+        static string CleanupScenario()
+        {
+            string errors = "";
+            void Close(Action action)
+            {
+                try { action(); }
+                catch (Exception ex) { errors += ex.GetType().Name + ":" + ex.Message + "\n"; }
+            }
+            Close(() => guestA?.Dispose());
+            Close(() => guestB?.Dispose());
+            var classroom = Find<LanClassroom>();
+            if (classroom != null && hostSession != null)
+            {
+                Close(() =>
+                {
+                    if (ReferenceEquals(Field<LanSession>(classroom, "session"), hostSession))
+                        classroom.GetType().GetMethod("Disconnect", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(classroom, null);
+                });
+            }
+            Close(() => hostSession?.Dispose());
+            guestA = guestB = hostSession = null;
+            if (!string.IsNullOrEmpty(nativeCsv))
+            {
+                Close(() =>
+                {
+                    string ownedDirectory = Path.GetFullPath(Path.Combine(Application.persistentDataPath, "Informes")) + Path.DirectorySeparatorChar;
+                    string ownedFile = Path.GetFullPath(nativeCsv);
+                    if (!ownedFile.StartsWith(ownedDirectory, StringComparison.OrdinalIgnoreCase)) throw new IOException("CSV de QA fuera de su carpeta prevista.");
+                    // Se conserva la copia de evidencia; solo se retira el archivo temporal creado por esta prueba.
+                    if (File.Exists(ownedFile)) File.Delete(ownedFile);
+                });
+                nativeCsv = null;
+            }
+            if (result != null) result.testSocketsClosed = string.IsNullOrEmpty(errors);
+            return errors;
+        }
+
         static void ShotPanel(string name, Transform panel, float distance) =>
             Shot(name, panel.position - panel.forward * distance, panel.rotation);
 
         static void Shot(string name, Vector3 position, Quaternion rotation)
         {
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null) return;
+            foreach (var text in Object.FindObjectsByType<TextMeshPro>())
+                text.ForceMeshUpdate(true, true);
             var cameraObject = new GameObject("CamaraQA");
             var camera = cameraObject.AddComponent<Camera>();
             camera.enabled = false;
@@ -380,9 +610,11 @@ namespace LabQuimicaVR.EditorTools
             SessionState.SetBool(Key + "ending", true);
             if (result == null) result = new Result { startedUtc = SessionState.GetString(Key + "utc", "") };
             result.error = error;
-            result.success = error == null && runtimeErrors.Count == 0;
+            string cleanup = CleanupScenario();
+            if (!string.IsNullOrEmpty(cleanup)) result.error += "\nLimpieza del escenario:" + cleanup;
+            result.success = string.IsNullOrEmpty(result.error) && runtimeErrors.Count == 0;
             result.finishedUtc = DateTime.UtcNow.ToString("o");
-            result.checks = assertions.Count; result.lastStep = step;
+            result.checks = assertions.Count; result.assertionExecutions = assertionExecutions; result.lastStep = step;
             result.assertions = assertions.ToArray(); result.runtimeErrors = runtimeErrors.ToArray(); result.screenshots = screenshots.ToArray();
             PersistResult();
             EditorApplication.update -= Tick;

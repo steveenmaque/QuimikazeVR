@@ -25,12 +25,12 @@ namespace LabQuimicaVR
             var size = new Vector2(2.8f, 3.1f);
             var screen = LabFactory.Screen("PantallaReto", transform, Vector3.zero, Quaternion.identity, size,
                 "RETO DE APRENDIZAJE", Palette.Accent2);
-            stepText = LabFactory.Text(screen, "", new Vector3(-0.55f, 1.12f, -0.02f), 0.09f, Palette.Accent,
-                TextAlignmentOptions.Left, 1.5f, 0.25f, true);
-            starsText = LabFactory.Text(screen, "", new Vector3(0.75f, 1.12f, -0.02f), 0.09f, Palette.Good,
-                TextAlignmentOptions.Right, 1.0f, 0.25f, true);
-            questionText = LabFactory.Text(screen, "", new Vector3(0, 0.67f, -0.02f), 0.095f, Color.white,
-                TextAlignmentOptions.Center, 2.5f, 0.58f, true);
+            stepText = LabFactory.Text(screen, "", new Vector3(-0.55f, 0.99f, -0.02f), 0.09f, Palette.Accent,
+                TextAlignmentOptions.Left, 1.5f, 0.18f, true);
+            starsText = LabFactory.Text(screen, "", new Vector3(0.75f, 0.99f, -0.02f), 0.09f, Palette.Good,
+                TextAlignmentOptions.Right, 1.0f, 0.18f, true);
+            questionText = LabFactory.Text(screen, "", new Vector3(0, 0.64f, -0.02f), 0.095f, Color.white,
+                TextAlignmentOptions.Center, 2.5f, 0.46f, true);
             Fit(questionText, 0.95f, 0.66f);
             for (int i = 0; i < 3; i++)
             {
@@ -40,9 +40,9 @@ namespace LabQuimicaVR
                 Fit(btn.Label, 0.85f, 0.60f);
                 optionButtons.Add(btn);
             }
-            LabFactory.Card(screen, new Vector3(0, -0.87f, 0), new Vector2(2.6f, 0.60f), new Color(0.10f, 0.18f, 0.28f));
-            feedbackText = LabFactory.Text(screen, "", new Vector3(0, -0.87f, -0.02f), 0.08f, Palette.Text,
-                TextAlignmentOptions.Center, 2.45f, 0.55f);
+            LabFactory.Card(screen, new Vector3(0, -0.90f, 0), new Vector2(2.6f, 0.55f), new Color(0.10f, 0.18f, 0.28f));
+            feedbackText = LabFactory.Text(screen, "", new Vector3(0, -0.90f, -0.02f), 0.08f, Palette.Text,
+                TextAlignmentOptions.Center, 2.45f, 0.50f);
             Fit(feedbackText, 0.80f, 0.57f);
             nextButton = LabFactory.Button(screen, "Siguiente pregunta ›", new Vector3(0, -1.32f, -0.03f), new Vector2(2.45f, 0.27f), 0.09f);
             nextButton.OnClick += NextStep;
