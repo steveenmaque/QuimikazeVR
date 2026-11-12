@@ -1,9 +1,8 @@
 name: Logica educativa y LAN
 
 on:
-  pull_request:
   push:
-    branches: [main, aula-retos-lan]
+    branches: [main]
   workflow_dispatch:
 
 permissions:

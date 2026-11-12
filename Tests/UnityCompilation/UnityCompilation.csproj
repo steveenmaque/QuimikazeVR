@@ -6,6 +6,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DefineConstants>UNITY_EDITOR;UNITY_EDITOR_WIN;UNITY_STANDALONE_WIN;UNITY_6000_6_OR_NEWER</DefineConstants>
     <UnityEditorPath Condition="'$(UnityEditorPath)' == ''">C:/Program Files/Unity/Hub/Editor/6000.6.0f1/Editor</UnityEditorPath>
+    <UnityPackageAssembliesPath Condition="'$(UnityPackageAssembliesPath)' == ''">$(MSBuildProjectDirectory)/../../Library/ScriptAssemblies</UnityPackageAssembliesPath>
     <OutputPath>../../AutoSync/Compilation/bin/</OutputPath>
   </PropertyGroup>
   <ItemGroup>
@@ -13,7 +14,11 @@
     <Compile Include="../../Assets/Editor/**/*.cs" />
     <Reference Include="$(UnityEditorPath)/Data/Managed/UnityEngine/*.dll" />
     <Reference Include="$(UnityEditorPath)/Data/Managed/UnityEditor/*.dll" />
-    <Reference Include="../../Library/ScriptAssemblies/Unity.TextMeshPro.dll" />
-    <Reference Include="../../Library/ScriptAssemblies/UnityEngine.UI.dll" />
+    <Reference Include="$(UnityPackageAssembliesPath)/Unity.TextMeshPro.dll" />
+    <Reference Include="$(UnityPackageAssembliesPath)/UnityEngine.UI.dll" />
   </ItemGroup>
+  <Target Name="ValidateUnityPackageReferences" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="!Exists('$(UnityPackageAssembliesPath)/Unity.TextMeshPro.dll') Or !Exists('$(UnityPackageAssembliesPath)/UnityEngine.UI.dll')"
+           Text="Faltan las bibliotecas importadas de UGUI/TextMeshPro. Completa la importación en Unity o indica UnityPackageAssembliesPath con una copia verificada del mismo paquete. Esto es un requisito del verificador, no un error C# del juego." />
+  </Target>
 </Project>

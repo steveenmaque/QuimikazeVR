@@ -92,7 +92,7 @@ namespace LabQuimicaVR.EditorTools
         }
 
         public const string ProductName = "Quimikaze";
-        public const string Version = "1.2.0";
+        public const string Version = "1.2";
         public const int VersionCode = 3;
 
         /// <summary>

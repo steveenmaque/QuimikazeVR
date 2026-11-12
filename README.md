@@ -13,7 +13,7 @@ Entras a una sala blanca con la **tabla periódica completa de los 118 elementos
 - los **descubridores con su retrato** y **dónde se encuentra en la naturaleza**, con datos del Perú;
 - una **transición con un paisaje 360°** relacionado con el elemento: el espacio, una mina, el mar, el bosque…
 
-> Novedades de la versión actual: [NOVEDADES_v1.1.md](NOVEDADES_v1.1.md)
+> Desarrollo actual: [NOVEDADES_v1.2.md](NOVEDADES_v1.2.md). El APK público anterior sigue en v1.1 hasta completar la compilación de v1.2.
 
 ---
 
