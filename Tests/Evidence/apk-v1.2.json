@@ -1,0 +1,62 @@
+{
+  "utc": "2026-11-12T15:15:32.3933973Z",
+  "passed": true,
+  "error": null,
+  "apk": "QuimikazeVR.apk",
+  "sha256": "E9898504CFDC16DDCBA35F01C869BA2D9C8134E06BAA979AFF3F678626AD190E",
+  "package": "com.labquimicaperu.laboratoriovr",
+  "version": "1.2",
+  "versionCode": "3",
+  "targetSdk": "36",
+  "minSdk": "26",
+  "checks": [
+    {
+      "name": "Android mínimo compatible con la versión anterior",
+      "passed": true
+    },
+    {
+      "name": "Paquete esperado",
+      "passed": true
+    },
+    {
+      "name": "Versión nueva esperada",
+      "passed": true
+    },
+    {
+      "name": "Código de versión nuevo",
+      "passed": true
+    },
+    {
+      "name": "SDK objetivo estable esperado",
+      "passed": true
+    },
+    {
+      "name": "Permiso INTERNET para LAN",
+      "passed": true
+    },
+    {
+      "name": "Proveedor de informes incluido",
+      "passed": true
+    },
+    {
+      "name": "IL2CPP ARM64",
+      "passed": true
+    },
+    {
+      "name": "IL2CPP ARMv7",
+      "passed": true
+    },
+    {
+      "name": "Firma APK válida",
+      "passed": true
+    },
+    {
+      "name": "Certificado esperado para la línea v1.2 y posteriores",
+      "passed": true
+    }
+  ],
+  "scope": "Inspección del APK, manifiesto, arquitecturas y firma; no ejecuta el juego en Android.",
+  "signerCertificateSha256": "4f4b9c89eaf26e83d6a4131abea4e49e0743b972d6ab32fdf249373952ad2b54",
+  "canUpdateV11": false,
+  "signingPolicy": "Nueva base v1.2 autorizada por pérdida de la clave anterior. v1.1 requiere reinstalación; conservar esta firma en las próximas actualizaciones."
+}

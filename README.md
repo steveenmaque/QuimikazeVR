@@ -1,6 +1,8 @@
 # Quimikaze · Laboratorio virtual de química en VR
 
-**Candidato de aula 1.2, en validación:** misiones educativas, progreso persistente, retos con explicaciones, fuentes consultables y multijugador LAN de 2–8 personas con anfitrión Android. Consulta el [modelo educativo](AULA_EDUCATIVA.md), las [fuentes científicas](FUENTES_CIENTIFICAS.md), el [uso de LAN](Tests/LAN.md) y la [checklist de aceptación](VALIDACION_FINAL.md). Esta rama aún no tiene un APK nuevo validado ni aprobación de contenido para venta escolar.
+**Versión 1.2, candidata para pilotaje de aula:** misiones educativas, progreso persistente, retos con explicaciones, fuentes consultables y multijugador LAN de 2–8 personas con anfitrión Android. APK IL2CPP compilado y verificado; las pruebas físicas y la aprobación del contenido para venta escolar siguen en la [checklist](VALIDACION_FINAL.md). Consulta el [modelo educativo](AULA_EDUCATIVA.md), las [fuentes científicas](FUENTES_CIENTIFICAS.md) y el [uso de LAN](Tests/LAN.md).
+
+**Instalación desde v1.1:** su clave de firma se perdió y el propietario autorizó una nueva base. Esta vez es necesario reinstalar; la desinstalación puede borrar datos locales. Desde v1.2, conservar la misma clave para que las siguientes versiones puedan instalarse como actualización.
 
 Laboratorio virtual de química para chicos de 10 a 14 años que no tienen acceso a un laboratorio real. Funciona con un **celular Android dentro de un visor tipo VR Box o Cardboard**, el botón del visor y un **mando Bluetooth genérico**.
 
@@ -13,7 +15,7 @@ Entras a una sala blanca con la **tabla periódica completa de los 118 elementos
 - los **descubridores con su retrato** y **dónde se encuentra en la naturaleza**, con datos del Perú;
 - una **transición con un paisaje 360°** relacionado con el elemento: el espacio, una mina, el mar, el bosque…
 
-> Desarrollo actual: [NOVEDADES_v1.2.md](NOVEDADES_v1.2.md). El APK público anterior sigue en v1.1 hasta completar la compilación de v1.2.
+> Cambios y verificaciones: [NOVEDADES_v1.2.md](NOVEDADES_v1.2.md).
 
 ---
 
@@ -34,7 +36,11 @@ En la página de [Releases](https://github.com/steveenmaque/QuimikazeVR/releases
 2. Abre el archivo descargado desde **Descargas** o el administrador de archivos.
 3. Android pedirá **permitir instalar apps desconocidas** para el navegador o el administrador de archivos. Actívalo y vuelve atrás.
 4. Pulsa **Instalar**. Si aparece *Google Play Protect*, elige **Más detalles → Instalar de todos modos**. Es normal: la app no viene de Play Store.
-5. Abre **Quimikaze**. Si tenías instalada la versión anterior, la nueva se instala encima.
+5. Abre **Quimikaze**. Si tienes v1.1, aplica la reinstalación indicada arriba; su firma no es compatible con la nueva base v1.2.
+
+### Conservar las próximas actualizaciones
+
+La firma de la línea v1.2 queda fijada en `Tests/Test-ApkRelease.ps1`. Conservar un respaldo privado de `.android/debug.keystore` fuera del repositorio y en un almacenamiento externo antes de reinstalar el equipo. El archivo de claves no debe subirse a GitHub. Para verificar cada APK, ejecutar el comprobador con la versión y el código que correspondan; mantener el certificado esperado.
 
 ### Primera vez con el visor
 1. Coloca el celular en el visor, en horizontal y **del lado que quieras**: con los botones de volumen hacia arriba o hacia abajo. La pantalla gira sola, también si el celular tiene el bloqueo de rotación activado.

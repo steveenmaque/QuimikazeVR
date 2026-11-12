@@ -12,8 +12,9 @@ Estado: **candidato en desarrollo; no aprobado todavía para distribución escol
 - [x] Unity 6000.6.0f1 ejecutó las pruebas con su serializador nativo. El bloqueo anterior de Windows fue resuelto por el usuario; la validación terminó con éxito. Informe: `Tests/Evidence/unity-v1.2.json`.
 - [x] Las 118 vistas se construyeron y se comprobaron con TMP: cero textos desbordados. Se revisaron capturas de las estaciones y se corrigieron encabezados, espaciado y ubicación del tablero. Capturas en el paquete de evidencias de v1.2.
 - [x] Flujo real en Play: transiciones, modelos, guardado/restauración nativa, repetición sin farming, CSV y anfitrión GUI con dos clientes TCP reales; tres preguntas compartidas y cierre limpio. Informe: `Tests/Evidence/runtime-v1.2.json`. No equivale a Wi-Fi entre celulares.
-- [ ] APK IL2CPP ARMv7 + ARM64 generado e inspeccionado: identidad, versiones, API mínima 26, objetivo 36, INTERNET, proveedor de informes y certificado compatible con v1.1.
-- [ ] Instalar sobre v1.1 en un celular con datos existentes, confirmar que Android ofrece actualizar, abrir el juego y comprobar que se conservan sus preferencias. El usuario eligió continuar con la inspección del APK sin conectar un dispositivo.
+- [x] APK IL2CPP ARMv7 + ARM64 generado e inspeccionado: 11 comprobaciones de identidad, versiones, API mínima 26, objetivo 36, INTERNET, proveedor de informes y firma válida de la nueva línea v1.2. Informe: `Tests/Evidence/apk-v1.2.json`.
+- [x] Detectada firma distinta a v1.1. Su clave original no está disponible; el propietario autorizó continuar con una nueva base v1.2. La necesidad de reinstalar y la posible pérdida de datos locales están indicadas en README y release. Clave actual respaldada privadamente y certificado fijado para las próximas versiones.
+- [ ] Instalar y abrir v1.2 en un celular; después probar actualización v1.2 → siguiente versión con la misma firma y preferencias existentes. El usuario eligió continuar con la inspección del APK sin conectar un dispositivo.
 
 ## Revisión de cada viñeta
 

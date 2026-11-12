@@ -6,7 +6,7 @@ param(
     [int]$ExpectedTargetSdk = 36,
     [int]$ExpectedMinSdk = 26,
     [string]$ExpectedPackage = 'com.labquimicaperu.laboratoriovr',
-    [string]$ExpectedSignerCertificateSha256 = '20a038c2a78379520931f84cbcabbaffd1d7277cd660de5e7b00135499f10e49',
+    [string]$ExpectedSignerCertificateSha256 = '4f4b9c89eaf26e83d6a4131abea4e49e0743b972d6ab32fdf249373952ad2b54',
     [string]$AndroidSdkPath = 'C:/Program Files/Unity/Hub/Editor/6000.6.0f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK',
     [string]$JavaPath = 'C:/Program Files/Unity/Hub/Editor/6000.6.0f1/Editor/Data/PlaybackEngines/AndroidPlayer/OpenJDK/bin/java.exe',
     [string]$ReportPath = ''
@@ -43,7 +43,7 @@ try {
     $validation.version=$packageMatch.Groups[3].Value
     $targetMatch=[regex]::Match($badging,"targetSdkVersion:'([0-9]+)'")
     if ($targetMatch.Success) { $validation.targetSdk=$targetMatch.Groups[1].Value }
-    $minMatch=[regex]::Match($badging,"sdkVersion:'([0-9]+)'")
+    $minMatch=[regex]::Match($badging,"(?m)^(?:minSdkVersion|sdkVersion):'([0-9]+)'")
     if ($minMatch.Success) { $validation.minSdk=$minMatch.Groups[1].Value }
     Add-ReleaseCheck 'Android mínimo compatible con la versión anterior' ($validation.minSdk -eq $ExpectedMinSdk)
     Add-ReleaseCheck 'Paquete esperado' ($validation.package -eq $ExpectedPackage)
@@ -65,7 +65,9 @@ try {
     Add-ReleaseCheck 'Firma APK válida' ($LASTEXITCODE -eq 0)
     $signer = [regex]::Match($signature,'Signer #1 certificate SHA-256 digest: ([0-9a-fA-F]+)')
     if ($signer.Success) { $validation.signerCertificateSha256=$signer.Groups[1].Value }
-    Add-ReleaseCheck 'Firma compatible con la versión pública anterior' ($signer.Success -and $signer.Groups[1].Value -eq $ExpectedSignerCertificateSha256)
+    Add-ReleaseCheck 'Certificado esperado para la línea v1.2 y posteriores' ($signer.Success -and $signer.Groups[1].Value -eq $ExpectedSignerCertificateSha256)
+    $validation.canUpdateV11 = $signer.Success -and $signer.Groups[1].Value -eq '20a038c2a78379520931f84cbcabbaffd1d7277cd660de5e7b00135499f10e49'
+    $validation.signingPolicy = 'Nueva base v1.2 autorizada por pérdida de la clave anterior. v1.1 requiere reinstalación; conservar esta firma en las próximas actualizaciones.'
     $validation.passed = @($releaseChecks | Where-Object { -not $_.passed }).Count -eq 0
     if (-not $validation.passed) { $validation.error='APK rechazado: no cumple las condiciones de la versión solicitada.' }
 } catch { $validation.error=$_.Exception.Message }
