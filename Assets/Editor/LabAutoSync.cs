@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Compilation;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace LabQuimicaVR.EditorTools
@@ -40,6 +41,7 @@ namespace LabQuimicaVR.EditorTools
             CompilationPipeline.assemblyCompilationFinished += OnAssemblyCompiled;
             EditorApplication.update += Poll;
             EditorApplication.delayCall += EnsureTmpEssentials;
+            EditorApplication.delayCall += EnsurePlayModeStartScene;
             pendingSince = EditorApplication.timeSinceStartup;
         }
 
@@ -63,6 +65,15 @@ namespace LabQuimicaVR.EditorTools
             AssetDatabase.ImportPackage(pkg, false);
 #pragma warning restore CS0618
             WriteStatus("TMP Essential Resources importados");
+        }
+
+        public static void EnsurePlayModeStartScene()
+        {
+            if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode) return;
+            if (EditorSceneManager.playModeStartScene != null) return;
+            var startScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(LabSceneBuilder.MenuScenePath);
+            if (startScene != null)
+                EditorSceneManager.playModeStartScene = startScene;
         }
 
         static void Poll()

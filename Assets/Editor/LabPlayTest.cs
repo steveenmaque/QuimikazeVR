@@ -30,6 +30,7 @@ namespace LabQuimicaVR.EditorTools
         {
             Directory.CreateDirectory(Dir);
             foreach (var f in Directory.GetFiles(Dir)) File.Delete(f);
+            EditorSceneManager.playModeStartScene = null;
             EditorSceneManager.OpenScene(LabSceneBuilder.TableScenePath);
             SessionState.SetBool(Key, true);
             EditorApplication.EnterPlaymode();
@@ -52,6 +53,7 @@ namespace LabQuimicaVR.EditorTools
                 Application.logMessageReceived -= OnLog;
                 File.WriteAllLines(Path.Combine(Dir, "log.txt"), log);
                 SessionState.SetBool(Key, false);
+                EditorApplication.delayCall += LabAutoSync.EnsurePlayModeStartScene;
                 LabAutoSync.WriteStatus("Prueba en Play terminada");
             }
         }
